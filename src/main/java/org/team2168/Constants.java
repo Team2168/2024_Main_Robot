@@ -4,6 +4,8 @@
 
 package org.team2168;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -13,6 +15,13 @@ package org.team2168;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class PneumaticsDevices {
+  public static final int RED_LIGHT = 6;
+  public static final int GREEN_LIGHT = 7;
+  public static final int BLUE_LIGHT = 8;
+
+    public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
+  }
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
