@@ -4,12 +4,24 @@
 
 package org.team2168.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+  private TalonFX _motor = new TalonFX(0);
+
+  private static ExampleSubsystem instance = null;
+
+  public static ExampleSubsystem getInstance() {
+    if(instance == null)
+      instance = new ExampleSubsystem();
+    return instance;
+  }
+
+  private ExampleSubsystem() {}
 
   /**
    * Example command factory method.
