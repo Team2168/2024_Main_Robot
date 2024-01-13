@@ -4,6 +4,9 @@
 
 package org.team2168.subsystems;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   private TalonFX _motor = new TalonFX(0);
+ 
+  private double kP;
+  private double kI;
+  private double kD;
 
   private static ExampleSubsystem instance = null;
 
@@ -21,7 +28,16 @@ public class ExampleSubsystem extends SubsystemBase {
     return instance;
   }
 
-  private ExampleSubsystem() {}
+  private ExampleSubsystem() {
+    _motor.getConfigurator().apply(new TalonFXConfiguration()); //sets the motor to its facotry default
+    var motorConfigs = new MotorOutputConfigs();
+    var gains = new Slot0Configs();
+
+    //setting gains
+    gains.withKP(kP)
+         .withKI(kI)
+         .withKD(kD);
+  }
 
   /**
    * Example command factory method.
