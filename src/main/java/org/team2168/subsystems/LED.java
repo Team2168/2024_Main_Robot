@@ -47,6 +47,21 @@ blueLED.set(blueIsOn);
   public void bluelight(boolean isOn) {
     blueLED.set(isOn);
   }
+
+  @Log(name = "Red on?", rowIndex = 0, columnIndex = 0)
+  public boolean getRedState() {
+    return redLED.get();
+  }
+
+   @Log(name = "Green on?", rowIndex = 0, columnIndex = 1)
+  public boolean getGreenState() {
+    return greenLED.get();
+  }
+
+   @Log(name = "Blue on?", rowIndex = 0, columnIndex = 2)
+  public boolean getBlueState() {
+    return blueLED.get();
+  }
   
 
 public static LED getInstance() {
