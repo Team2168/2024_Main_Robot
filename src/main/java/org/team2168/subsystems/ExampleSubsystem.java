@@ -5,6 +5,7 @@
 package org.team2168.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -19,12 +20,26 @@ public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   private TalonFX _motor = new TalonFX(0);
  
-  //The motor's inversion is such that moving clockwise is considered moving forward
+  // The motor's inversion is such that moving clockwise is considered moving forward
   private InvertedValue inversion = InvertedValue.Clockwise_Positive;
+  // The deadband for the motor--the minimum percentage output it needs to be commanded to go before actually moving
+  // 0.05 is an arbitrary value
+  private double neutralDeadband = 0.05; 
+  // The maximum values the motor can be commanded to go, in percent
+  // Values are arbitrary
+  private double maxForwardOutput = 0.95;
+  private double minForwardOutput = 0.0; //The motor is not allowed to move backwards 😱
+
+  private double currentLimit = 20.0;
+  private boolean currentLimitEnabled = true;
+  private double currentThreshold = 25.0;
+  private double currentTimeThreshold = 0.2;
   
   private double kP;
   private double kI;
   private double kD;
+
+  private int feedbackSensor = 0;
 
   private static ExampleSubsystem instance = null;
 
@@ -67,8 +82,12 @@ public class ExampleSubsystem extends SubsystemBase {
     * <h4> Using the setter
     * <p> Each variable you can configure comes with a setter that doubles as a getter. These can 
     * be accessed by using a dot operator on the Configuration variable:
-    * <p> ex) motorConfigs.withInversion(InvertedValue.Clockwise_Positive)
+    * <p> ex) motorConfigs.withInversion(InvertedValue.Clockwise_Positive);
+    * <h4> Accessing the member variable
+    * <p> To change the member variable directly, you can use:
+    * <p> ex) motorConfigs.Inverted = InvertedValue.Clockwise_Positive;
     * 
+    * <p> While either method works, it is more conventional to use the setter!
     */
   private ExampleSubsystem() {
     _motor.getConfigurator().apply(new TalonFXConfiguration()); //sets the motor to its facotry default
@@ -76,22 +95,34 @@ public class ExampleSubsystem extends SubsystemBase {
     var motorConfigs = new MotorOutputConfigs();
     var currentConfigs = new CurrentLimitsConfigs();
     var gains = new Slot0Configs();
+    var feedbackConfigs = new FeedbackConfigs();
 
     /* Motor Output Configurations */    
     motorConfigs.Inverted = inversion;
     motorConfigs.withNeutralMode(NeutralModeValue.Brake);
+    motorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    motorConfigs.withPeakForwardDutyCycle(maxForwardOutput);
+    motorConfigs.withPeakReverseDutyCycle(minForwardOutput);
     
     /* Current Limits Configurations */
-    
+    currentConfigs.withSupplyCurrentLimit(currentLimit);
+    currentConfigs.withSupplyCurrentLimitEnable(currentLimitEnabled);
+    currentConfigs.withSupplyCurrentThreshold(currentThreshold);
+    currentConfigs.withSupplyTimeThreshold(currentTimeThreshold);
+
     /* PID Gains Configurations */
-    //setting gains
+    //setting gains with the dot operator
     gains.withKP(kP)
          .withKI(kI)
          .withKD(kD);
-    //another way to set gains:
+    //another way to set gains (accessing the member variable directly to change it):
     gains.kP = kP;
     gains.kI = kI;
     gains.kD = kD;
+
+    /* Feedback Configurations */
+    feedbackConfigs.withFeedbackRemoteSensorID(feedbackSensor); //normally, the parameter should be calling the sensor ID from Constants
+                                                                //ex) CanDevices.SensorOne  
   }
 
   /**
