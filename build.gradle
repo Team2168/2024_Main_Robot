@@ -8,6 +8,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+
 def ROBOT_MAIN_CLASS = "org.team2168.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -52,6 +53,7 @@ def includeDesktopSupport = false
 dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+    implementation "com.github.Oblarg.Oblog:5.1.0"
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
@@ -99,3 +101,11 @@ wpi.java.configureTestTasks(test)
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
+
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
