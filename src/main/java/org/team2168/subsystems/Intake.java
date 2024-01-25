@@ -92,7 +92,7 @@ public class Intake extends SubsystemBase {
     return ticksPerHundredMs * (GEAR_RATIO/TICKS_PER_REV) * minuteInHundredMs;
   }
 
-  
+  @Log(name = "speed (rotations per minutes)", rowIndex = 3, columnIndex = 1);
 
   public double getSpeedRPM () {
     return TicksPerOneHundredMSToRPM(intakeRoller.getVelocity().getValueAsDouble());
