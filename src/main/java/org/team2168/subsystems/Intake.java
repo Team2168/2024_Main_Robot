@@ -67,7 +67,7 @@ public class Intake extends SubsystemBase {
       .withSupplyCurrentLimit(CONTINUOUS_CURRENT_LIMIT)
       .withSupplyCurrentThreshold(TRIGGER_THRESHOLD_LIMIT)
       .withSupplyTimeThreshold(TRIGGER_THRESHOLD_TIME);
-    intakeRollerConfig.withCurrentLimits(currentLimitConfig);
+    //intakeRollerConfig.withCurrentLimits(currentLimitConfig);
     //intakeRollerOneConfig.supplyCurrLimit = talonCurrentLimit;
 
     var intakeRolle = intakeRoller.getConfigurator();
