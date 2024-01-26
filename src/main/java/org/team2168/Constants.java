@@ -19,5 +19,6 @@ public final class Constants {
 
   public static final class ClimberMotors{
     public static final int CLIMBER_MOTOR = 14;  //placeholder
+    public static final double UPDATE_TIME = 0; //placeholder
   }
 }
