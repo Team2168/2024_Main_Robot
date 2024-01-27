@@ -31,11 +31,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class Climber extends SubsystemBase {
+public class ClimberLeft extends SubsystemBase {
 
-  private TalonFX climberMotor;
+  private TalonFX climberMotorLeft;
 
-  static Climber instance = null;
+  static ClimberLeft instance = null;
   private static final double TIME_UNITS_OF_VELOCITY = 0.1;
   private static final double TICKS_PER_REV = 2048;
   private static final double GEAR_RATIO = 0; // placeholder number
@@ -74,9 +74,9 @@ public class Climber extends SubsystemBase {
 
 
   /** Creates a new Climber. */
-  public Climber() {
-    climberMotor = new TalonFX(ClimberMotors.CLIMBER_MOTOR);
-    climberMotor.getConfigurator().apply(new TalonFXConfiguration());
+  public ClimberLeft() {
+    climberMotorLeft = new TalonFX(ClimberMotors.CLIMBER_MOTOR_LEFT);
+    climberMotorLeft.getConfigurator().apply(new TalonFXConfiguration());
 
     var motorConfigs = new MotorOutputConfigs();
     var currentConfigs = new CurrentLimitsConfigs();
@@ -119,9 +119,9 @@ public class Climber extends SubsystemBase {
 
   }
 
-  public static Climber getInstance() {
+  public static ClimberLeft getInstance() {
     if (instance == null) {
-      instance = new Climber();
+      instance = new ClimberLeft();
     }
     return instance;
   }
@@ -143,22 +143,22 @@ public class Climber extends SubsystemBase {
   }
 
   public void setMotorBrake() {
-    climberMotor.setNeutralMode(NeutralModeValue.Brake);
+    climberMotorLeft.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void setMotorCoast() {
-    climberMotor.setNeutralMode(NeutralModeValue.Coast);
+    climberMotorLeft.setNeutralMode(NeutralModeValue.Coast);
   }
 
    //@Config()
   public void setSpeedVelocity(double speed){
-    climberMotor.set(inchesToTicks(speed) * TIME_UNITS_OF_VELOCITY);
+    climberMotorLeft.set(inchesToTicks(speed) * TIME_UNITS_OF_VELOCITY);
   }
 
   //@Config()
   public void setPosition(double inches){
     //this.position = position;
-    climberMotor.setPosition(inchesToTicks(inches), kTimeoutMs);
+    climberMotorLeft.setPosition(inchesToTicks(inches), kTimeoutMs);
   }
 
   /* //@Config()
@@ -167,25 +167,25 @@ public class Climber extends SubsystemBase {
   }*/
 
   public void setToZero(){
-    climberMotor.setPosition(0, kTimeoutMs);
+    climberMotorLeft.setPosition(0, kTimeoutMs);
   }
 
   public void setInvertPosition(boolean invert){
-    climberMotor.setInverted(invert);
+    climberMotorLeft.setInverted(invert);
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getCurrentSpeed(){
-    return climberMotor.get();
+    return climberMotorLeft.get();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getspeedVelocity(){
-    return (ticksToInches(climberMotor.get()) / TIME_UNITS_OF_VELOCITY);
+    return (ticksToInches(climberMotorLeft.get()) / TIME_UNITS_OF_VELOCITY);
   }
 
   public boolean getInvertPosition(){
-    return climberMotor.getInverted();
+    return climberMotorLeft.getInverted();
   }
 
   @Override
