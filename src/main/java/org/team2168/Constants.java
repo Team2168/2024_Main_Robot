@@ -4,6 +4,8 @@
 
 package org.team2168;
 
+import com.ctre.phoenix6.hardware.DeviceIdentifier;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,5 +17,12 @@ package org.team2168;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+
+  public static final class MOTOR_CONSTANTS {
+    public static final int FIRST_SHOOTER_ID = 6;
+    public static final int SECOND_SHOOTER_ID = 7;
+    public static final DeviceIdentifier FIRST_SHOOTER_CONFIG_ID = new DeviceIdentifier();
+    public static final DeviceIdentifier SECOND_SHOOTER_CONFIG_ID = new DeviceIdentifier();
   }
 }
