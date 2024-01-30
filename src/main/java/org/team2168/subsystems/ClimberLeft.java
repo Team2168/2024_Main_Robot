@@ -65,7 +65,7 @@ public class ClimberLeft extends SubsystemBase {
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
 
-  private static ElevatorSim climberSim;
+  private static ElevatorSim climberSimLeft;
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
   private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
   private static final double MAX_HEIGHT_INCHES = 0.5; //placeholder
@@ -107,7 +107,7 @@ public class ClimberLeft extends SubsystemBase {
     /* Feedback Configurations */
     feedbackConfigs.withFeedbackRemoteSensorID(ClimberMotors.FEEDBACK_SENSOR);
 
-    climberSim = new ElevatorSim(
+    climberSimLeft = new ElevatorSim(
     DCMotor.getFalcon500(1), 
     GEAR_RATIO, 
     CARRIAGE_MASS_KG, 
@@ -134,7 +134,7 @@ public class ClimberLeft extends SubsystemBase {
     return (ticks / TICKS_PER_REV * 360);
   }
 
-  private static double inchesToTicks(double inches) {
+  public static double inchesToTicks(double inches) {
     return (inches / INCHES_PER_REV) * GEAR_RATIO * TICKS_PER_REV;
   }
 
