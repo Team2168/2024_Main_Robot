@@ -12,8 +12,12 @@ public class SetRedLED extends Command {
   /** Creates a new SetRedLED. */
   private LEDs leds;
   private boolean Ison;
-  public SetRedLED() {
+  public SetRedLED(LEDs leds, boolean Ison) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.leds = leds;
+    this.Ison = Ison;
+
+    addRequirements(leds);
   }
 
   // Called when the command is initially scheduled.
@@ -22,7 +26,9 @@ public class SetRedLED extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    //leds.red(Ison);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -31,6 +37,6 @@ public class SetRedLED extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
