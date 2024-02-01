@@ -1,5 +1,6 @@
 package org.team2168.subsystems;
 
+import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -24,6 +25,19 @@ public class Limelight extends SubsystemBase implements Loggable {
     private static NetworkTableEntry pipeline;
     private static NetworkTableEntry camMode;
 
+   
+    AprilTagDetector detector = new AprilTagDetector();
+    AprilTagDetector.Config config = new AprilTagDetector.Config();
+    
+    public Limelight() {
+
+        detector.setConfig(config);
+        detector.addFamily("tag32h11");
+    }
+    
+
+
+
     public enum Pipeline {
         APRIL_TAGS(0),
         PIPELINE_ONE(1),
@@ -47,6 +61,8 @@ public class Limelight extends SubsystemBase implements Loggable {
             this.camMode = camMode;
         }
     }
+
+
 
     public static Limelight getInstance() {
         if (instance == null) {
@@ -98,12 +114,18 @@ public class Limelight extends SubsystemBase implements Loggable {
         setCamMode(1);
         setPipeline(0);
         isLimelightEnabled = false;
-      }
+    }
 
 
     public boolean isLimelightEnabled() {
         return isLimelightEnabled;
     }
+
+
+    
+
+    
+
 
     public void init() {
         tv = networkTable.getEntry("tv");
