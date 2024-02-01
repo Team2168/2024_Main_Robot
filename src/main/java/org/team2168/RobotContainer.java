@@ -31,6 +31,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    Logger.configureLoggingAndConfig(this, false);
   }
 
   /**
@@ -65,7 +66,4 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  private RobotContainer() {
-    Logger.configureLoggingAndConfig(this, false);
-  }
 }

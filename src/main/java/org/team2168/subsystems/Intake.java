@@ -80,7 +80,7 @@ public class Intake extends SubsystemBase {
    * sets the speed in percentage
    * @param speed value is between -1.0 and 1.0
    */
-  private static void setRollerSpeed(double speed) {
+  public void setRollerSpeed(double speed) {
     intakeRoller.set(speed);
   }
   
@@ -92,7 +92,7 @@ public class Intake extends SubsystemBase {
     return ticksPerHundredMs * (GEAR_RATIO/TICKS_PER_REV) * minuteInHundredMs;
   }
 
-@Log(name = "speed (rotations per minutes)", rowIndex = 3, columnIndex = 1);
+@Log(name = "speed (rotations per minutes)", rowIndex = 3, columnIndex = 1)
 
   public double getSpeedRPM () {
     return TicksPerOneHundredMSToRPM(intakeRoller.getVelocity().getValueAsDouble());

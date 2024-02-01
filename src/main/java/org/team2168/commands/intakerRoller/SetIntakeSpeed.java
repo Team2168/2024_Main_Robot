@@ -4,10 +4,12 @@
 
 package org.team2168.commands.intakerRoller;
 
+import org.team2168.subsystems.Intake;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SetIntakeSpeed extends Command {
-  private IntakeRoller iRoller;
+  private Intake iRoller;
   private double speed;
 
   /**
@@ -15,7 +17,7 @@ public class SetIntakeSpeed extends Command {
    * @param iRoller the intake instance
    * @param speed speed of the intake roller from -1 to 1
    */
-  public SetIntakeSpeed(IntakerRoller iRoller, double speed) {
+  public SetIntakeSpeed(Intake iRoller, double speed) {
     this.iRoller = iRoller;
     this.speed = speed;
     addRequirements(iRoller);
