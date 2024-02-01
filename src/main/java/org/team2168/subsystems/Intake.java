@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.annotations.Log;
 
 
 public class Intake extends SubsystemBase {
@@ -48,7 +49,6 @@ public class Intake extends SubsystemBase {
   private final double GEAR_RATIO = 0; // TODO: Add later
 
 
-  /** Creates a new Intake. */
   /*
    * In intake constructor configures motor to have certain settings 
    * Using the TalonFXConfig variable, gives it different values
@@ -92,7 +92,7 @@ public class Intake extends SubsystemBase {
     return ticksPerHundredMs * (GEAR_RATIO/TICKS_PER_REV) * minuteInHundredMs;
   }
 
-  @Log(name = "speed (rotations per minutes)", rowIndex = 3, columnIndex = 1);
+@Log(name = "speed (rotations per minutes)", rowIndex = 3, columnIndex = 1);
 
   public double getSpeedRPM () {
     return TicksPerOneHundredMSToRPM(intakeRoller.getVelocity().getValueAsDouble());
