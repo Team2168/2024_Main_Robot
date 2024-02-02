@@ -4,8 +4,10 @@
 
 package org.team2168.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -25,6 +27,8 @@ public class ExampleSubsystem extends SubsystemBase {
   // The deadband for the motor--the minimum percentage output it needs to be commanded to go before actually moving
   // 0.05 is an arbitrary value
   private double neutralDeadband = 0.05; 
+  // The motor brake mode. Can be brake or caost
+  private NeutralModeValue neutralMode = NeutralModeValue.Coast;
   // The maximum values the motor can be commanded to go, in percent
   // Values are arbitrary
   private double maxForwardOutput = 0.95;
@@ -40,6 +44,10 @@ public class ExampleSubsystem extends SubsystemBase {
   private double kD;
 
   private int feedbackSensor = 0;
+  private int feedbackOffset = 457; //arbitrary number
+
+  private int cruiseVelocity = 25; //in rotations per second
+  private int acceleration = 25; //in rotations per seconds squared
 
   private static ExampleSubsystem instance = null;
 
@@ -96,10 +104,11 @@ public class ExampleSubsystem extends SubsystemBase {
     var currentConfigs = new CurrentLimitsConfigs();
     var gains = new Slot0Configs();
     var feedbackConfigs = new FeedbackConfigs();
+    var motionMagicConfigs = new MotionMagicConfigs();
 
     /* Motor Output Configurations */    
-    motorConfigs.Inverted = inversion;
-    motorConfigs.withNeutralMode(NeutralModeValue.Brake);
+    motorConfigs.withInverted(inversion);
+    motorConfigs.withNeutralMode(neutralMode);
     motorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
     motorConfigs.withPeakForwardDutyCycle(maxForwardOutput);
     motorConfigs.withPeakReverseDutyCycle(minForwardOutput);
@@ -123,6 +132,12 @@ public class ExampleSubsystem extends SubsystemBase {
     /* Feedback Configurations */
     feedbackConfigs.withFeedbackRemoteSensorID(feedbackSensor); //normally, the parameter should be calling the sensor ID from Constants
                                                                 //ex) CanDevices.SensorOne  
+    feedbackConfigs.withFeedbackRotorOffset((double)feedbackOffset); //example of typecasting, although it is not necessary in this case
+                                                                     //(Java can automatically change ints to doubles)
+    
+    /* Motion Magic Configurations */
+    motionMagicConfigs.withMotionMagicCruiseVelocity(cruiseVelocity);
+    motionMagicConfigs.withMotionMagicAcceleration(acceleration);
   }
 
   /**
