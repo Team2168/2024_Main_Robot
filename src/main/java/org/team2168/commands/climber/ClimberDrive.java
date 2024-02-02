@@ -18,11 +18,23 @@ public class ClimberDrive extends InstantCommand {
   ClimberRight climberRight;
   DoubleSupplier speed;
 
-  public ClimberDrive(ClimberLeft climberL, ClimberRight climberR, DoubleSupplier speed) {
+  public ClimberDrive(ClimberLeft climberLeft, ClimberRight climberRight, DoubleSupplier s) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.climberLeft = climberLeft;
+    this.climberRight = climberRight;
+    speed = s;
+
+    addRequirements(climberLeft, climberRight);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
+
+  @Override
+  public void execute() {
+    //elevator.setPercentOutput(elevatorPercentOutput);
+  // if (elevator.isInRange()) {
+    climber.setPercentOutput(elevatorOutput.getAsDouble());
+  }
 }

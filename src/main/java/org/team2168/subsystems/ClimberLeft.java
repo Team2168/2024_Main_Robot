@@ -174,6 +174,10 @@ public class ClimberLeft extends SubsystemBase {
     climberMotorLeft.setInverted(invert);
   }
 
+  public void setPercentOutput(double percentOutput) {
+    climberMotorLeft.setVoltage(percentOutput);
+  }
+
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getCurrentSpeed(){
     return climberMotorLeft.get();
@@ -217,4 +221,6 @@ public class ClimberLeft extends SubsystemBase {
 
     //This is some stuff we were testing out. This may not be in the final code at all.
   }
+
+  
 }

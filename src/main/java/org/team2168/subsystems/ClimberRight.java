@@ -163,8 +163,13 @@ public class ClimberRight extends SubsystemBase {
     return climberMotorRight.getInverted();
   }
 
+  public void setPercentOutput(double percentOutput) {
+    climberMotorRight.setVoltage(percentOutput);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
 }
