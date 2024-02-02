@@ -188,6 +188,12 @@ public class ClimberLeft extends SubsystemBase {
     return (ticksToInches(climberMotorLeft.get()) / TIME_UNITS_OF_VELOCITY);
   }
 
+  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  public double getPosition(){
+    return ticksToInches(climberMotorLeft.get());
+  }
+
+  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public boolean getInvertPosition(){
     return climberMotorLeft.getInverted();
   }

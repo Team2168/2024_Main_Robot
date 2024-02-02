@@ -149,6 +149,10 @@ public class ClimberRight extends SubsystemBase {
     climberMotorRight.setInverted(invert);
   }
 
+  public void setPercentOutput(double percentOutput) {
+    climberMotorRight.setVoltage(percentOutput);
+  }
+
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getCurrentSpeed(){
     return climberMotorRight.get();
@@ -159,12 +163,20 @@ public class ClimberRight extends SubsystemBase {
     return (ClimberLeft.ticksToInches(climberMotorRight.get()) / TIME_UNITS_OF_VELOCITY);
   }
 
+  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public boolean getInvertPosition(){
     return climberMotorRight.getInverted();
   }
 
-  public void setPercentOutput(double percentOutput) {
-    climberMotorRight.setVoltage(percentOutput);
+  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  public double getPosition(){
+    return ticksToInches(climberMotorRight.get());
+  }
+
+
+  private double ticksToInches(double d) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'ticksToInches'");
   }
 
   @Override
