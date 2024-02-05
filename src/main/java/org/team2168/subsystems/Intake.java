@@ -15,13 +15,12 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-
+import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.annotations.Log;
 
 
 public class Intake extends SubsystemBase {
-  private static TalonFX intakeRoller = new TalonFX(0);
   private static Intake instance = null;
   private static TalonFXConfiguration intakeRollerConfig = new TalonFXConfiguration();
 
@@ -34,6 +33,8 @@ public class Intake extends SubsystemBase {
   private static InvertedValue intakeInvert = InvertedValue.Clockwise_Positive; //TODO: check value
   
   private static int intakeTimeoutMs = 30;
+  private static final int leftMotorId = 1;
+  private static final int rightMotorId = 2;
   private static double peakOutput = 1.0;
   private final boolean ENABLE_CURRENT_LIMIT = true;
   private final double CONTINUOUS_CURRENT_LIMIT = 20.0;
@@ -47,6 +48,10 @@ public class Intake extends SubsystemBase {
 
   private final double TICKS_PER_REV = 2048;
   private final double GEAR_RATIO = 0; // TODO: Add later
+
+  private static CANSparkMax intakeLeftMotor = new CANSparkMax(leftMotorId, MotorType.kBrushless); 
+  private static CANSparkMax intakeRighttMotor = new CANSparkMax(leftMotorId, MotorType.kBrushless);
+
 
 
   /*

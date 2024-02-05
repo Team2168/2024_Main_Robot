@@ -4,11 +4,14 @@
 
 package org.team2168.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -16,20 +19,21 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class IntakeUpAndDown extends SubsystemBase {
-  /** Creates a new IntakeUpAndDown. */
+public class IntakePivot extends SubsystemBase {
 
-  private static TalonFX intakeUpAndDown = new TalonFX(0);
-  private static IntakeUpAndDown instance = null;
+  private static TalonFX intakePivotOne = new TalonFX(0); // leader motor
+  private static TalonFX intakePivotTwo = new TalonFX(0); // follower motor
+  private static IntakePivot instance = null;
 
-  public IntakeUpAndDown getInstance() {
+  public IntakePivot getInstance() {
     if(instance == null)
-    instance = new IntakeUpAndDown();
+    instance = new IntakePivot();
     return instance;
   }
 
-  private static InvertedValue intakeInvert = InvertedValue.Clockwise_Positive; //TODO: check value
-  
+  private static InvertedValue intakeInvertOne = InvertedValue.Clockwise_Positive; //TODO: check value
+  private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
+
   private static int intakeTimeoutMs = 30;
   private static double peakOutput = 1.0;
   private final boolean ENABLE_CURRENT_LIMIT = true;
@@ -55,39 +59,52 @@ public class IntakeUpAndDown extends SubsystemBase {
   private double kI = 0;
   private double kD = 0;
 
-  private IntakeUpAndDown() {
-    intakeUpAndDown.getConfigurator().apply( new TalonFXConfiguration()); //resets motor to its factory default
-    var motorConfigs = new MotorOutputConfigs();
-    var currentConfigs = new CurrentLimitsConfigs();
+  private IntakePivot() {
+    intakePivotOne.getConfigurator().apply(new TalonFXConfiguration()); //resets leader motor to its factory default
+    intakePivotTwo.getConfigurator().apply(new TalonFXConfiguration()); //resets follower motor to its factory default
 
+    var currentConfigs = new CurrentLimitsConfigs();
     var PIDconfigs = new Slot0Configs();
-    motorConfigs.withInverted(intakeInvert);
-    motorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    var motionMagicConfigs = new MotionMagicConfigs();
+    var leaderMotorConfigs = new MotorOutputConfigs();
+    var followerMotorConfigs = new MotorOutputConfigs();
+
+    leaderMotorConfigs.withInverted(intakeInvertOne);
+    leaderMotorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+   // followerMotorConfigs.withInverted(intakeInvertTwo);
 
     currentConfigs
       .withSupplyCurrentLimitEnable(ENABLE_CURRENT_LIMIT)
       .withSupplyCurrentLimit(CONTINUOUS_CURRENT_LIMIT)
       .withSupplyCurrentThreshold(TRIGGER_THRESHOLD_LIMIT)
       .withSupplyTimeThreshold(TRIGGER_THRESHOLD_TIME);
-    //intakeRollerConfig.withCurrentLimits(currentLimitConfig);
-    //intakeRollerOneConfig.supplyCurrLimit = talonCurrentLimit;
+    //intakePivotConfig.withCurrentLimits(currentLimitConfig);
+    //intakePivotConfig.supplyCurrLimit = talonCurrentLimit;
 
     PIDconfigs
       .withKP(kP)
       .withKI(kI)
       .withKD(kD);
 
-    var motionMagicConfigs = new MotionMagicConfigs();
     motionMagicConfigs
       .withMotionMagicAcceleration(motionMagicAcceleration)
       .withMotionMagicCruiseVelocity(motionMagicCruiseVelocity)
       .withMotionMagicExpo_kA(kA)
       .withMotionMagicExpo_kV(kV);
 
-    var intakeRaiseAndLower = intakeUpAndDown.getConfigurator();
-    intakeRaiseAndLower.apply(motorConfigs);
-    intakeRaiseAndLower.apply(currentConfigs);
-    intakeRaiseAndLower.apply(PIDconfigs);
+    var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
+    var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
+    
+    intakeRaiseAndLowerOne.apply(leaderMotorConfigs);
+    intakeRaiseAndLowerOne.apply(currentConfigs);
+    intakeRaiseAndLowerOne.apply(PIDconfigs);
+
+    intakeRaiseAndLowerTwo.apply(followerMotorConfigs);
+    intakeRaiseAndLowerTwo.apply(currentConfigs);
+    
+    intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
+    // intakeRaiseAndLower.apply(motionMagicConfigs);
+    
     
   }
 
@@ -111,7 +128,7 @@ public class IntakeUpAndDown extends SubsystemBase {
 
   private void setIntakePosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
-    intakeUpAndDown.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
+    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
   }
 
   @Override
