@@ -12,6 +12,13 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
@@ -22,18 +29,23 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+
+
+
 public class ClimberLeft extends SubsystemBase {
 
-  private TalonFX climberMotorLeft;
+  private CANSparkMax climberMotorLeft;
 
   static ClimberLeft instance = null;
   private static final double TIME_UNITS_OF_VELOCITY = 0.1;
@@ -42,11 +54,16 @@ public class ClimberLeft extends SubsystemBase {
   private static final double SPROCKET_RADIUS_IN = 0; // placeholder number
   private static final double INCHES_PER_REV = SPROCKET_RADIUS_IN * 2 * Math.PI;
 
+  private SparkPIDController m_pidController;
+  private RelativeEncoder m_encoder;
+  private static final double kMaxOutput = 0;// placeholder
+  private static final double kMinOutput = 0;// placeholder
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
   private static final double kD = 0;// placeholder
   //private static final double kF = 0;// placeholder
   private static final double kArbitraryFeedForward = 0;// placeholder 
+
 
   private InvertedValue inversion = InvertedValue.Clockwise_Positive;
   private static final double NEUTRAL_DEADBAND = 0.001;
@@ -59,10 +76,16 @@ public class ClimberLeft extends SubsystemBase {
   private static final int kTimeoutMs = 30; // placeholder 
   private static boolean kSensorPhase = false;
 
-  private static final double CURRENT_LIMIT = 0.0; // it limits when the feature is activited (in amps)
-  private static final double THRESHOLD_CURRENT = 0.0; // it tells what the threshold should be for the limit to be activited (in amps)
-  private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
-  private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
+  private SparkLimitSwitch forwardLimit;
+  private SparkLimitSwitch reverseLimit;
+
+  public String kEnable;
+  public String kDisable;
+
+ // private static final double CURRENT_LIMIT = 0.0; // it limits when the feature is activited (in amps)
+  //private static final double THRESHOLD_CURRENT = 0.0; // it tells what the threshold should be for the limit to be activited (in amps)
+  //private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
+  //private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
 
   private static ElevatorSim climberSimLeft;
@@ -75,37 +98,30 @@ public class ClimberLeft extends SubsystemBase {
 
   /** Creates a new Climber. */
   public ClimberLeft() {
-    climberMotorLeft = new TalonFX(ClimberMotors.CLIMBER_MOTOR_LEFT);
-    climberMotorLeft.getConfigurator().apply(new TalonFXConfiguration());
+    climberMotorLeft = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR_LEFT, MotorType.kBrushless);
 
-    var motorConfigs = new MotorOutputConfigs();
-    var currentConfigs = new CurrentLimitsConfigs();
-    var gains = new Slot0Configs();
-    var feedbackConfigs = new FeedbackConfigs();
+    m_pidController = climberMotorLeft.getPIDController();
+    m_pidController.setFeedbackDevice(m_encoder);
+    m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
 
-    motorConfigs.Inverted = inversion;
-    motorConfigs.withNeutralMode(NeutralModeValue.Brake);
-    motorConfigs.withDutyCycleNeutralDeadband(NEUTRAL_DEADBAND);
-    motorConfigs.withPeakForwardDutyCycle(MAX_HEIGHT_INCHES);
-    motorConfigs.withPeakReverseDutyCycle(MIN_HEIGHT_INCHES);
+    // Encoder object created to display position values
+    m_encoder = climberMotorLeft.getEncoder();
 
-    currentConfigs.withSupplyCurrentLimit(CURRENT_LIMIT);
-    currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
-    currentConfigs.withSupplyCurrentThreshold(THRESHOLD_CURRENT);
-    currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
+    // set PID coefficients
+    m_pidController.setP(kP);
+    m_pidController.setI(kI);
+    m_pidController.setD(kD);
+    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    //set the gains
-    gains.withKP(kP)
-    .withKI(kI)
-    .withKD(kD);
-    //another way to set gains (accessing the member variable directly to change it):
-    gains.kP = kP;
-    gains.kI = kI;
-    gains.kD = kD;
-    //climberMotor.config_kF(kPIDLoopIdx, kF, kTimeoutMs);
+    climberMotorLeft.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    climberMotorLeft.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
+    climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
-    /* Feedback Configurations */
-    feedbackConfigs.withFeedbackRemoteSensorID(ClimberMotors.FEEDBACK_SENSOR);
+    forwardLimit = climberMotorLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    reverseLimit = climberMotorLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    forwardLimit.enableLimitSwitch(false);
+    reverseLimit.enableLimitSwitch(false);
 
     climberSimLeft = new ElevatorSim(
     DCMotor.getFalcon500(1), 
@@ -143,11 +159,11 @@ public class ClimberLeft extends SubsystemBase {
   }
 
   public void setMotorBrake() {
-    climberMotorLeft.setNeutralMode(NeutralModeValue.Brake);
+    climberMotorLeft.setIdleMode(IdleMode.kBrake);
   }
 
   public void setMotorCoast() {
-    climberMotorLeft.setNeutralMode(NeutralModeValue.Coast);
+    climberMotorLeft.setIdleMode(IdleMode.kCoast);
   }
 
    //@Config()
@@ -158,7 +174,7 @@ public class ClimberLeft extends SubsystemBase {
   //@Config()
   public void setPosition(double inches){
     //this.position = position;
-    climberMotorLeft.setPosition(inchesToTicks(inches), kTimeoutMs);
+    climberMotorLeft.setPosition(inchesToTicks(inches), kTimeoutMs); //this needs to be fixed
   }
 
   /* //@Config()
@@ -167,7 +183,7 @@ public class ClimberLeft extends SubsystemBase {
   }*/
 
   public void setToZero(){
-    climberMotorLeft.setPosition(0, kTimeoutMs);
+    climberMotorLeft.setPosition(0, kTimeoutMs); //this needs to be fixed
   }
 
   public void setInvertPosition(boolean invert){

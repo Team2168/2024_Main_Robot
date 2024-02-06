@@ -19,6 +19,7 @@ import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -26,6 +27,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
 public class ClimberRight extends SubsystemBase {
   /** Creates a new ClimberRight. */
@@ -38,6 +41,10 @@ public class ClimberRight extends SubsystemBase {
   private static final double SPROCKET_RADIUS_IN = 0; // placeholder number
   private static final double INCHES_PER_REV = SPROCKET_RADIUS_IN * 2 * Math.PI;
 
+    private SparkPIDController m_pidController;
+  private RelativeEncoder m_encoder;
+  private static final double kMaxOutput = 0;// placeholder
+  private static final double kMinOutput = 0;// placeholder
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
   private static final double kD = 0;// placeholder
