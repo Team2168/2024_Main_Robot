@@ -33,57 +33,39 @@ public class Shooter extends SubsystemBase {
   private TalonFX firstShooterMotor;
   private TalonFX secondShooterMotor;
   private TalonFXConfigurator firstShooterConfig;
-  private TalonFXConfigurator secondShooterConfig;
+  private TalonFXConfiguration firstMotorConfiguration;
   private Slot0Configs firstMotorGains;
-  private Slot1Configs secondMotorGains;
   private ClosedLoopGeneralConfigs closedLoopConfigs;
   private CurrentLimitsConfigs currentLimitConfigs;
   private DifferentialSensorsConfigs firstSensorConfigs;
-  private DifferentialSensorsConfigs secondSensorConfigs;
 
   private FeedbackConfigs firstFeedbackConfigs;
-  private FeedbackConfigs secondFeedbackConfigs;
 
   private MotorOutputConfigs firstOutputConfigs;
-  private MotorOutputConfigs secondOutputConfigs;
 
   private final DeviceIdentifier FIRST_SHOOTER_CONFIG_ID = new DeviceIdentifier(); // placeholder
-  private final DeviceIdentifier SECOND_SHOOTER_CONFIG_ID = new DeviceIdentifier(); // placeholder
-  private final int FIRST_TALON_FX_SENSOR_ID_NUMBER = 1; // PLACEHOLDER
-  private final int SECOND_TALON_FX_SENSOR_ID_NUMBER = 2;
   private final double PEAK_FORWARD_DUTY_CYCLE = 10.00;
   private final double PEAK_REVERSE_DUTY_CYCLE = 10.00;
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
-  private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
 
   private double first_kP = 0.1; // placeholder
   private double first_kI = 0.45; // placeholder
   private double first_kD = 0.001; // placeholder
   private double first_kVolts = 0.12; // placeholder
 
-  private double second_kP = 0.1; // placeholder
-  private double second_kI = 0.45; // placeholder
-  private double second_kD = 0.001; // placeholder
-  private double second_kVolts = 0.12; // placeholder
-
-  private final double GEAR_RATIO = 0;
+  private final double GEAR_RATIO = 0.0;
   private VelocityVoltage velocityVoltage;
 
   public Shooter() {
     firstShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.FIRST_SHOOTER_ID);
     secondShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SECOND_SHOOTER_ID);
     firstShooterConfig = new TalonFXConfigurator(FIRST_SHOOTER_CONFIG_ID);
-    secondShooterConfig = new TalonFXConfigurator(FIRST_SHOOTER_CONFIG_ID);
-    closedLoopConfigs = new ClosedLoopGeneralConfigs();
+    firstMotorConfiguration = new TalonFXConfiguration();
     currentLimitConfigs = new CurrentLimitsConfigs();
     firstSensorConfigs = new DifferentialSensorsConfigs();
-    secondSensorConfigs = new DifferentialSensorsConfigs();
     firstFeedbackConfigs = new FeedbackConfigs();
-    secondFeedbackConfigs = new FeedbackConfigs();
     firstOutputConfigs = new MotorOutputConfigs();
-    secondOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
-    secondMotorGains = new Slot1Configs();
     velocityVoltage = new VelocityVoltage(0.0);
 
     firstShooterMotor.clearStickyFaults();
@@ -94,11 +76,7 @@ public class Shooter extends SubsystemBase {
     currentLimitConfigs.withSupplyCurrentThreshold(25.0);
     currentLimitConfigs.withSupplyTimeThreshold(0.025);
 
-    firstSensorConfigs.withDifferentialTalonFXSensorID(FIRST_TALON_FX_SENSOR_ID_NUMBER);
-    firstFeedbackConfigs.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
-
-    secondSensorConfigs.withDifferentialTalonFXSensorID(SECOND_TALON_FX_SENSOR_ID_NUMBER);
-    firstFeedbackConfigs.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+    firstFeedbackConfigs = firstMotorConfiguration.Feedback;
 
     firstOutputConfigs.withDutyCycleNeutralDeadband(0.002);
     firstOutputConfigs.withInverted(leftInvert);
@@ -106,37 +84,19 @@ public class Shooter extends SubsystemBase {
     firstOutputConfigs.withPeakForwardDutyCycle(PEAK_FORWARD_DUTY_CYCLE);
     firstOutputConfigs.withPeakReverseDutyCycle(PEAK_REVERSE_DUTY_CYCLE);
 
-    secondOutputConfigs.withDutyCycleNeutralDeadband(0.002);
-    secondOutputConfigs.withInverted(rightInvert);
-    secondOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
-    secondOutputConfigs.withPeakForwardDutyCycle(PEAK_FORWARD_DUTY_CYCLE);
-    secondOutputConfigs.withPeakReverseDutyCycle(PEAK_REVERSE_DUTY_CYCLE);
-
     firstMotorGains.withKP(first_kP);
     firstMotorGains.withKI(first_kI);
     firstMotorGains.withKD(first_kD);
     firstMotorGains.withKV(first_kVolts);
 
-    secondMotorGains.withKP(first_kP);
-    secondMotorGains.withKI(first_kI);
-    secondMotorGains.withKD(first_kD);
-    secondMotorGains.withKV(first_kVolts);
+    firstMotorConfiguration.withSlot0(firstMotorGains);
+    firstMotorConfiguration.withCurrentLimits(currentLimitConfigs);
+    firstMotorConfiguration.withFeedback(firstFeedbackConfigs);
+    firstMotorConfiguration.withMotorOutput(firstOutputConfigs);
 
-    firstShooterConfig.apply(closedLoopConfigs);
-    firstShooterConfig.apply(currentLimitConfigs);
-    firstShooterConfig.apply(firstSensorConfigs);
-    firstShooterConfig.apply(firstFeedbackConfigs);
-    firstShooterConfig.apply(firstOutputConfigs);
-    firstShooterConfig.apply(firstMotorGains);
+    firstShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
-    secondShooterConfig.apply(closedLoopConfigs);
-    secondShooterConfig.apply(currentLimitConfigs);
-    secondShooterConfig.apply(secondSensorConfigs);
-    secondShooterConfig.apply(secondFeedbackConfigs);
-    secondShooterConfig.apply(secondOutputConfigs);
-    secondShooterConfig.apply(secondMotorGains);
-
-    secondShooterMotor.setControl(new Follower(Constants.SHOOTER_MOTOR_CONSTANTS.SECOND_SHOOTER_ID, true));
+    secondShooterMotor.setControl(new Follower(firstShooterMotor.getDeviceID(), true));
   }
 
   public static Shooter getInstance() {
@@ -146,12 +106,16 @@ public class Shooter extends SubsystemBase {
     return instance;
   }
 
+  public double rpmToTicksPer100ms(double rpm) {
+    return (rpm * GEAR_RATIO * 2048) / 600;
+  }
+
   public void setVelocity(double velocity) {
-    firstShooterMotor.setControl(velocityVoltage.withVelocity(velocity));
+    firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToTicksPer100ms(velocity)));
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    firstShooterMotor.getVelocity();
   }
 }
