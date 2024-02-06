@@ -32,12 +32,9 @@ public class Shooter extends SubsystemBase {
   private static Shooter instance = null;
   private TalonFX firstShooterMotor;
   private TalonFX secondShooterMotor;
-  private TalonFXConfigurator firstShooterConfig;
   private TalonFXConfiguration firstMotorConfiguration;
   private Slot0Configs firstMotorGains;
-  private ClosedLoopGeneralConfigs closedLoopConfigs;
   private CurrentLimitsConfigs currentLimitConfigs;
-  private DifferentialSensorsConfigs firstSensorConfigs;
 
   private FeedbackConfigs firstFeedbackConfigs;
 
@@ -59,10 +56,8 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     firstShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.FIRST_SHOOTER_ID);
     secondShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SECOND_SHOOTER_ID);
-    firstShooterConfig = new TalonFXConfigurator(FIRST_SHOOTER_CONFIG_ID);
     firstMotorConfiguration = new TalonFXConfiguration();
     currentLimitConfigs = new CurrentLimitsConfigs();
-    firstSensorConfigs = new DifferentialSensorsConfigs();
     firstFeedbackConfigs = new FeedbackConfigs();
     firstOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
