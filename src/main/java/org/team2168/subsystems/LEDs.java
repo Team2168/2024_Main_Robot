@@ -15,7 +15,6 @@ import io.github.oblarg.oblog.annotations.Log;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import io.github.oblarg.oblog.annotations.Log;
 
 public class LEDs extends SubsystemBase {
   /** Creates a new LED. */

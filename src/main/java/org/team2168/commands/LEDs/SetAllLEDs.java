@@ -8,14 +8,18 @@ import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class SetBlueLED extends Command {
-  /** Creates a new SetBlueLED. */
+public class SetAllLEDs extends Command {
+  /** Creates a new SetAllLEDs. */
   private LEDs leds;
-  private boolean isOn;
-  public SetBlueLED(LEDs leds, boolean isOn) {
+  private boolean redOn;
+  private boolean blueOn;
+  private boolean greenOn;
+  public SetAllLEDs(LEDs leds, boolean redOn, boolean greenOn, boolean blueOn) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.leds = leds;
-    this.isOn = isOn;
+    this.redOn = redOn;
+    this.blueOn = blueOn;
+    this.greenOn = greenOn;
 
     addRequirements(leds);
   }
@@ -27,15 +31,14 @@ public class SetBlueLED extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    leds.bluelight(isOn);
-
+      leds.redlight(redOn);
+    leds.greenlight(greenOn);
+    leds.bluelight(blueOn);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    leds.bluelight(false);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
