@@ -19,10 +19,10 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  public static final class MOTOR_CONSTANTS {
-    public static final int FIRST_SHOOTER_ID = 6;
-    public static final int SECOND_SHOOTER_ID = 7;
-    public static final DeviceIdentifier FIRST_SHOOTER_CONFIG_ID = new DeviceIdentifier();
-    public static final DeviceIdentifier SECOND_SHOOTER_CONFIG_ID = new DeviceIdentifier();
+  public static final class SHOOTER_MOTOR_CONSTANTS {
+    public static final int FIRST_SHOOTER_ID = 6; //placeholder
+    public static final int SECOND_SHOOTER_ID = 7; //placeholder
+    
+    
   }
 }
