@@ -5,12 +5,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.FilterConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Preferences;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
@@ -33,8 +34,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     private final double[] ABSOLUTE_ENCODER_OFFSET = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
-    private final double CONTINUOUS_DRIVE_CURRENT_LIMIT = 25.0; // amps
-    private final double TRIGGER_DRIVE_THRESHOLD_LIMIT = 40.0; // amps
+    private final double CONTINUOUS_DRIVE_CURRENT_LIMIT = 30.0; // amps
+    private final double TRIGGER_DRIVE_THRESHOLD_LIMIT = 45.0; // amps
     private final double TRIGGER_DRIVE_THRESHOLD_TIME = 0.2; // seconds
 
     private final boolean ENABLE_AZIMUTH_CURRENT_LIMIT = true;
@@ -68,9 +69,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
      * @return a configured SwerveDrive
      */
     private SwerveDrive configSwerve() {
-        TalonFXConfiguration azimuthConfig = new TalonFXConfiguration();
-        CANCoderConfiguration azimuthEncoderConfig = new CANCoderConfiguration();
-        TalonFXConfiguration driveConfig = new TalonFXConfiguration();
+        // TalonFXConfiguration azimuthConfig = new TalonFXConfiguration();
+        // CANCoderConfiguration azimuthEncoderConfig = new CANCoderConfiguration();
+        // TalonFXConfiguration driveConfig = new TalonFXConfiguration();
+        Slot0Configs driveSlot0Config = new Slot0Configs();
+        Slot0Configs azimuthSlot0Config = new Slot0Configs();
+        Slot0Configs azimuthEncoderSlot0Config = new Slot0Configs();
+
         SupplyCurrentLimitConfiguration driveTalonCurrentLimit, azimuthTalonCurrentLimit;
         driveTalonCurrentLimit = new SupplyCurrentLimitConfiguration(ENABLE_DRIVE_CURRENT_LIMIT,
         CONTINUOUS_DRIVE_CURRENT_LIMIT, TRIGGER_DRIVE_THRESHOLD_LIMIT, TRIGGER_DRIVE_THRESHOLD_TIME);
@@ -81,27 +86,27 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         FilterConfiguration azimuthFilterConfig = new FilterConfiguration();
         azimuthFilterConfig.remoteSensorSource = RemoteSensorSource.CANCoder;
 
-        azimuthConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
-        azimuthConfig.remoteFilter0 = azimuthFilterConfig;
-        azimuthConfig.slot0.kP = 0.6; // 0.5
+        azimuthSlot0Config.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+        azimuthSlot0Config.remoteFilter0 = azimuthFilterConfig;
+        azimuthSlot0Config.kP = 0.6; // 0.5
         System.out.println("slot0 kP set");
-        azimuthConfig.slot0.kI = 0.001;
-        azimuthConfig.slot0.kD = 0.0;
-        azimuthConfig.slot0.kF = 0.0;
-        azimuthConfig.slot0.integralZone = 500;
-        azimuthConfig.slot0.allowableClosedloopError = 0; //Wheel.degreesToTicksAzimuth(0.1);
-        azimuthConfig.motionAcceleration = Wheel.DPSToTicksPer100msAzimuth(360 * 10); // 10_000;
-        azimuthConfig.motionCruiseVelocity = Wheel.DPSToTicksPer100msAzimuth(360 * 4); // 800;
-        driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        driveConfig.slot0.kP = 0.5; //0.35
-        driveConfig.slot0.kI = 0.001;
-        driveConfig.slot0.kD = 0.4;
-        driveConfig.slot0.kF = 0.00;  // 0.032 TODO: tune these
-        driveConfig.slot0.integralZone = 1000;
-        driveConfig.slot0.maxIntegralAccumulator = 250;
-        driveConfig.slot0.allowableClosedloopError = 0;
-        driveConfig.motionAcceleration = Wheel.DPSToTicksPer100msDW(1000); // 500;
-        driveConfig.motionCruiseVelocity = Wheel.DPSToTicksPer100msDW(400); // 100;
+        azimuthSlot0Config.kI = 0.001;
+        azimuthSlot0Config.kD = 0.0;
+        azimuthSlot0Config.kV = 0.0;
+        azimuthSlot0Config.integralZone = 500;
+        azimuthSlot0Config.slot0.allowableClosedloopError = 0; //Wheel.degreesToTicksAzimuth(0.1);
+        azimuthSlot0Config.motionAcceleration = Wheel.DPSToTicksPer100msAzimuth(360 * 10); // 10_000;
+        azimuthSlot0Config.motionCruiseVelocity = Wheel.DPSToTicksPer100msAzimuth(360 * 4); // 800;
+        driveSlot0Config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        driveSlot0Config.kP = 0.5; //0.35
+        driveSlot0Config.kI = 0.001;
+        driveSlot0Config.kD = 0.4;
+        driveSlot0Config.kV = 0.00;  // 0.032 TODO: tune these
+        driveSlot0Config.integralZone = 1000;
+        driveSlot0Config.maxIntegralAccumulator = 250;
+        driveSlot0Config.allowableClosedloopError = 0;
+        driveSlot0Config.motionAcceleration = Wheel.DPSToTicksPer100msDW(1000); // 500;
+        driveSlot0Config.motionCruiseVelocity = Wheel.DPSToTicksPer100msDW(400); // 100;
 
         azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
@@ -109,13 +114,14 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
             azimuthEncoderConfig.magnetOffsetDegrees = ABSOLUTE_ENCODER_OFFSET[i];
             azimuthEncoderConfig.sensorDirection = ABSOLUTE_ENCODER_INVERTED[i];
 
-            CANCoder azimuthEncoder = new CANCoder(Constants.CANDevices.CANCODER_ID[i]);
+            CANcoder azimuthEncoder = new CANcoder(Constants.CANDevices.CANCODER_ID[i]);
             azimuthEncoder.configAllSettings(azimuthEncoderConfig);
 
             azimuthFilterConfig.remoteSensorDeviceID = Constants.CANDevices.CANCODER_ID[i];
 
-            TalonFXHelper azimuthTalon = new TalonFXHelper(Constants.CANDevices.AZIMUTH_MODULES[i]);
+            TalonFX azimuthTalon = new TalonFXHelper(Constants.CANDevices.AZIMUTH_MODULES[i]);
             azimuthTalon.configFactoryDefault();
+            azimuthTalon.getConfigurator().apply(driveSlot0Config, 0.05);
             azimuthTalon.setInverted(true);
             azimuthTalon.setSensorPhase(false);
             azimuthTalon.configAllSettings(azimuthConfig);
