@@ -91,6 +91,8 @@ public class Shooter extends SubsystemBase {
     firstShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
     secondShooterMotor.setControl(new Follower(firstShooterMotor.getDeviceID(), true));
+    velocityVoltage.withAcceleration(rpmToTicksPer100ms(25));
+    velocityVoltage.withSlot(0);
   }
 
   public static Shooter getInstance() {

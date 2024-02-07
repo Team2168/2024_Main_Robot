@@ -22,6 +22,7 @@ public final class Constants {
   public static final class SHOOTER_MOTOR_CONSTANTS {
     public static final int FIRST_SHOOTER_ID = 6; //placeholder
     public static final int SECOND_SHOOTER_ID = 7; //placeholder
+    public static final int SHOOTER_PIVOT_ID = 8; //placeholder
     
     
   }
