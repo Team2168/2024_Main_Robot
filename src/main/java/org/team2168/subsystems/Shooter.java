@@ -50,6 +50,7 @@ public class Shooter extends SubsystemBase {
   private double first_kVolts = 0.12; // placeholder
 
   private final double GEAR_RATIO = 0.0;
+  private final double ACCELERATION = rpmToTicksPer100ms(25); //placeholder
   private VelocityVoltage velocityVoltage;
 
   public Shooter() {
@@ -71,6 +72,7 @@ public class Shooter extends SubsystemBase {
     currentLimitConfigs.withSupplyTimeThreshold(0.025);
 
     firstFeedbackConfigs = firstMotorConfiguration.Feedback;
+    firstFeedbackConfigs.withSensorToMechanismRatio(12.8);
 
     firstOutputConfigs.withDutyCycleNeutralDeadband(0.002);
     firstOutputConfigs.withInverted(leftInvert);
@@ -91,7 +93,7 @@ public class Shooter extends SubsystemBase {
     firstShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
     secondShooterMotor.setControl(new Follower(firstShooterMotor.getDeviceID(), true));
-    velocityVoltage.withAcceleration(rpmToTicksPer100ms(25));
+    velocityVoltage.withAcceleration(rpmToTicksPer100ms(ACCELERATION));
     velocityVoltage.withSlot(0);
   }
 

@@ -25,7 +25,9 @@ public class ShooterPivot extends SubsystemBase {
   private Slot0Configs pivotMotorGains;
   private FeedbackConfigs feedbackConfig;
   private MotorOutputConfigs motorOutputConfig;
-  private final double GEAR_RATIO = 0.0; // placeolder
+  private final double GEAR_RATIO = 0.0; // placeholder
+  private final double MINIMUM_LIMIT_ANGLE = degreesToTicks(0.0); //placeholder for softlimit
+  private final double MAXIMUM_LIMIT_ANGLE = degreesToTicks(75); //placeholder for softlimit
 
   public ShooterPivot() {
     pivotMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SHOOTER_PIVOT_ID);
