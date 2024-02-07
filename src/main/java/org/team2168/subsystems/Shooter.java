@@ -40,9 +40,8 @@ public class Shooter extends SubsystemBase {
 
   private MotorOutputConfigs firstOutputConfigs;
 
-  private final DeviceIdentifier FIRST_SHOOTER_CONFIG_ID = new DeviceIdentifier(); // placeholder
-  private final double PEAK_FORWARD_DUTY_CYCLE = 10.00;
-  private final double PEAK_REVERSE_DUTY_CYCLE = 10.00;
+  private final double PEAK_FORWARD_DUTY_CYCLE = 10.00; //placeholder
+  private final double PEAK_REVERSE_DUTY_CYCLE = 10.00; //placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
 
   private double first_kP = 0.1; // placeholder

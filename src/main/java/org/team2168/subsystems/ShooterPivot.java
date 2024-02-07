@@ -4,10 +4,22 @@
 
 package org.team2168.subsystems;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterPivot extends SubsystemBase {
-  /** Creates a new ShooterPivot. */
+  
+  TalonFX pivotMotor;
+  MotionMagicVoltage motionMagic;
+  MotionMagicConfigs motionMagicConfigs;
+  TalonFXConfiguration pivotMotorConfigs;
+  Slot0Configs pivotMotorGains;
+  
   public ShooterPivot() {}
 
   @Override
