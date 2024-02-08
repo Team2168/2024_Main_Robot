@@ -16,15 +16,19 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.math.controller.PIDController;
 
 import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -58,6 +62,9 @@ public class ClimberLeft extends SubsystemBase {
   private RelativeEncoder m_encoder;
   private static final double kMaxOutput = 0;// placeholder
   private static final double kMinOutput = 0;// placeholder
+  private static final double kMaxVel= inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxAcc= inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
+
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
   private static final double kD = 0;// placeholder
@@ -69,23 +76,21 @@ public class ClimberLeft extends SubsystemBase {
   private static final double NEUTRAL_DEADBAND = 0.001;
 
   private static final double kPeakOutput = 1.0;
-  private static final double ACCELERATION_LIMIT = inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY; // placeholder
-  private static final double CRUISE_VELOCITY_LIMIT = inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY; // placeholder
 
   private static final int kPIDLoopIdx = 0;
   private static final int kTimeoutMs = 30; // placeholder 
   private static boolean kSensorPhase = false;
 
-  private SparkLimitSwitch forwardLimit;
-  private SparkLimitSwitch reverseLimit;
+  //private SparkLimitSwitch forwardLimit;
+  //private SparkLimitSwitch reverseLimit;
 
   public String kEnable;
   public String kDisable;
 
- // private static final double CURRENT_LIMIT = 0.0; // it limits when the feature is activited (in amps)
-  //private static final double THRESHOLD_CURRENT = 0.0; // it tells what the threshold should be for the limit to be activited (in amps)
-  //private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
-  //private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
+ private static final int CURRENT_LIMIT = 0; // it limits when the feature is activited (in amps)
+private static final int FREE_LIMIT = 0; // it tells what the threshold should be for the limit to be activited (in amps)
+  private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
+  private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
 
   private static ElevatorSim climberSimLeft;
@@ -103,11 +108,14 @@ public class ClimberLeft extends SubsystemBase {
     m_pidController = climberMotorLeft.getPIDController();
     m_pidController.setFeedbackDevice(m_encoder);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
-
+   
     // Encoder object created to display position values
     m_encoder = climberMotorLeft.getEncoder();
 
-    // set PID coefficients
+    m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
+    m_pidController.setSmartMotionMaxAccel(kMaxAcc, 0);
+
+    //sets PID gains
     m_pidController.setP(kP);
     m_pidController.setI(kI);
     m_pidController.setD(kD);
@@ -118,10 +126,9 @@ public class ClimberLeft extends SubsystemBase {
     climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
     climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
-    forwardLimit = climberMotorLeft.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
-    reverseLimit = climberMotorLeft.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
-    forwardLimit.enableLimitSwitch(false);
-    reverseLimit.enableLimitSwitch(false);
+    climberMotorLeft.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+    //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
+    //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
 
     climberSimLeft = new ElevatorSim(
     DCMotor.getFalcon500(1), 
@@ -167,31 +174,25 @@ public class ClimberLeft extends SubsystemBase {
   }
 
    //@Config()
-  public void setSpeedVelocity(double speed){
-    climberMotorLeft.set(inchesToTicks(speed) * TIME_UNITS_OF_VELOCITY);
+  public void setSpeedVelocity(double velocity){
+    m_pidController.setReference(inchesToTicks(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
 
   //@Config()
-  public void setPosition(double inches){
-    //this.position = position;
-    climberMotorLeft.setPosition(inchesToTicks(inches), kTimeoutMs); //this needs to be fixed
+  public void setPosition(double in){
+    m_pidController.setReference(inchesToTicks(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
-  /* //@Config()
-  public void setPercentOutput(double percentOutput) {
-    climberMotor.set(ControlMode.PercentOutput, percentOutput, DemandType.ArbitraryFeedForward, kArbitraryFeedForward);
-  }*/
-
   public void setToZero(){
-    climberMotorLeft.setPosition(0, kTimeoutMs); //this needs to be fixed
+    m_pidController.setReference(0, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
   public void setInvertPosition(boolean invert){
     climberMotorLeft.setInverted(invert);
   }
 
-  public void setPercentOutput(double percentOutput) {
-    climberMotorLeft.setVoltage(percentOutput);
+  public void setVolt(double volt) {
+    climberMotorLeft.setVoltage(volt);
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
@@ -207,6 +208,10 @@ public class ClimberLeft extends SubsystemBase {
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getPosition(){
     return ticksToInches(climberMotorLeft.get());
+  }
+
+  public double getVoltage(){
+    return climberMotorLeft.getBusVoltage();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
