@@ -7,7 +7,7 @@ package org.team2168.commands.LEDs;
 import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
+//a way to set every led to something at once
 public class SetAllLEDs extends Command {
   /** Creates a new SetAllLEDs. */
   private LEDs leds;

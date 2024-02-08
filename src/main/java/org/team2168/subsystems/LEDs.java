@@ -9,6 +9,7 @@ import java.util.Set;
 import org.team2168.Constants.PneumaticsDevices;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 import io.github.oblarg.oblog.annotations.Log;
 import io.github.oblarg.oblog.annotations.Log;
@@ -16,11 +17,11 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LEDs extends SubsystemBase {
+ public class LEDs extends SubsystemBase implements Loggable {
   /** Creates a new LED. */
    private Solenoid redLED;
-  private Solenoid greenLED;
-  private Solenoid blueLED;
+   private Solenoid greenLED;
+   private Solenoid blueLED;
 
 static LEDs instance = null;
   public LEDs() {

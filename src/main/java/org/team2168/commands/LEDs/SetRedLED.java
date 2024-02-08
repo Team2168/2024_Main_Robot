@@ -7,7 +7,7 @@ package org.team2168.commands.LEDs;
 import org.team2168.subsystems.LEDs;
  
 import edu.wpi.first.wpilibj2.command.Command;
-
+//SEts the red LED on or off
 public class SetRedLED extends Command {
   /** Creates a new SetRedLED. */
   private LEDs leds;
@@ -28,8 +28,9 @@ public class SetRedLED extends Command {
   @Override
   public void execute() {
         
-    leds.redlight(Ison);
-    
+    leds.redlight(true);
+    leds.bluelight(false);
+    leds.greenlight(false);
   }
 
   // Called once the command ends or is interrupted.

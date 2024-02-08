@@ -7,7 +7,7 @@ package org.team2168.commands.LEDs;
 import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
+//sets the green LED to be on or off
 public class SetGreenLED extends Command {
   /** Creates a new SetGreenLED. */
   private LEDs leds;
@@ -29,8 +29,9 @@ public class SetGreenLED extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    leds.greenlight(isOn);
-
+    leds.greenlight(true);
+leds.bluelight(false);
+leds.redlight(false);
   }
 
   // Called once the command ends or is interrupted.

@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//checklist
+//make sure that leds connect to certain functions of my choosing, and make sure they work sucesfully
 package org.team2168.commands.LEDs;
 
 import org.team2168.subsystems.LEDs;
