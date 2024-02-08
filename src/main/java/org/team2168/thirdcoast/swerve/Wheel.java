@@ -56,8 +56,7 @@ public class Wheel {
   private static final int EXTERNAL_ENCODER_TICKS = 4096;
   private static final double TICKS_PER_DEGREE_AZIMUTH = ((1.0 / 360.0) * EXTERNAL_ENCODER_TICKS);
   private static final double TICKS_PER_DEGREE_DW = ((1.0 / 360.0) * DRIVE_GEAR_RATIO * INTERNAL_ENCODER_TICKS);
-  public static final double TICKS_PER_FOOT_DW = ((1.0 / DRIVE_CIRCUMFERENCE_FT) * DRIVE_GEAR_RATIO
-      * INTERNAL_ENCODER_TICKS); // TODO: check math?
+  public static final double ROTS_PER_FOOT_DW = ((1.0 / DRIVE_CIRCUMFERENCE_FT) * DRIVE_GEAR_RATIO); // TODO: check math?
   private static final double EXTERNAL_ENCODER_TICKS_PER_REV = 360.0 * TICKS_PER_DEGREE_AZIMUTH;
   private static final double FREE_SPEED_RPM = 6380;
   private static final double FREE_SPEED_RPS = FREE_SPEED_RPM / 60.0;
@@ -189,7 +188,7 @@ public class Wheel {
    * previous setpoint.
    */
   public void stop() {
-    azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(PRIMARY_PID));
+    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(azimuthTalon.getRotorPosition().getValue()));
     driver.accept(0d);
   }
 
@@ -210,16 +209,16 @@ public class Wheel {
    * @param zero zero setpoint, absolute encoder position (in ticks) where wheel
    *             is zeroed.
    */
-  public void setAzimuthZero(int zero) {
-    int azimuthSetpoint = (int) getAzimuthPosition() - zero;
+  public void setAzimuthZero(double zero) {
+    double azimuthSetpoint = (double) getAzimuthPosition() - zero;
     // ErrorCode err =
     // azimuthTalon.setSelectedSensorPosition(externalToInternalTicks(azimuthSetpoint),
     // primaryPID, 10);
     // Errors.check(err, logger);
     System.out.println("zero: " + zero);
     System.out.println("current pos: " + getAzimuthPosition());
-    azimuthTalon.setSelectedSensorPosition(-azimuthSetpoint, PRIMARY_PID, 10);
-    azimuthTalon.set(MotionMagic, -azimuthSetpoint);
+    azimuthTalon.setPosition(-azimuthSetpoint);
+    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(-azimuthSetpoint));
     System.out.println("SETPOINT: " + -azimuthSetpoint);
   }
 
@@ -245,9 +244,9 @@ public class Wheel {
    * @return the number of ticks the internal encoder should rotate in order to
    *         rotate the azimuth motor
    */
-  public static int degreesToTicksAzimuth(double degrees) {
-    return (int) (degrees * TICKS_PER_DEGREE_AZIMUTH);
-  }
+  // public static int degreesToTicksAzimuth(double degrees) {
+  //   return (int) (degrees * TICKS_PER_DEGREE_AZIMUTH);
+  // }
 
   /**
    * Converts degrees of rotation into external encoder ticks
@@ -314,48 +313,48 @@ public class Wheel {
    * @param degrees number of degrees per second
    * @return number of ticks per 100 ms
    */
-  public static int DPSToTicksPer100msAzimuth(double degrees) {
-    return (int) (degreesToTicksAzimuth(degrees) / 10.0);
-  }
+  // public static int DPSToTicksPer100msAzimuth(double degrees) {
+  //   return (int) (degreesToTicksAzimuth(degrees) / 10.0);
+  // }
 
   /**
    * Converts the drive wheel's speed from ticks per 100 ms to feet per second.
    * 
-   * @param ticks number of ticks per 100 ms
+   * @param rots number of rots per 100 ms
    * @return number of feet per second
    */
-  public static double TicksPer100msToFPSDW(double ticks) {
-    return ticks * 10.0 / TICKS_PER_FOOT_DW;
+  public static double rotsPer100msToFPSDW(double rots) {
+    return rots * 10.0 / ROTS_PER_FOOT_DW;
   }
 
   /**
-   * Converts the drive wheel's speed from feet per second to ticks per 100 ms.
+   * Converts the drive wheel's speed from feet per second to rots per 100 ms.
    * 
    * @param feet number of feet per second
-   * @return number of ticks per 100 ms
+   * @return number of rots per 100 ms
    */
-  public static int FPSToTicksPer100msDW(double feet) {
-    return (int) (feet / 10.0 * TICKS_PER_FOOT_DW);
+  public static int FPSToRotsPer100msDW(double feet) {
+    return (int) (feet / 10.0 * ROTS_PER_FOOT_DW);
   }
 
   public static double FPStoPercentVelocity(double feet) {
-    return FPSToTicksPer100msDW(feet) / DRIVE_SETPOINT_MAX;
+    return FPSToRotsPer100msDW(feet) / DRIVE_SETPOINT_MAX;
   }
 
   /**
    * Returns the module heading, taking into account the gear ratio.
    *
-   * @return position in motor ticks
+   * @return position in rotor rotations
    */
   public double getAzimuthPosition() {
-    return azimuthTalon.getSelectedSensorPosition(PRIMARY_PID);
+    return azimuthTalon.getRotorPosition().getValue();
   }
 
   /**
-   * @return speed of drive wheel in ticks per 100 ms
+   * @return speed of drive wheel in rotations per 100 ms
    */
   public double getDWSpeed() {
-    return driveTalon.getSelectedSensorVelocity(PRIMARY_PID);
+    return driveTalon.getRotorVelocity().getValue();
   }
 
   /**
@@ -372,7 +371,7 @@ public class Wheel {
    *
    * @return drive Talon instance used by wheel
    */
-  public BaseTalon getDriveTalon() {
+  public TalonFX getDriveTalon() {
     return driveTalon;
   }
 

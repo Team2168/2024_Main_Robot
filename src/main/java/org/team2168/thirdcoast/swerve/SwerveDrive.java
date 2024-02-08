@@ -4,6 +4,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
+import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
@@ -88,8 +89,8 @@ public class SwerveDrive implements Loggable {
       // kGyroRateCorrection = 0;
     }
 
-    double ticksPerSecMax = Wheel.getDriveSetpointMax() * 10.0;
-    maxVelocityFtSec = ticksPerSecMax / Wheel.TICKS_PER_FOOT_DW;
+    double rotsPerSecMax = Wheel.getDriveSetpointMax() * 10.0;
+    maxVelocityFtSec = rotsPerSecMax / Wheel.ROTS_PER_FOOT_DW;
   }
 
   /**
@@ -208,10 +209,10 @@ public class SwerveDrive implements Loggable {
    */
   public void saveAzimuthPositions() {
     for (int encoderID : Constants.CANDevices.CANCODER_ID) {
-      CANCoder canCoder = new CANCoder(encoderID);
-      double zeroPos = canCoder.getAbsolutePosition();
+      CANcoder canCoder = new CANcoder(encoderID);
+      double zeroPos = canCoder.getAbsolutePosition().getValue();
       Preferences.initDouble(getPreferenceKeyForWheel(encoderID), zeroPos);
-      canCoder.configMagnetOffset(zeroPos);
+      // canCoder.configMagnetOffset(zeroPos); // removed for phoenix 6
       System.out.println(String.format("azimuth id %d: saved zero %f", encoderID, zeroPos));
     }
   }

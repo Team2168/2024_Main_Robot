@@ -122,16 +122,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         azimuthSlot0Config.withKD(0.0);
         azimuthSlot0Config.withKV(0.0);
         // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
-        azimuthMotionMagicConfig.withMotionMagicAcceleration(Wheel.DPSToTicksPer100msAzimuth(360 * 10)); // 10_000;
-        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(Wheel.DPSToTicksPer100msAzimuth(360 * 4)); // 800;
+        azimuthMotionMagicConfig.withMotionMagicAcceleration(10.0);
+        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(4.0);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
         driveSlot0Config.withKP(0.5); //0.35
         driveSlot0Config.withKI(0.001);
         driveSlot0Config.withKD(0.4);
         driveSlot0Config.withKV(0.0);  // 0.032 TODO: tune these
         // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
-        driveMotionMagicConfig.withMotionMagicAcceleration(Wheel.DPSToTicksPer100msDW(1000)); // 500;
-        driveMotionMagicConfig.withMotionMagicCruiseVelocity(Wheel.DPSToTicksPer100msDW(400)); // 100;
+        driveMotionMagicConfig.withMotionMagicAcceleration(3.0); // 500;
+        driveMotionMagicConfig.withMotionMagicCruiseVelocity(1.5); // 100;
 
         // azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
@@ -144,7 +144,6 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
 
             CANcoder azimuthEncoder = new CANcoder(Constants.CANDevices.CANCODER_ID[i]);
             azimuthEncoder.getConfigurator().apply(azimuthEncoderMagnetConfig);
-
             azimuthFeedbackConfig.withFeedbackRemoteSensorID(Constants.CANDevices.CANCODER_ID[i]);
 
             TalonFX azimuthTalon = new TalonFX(Constants.CANDevices.AZIMUTH_MODULES[i]);
@@ -176,7 +175,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
             // taking into account the gear ratio & difference in resolution, as well as the saved zero
             // Preferences prefs = Preferences.getInstance();
             // _wheels[i].setAzimuthZero(Preferences.getInt(SwerveDrive.getPreferenceKeyForWheel(i), SwerveDrive.DEFAULT_ABSOLUTE_AZIMUTH_OFFSET));
-            _wheels[i].setAzimuthZero(_wheels[i].degToExternalEncoderTicks(ABSOLUTE_ENCODER_OFFSET[i]));
+            _wheels[i].setAzimuthZero(ABSOLUTE_ENCODER_OFFSET[i]);
             _wheels[i].setDriveMode(DriveMode.OPEN_LOOP);
             SmartDashboard.putNumber("Abs position on init, module " + i, wheel.getAzimuthPosition());
         }

@@ -16,7 +16,7 @@ import io.github.oblarg.oblog.annotations.Log;
 public class PathController implements Runnable {
 
   private static final int NUM_WHEELS = 4;
-  private static final double TICKS_PER_FOOT = Wheel.TICKS_PER_FOOT_DW;
+  private static final double ROTS_PER_FOOT = Wheel.ROTS_PER_FOOT_DW;
   private static final Drivetrain DRIVE = Drivetrain.getInstance();
 
   @SuppressWarnings("FieldCanBeLocal")
@@ -39,7 +39,7 @@ public class PathController implements Runnable {
   private double maxVelocityFtSec;
   private double yawDelta;
   private int iteration;
-  private int[] start;
+  private double[] start;
   private Setpoint setpoint;
   private double setpointPos;
   private double yawError;
@@ -65,7 +65,7 @@ public class PathController implements Runnable {
   }
 
   public void start() {
-    start = new int[4];
+    start = new double[4];
     notifier = new Notifier(this);
     notifier.startPeriodic(DT);
     state = States.STARTING;
@@ -81,13 +81,13 @@ public class PathController implements Runnable {
     switch (state) {
       case STARTING:
         logState();
-        double ticksPerSecMax = Wheel.getDriveSetpointMax() * 10.0;
-        maxVelocityFtSec = ticksPerSecMax / TICKS_PER_FOOT; //~15.8 ft/s
+        double rotsPerSecMax = Wheel.getDriveSetpointMax() * 10.0;
+        maxVelocityFtSec = rotsPerSecMax / ROTS_PER_FOOT; //~15.8 ft/s
         iteration = 0;
         DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
 
         for (int i = 0; i < NUM_WHEELS; i++) {
-          start[i] = (int) wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
+          start[i] = wheels[i].getDriveTalon().getRotorPosition().getValue();
         }
 
         double currentAngle = DRIVE.getHeading();
