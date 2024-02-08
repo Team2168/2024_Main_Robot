@@ -9,9 +9,20 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.Preferences;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
@@ -19,6 +30,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
+
+import java.beans.FeatureDescriptor;
 
 import org.team2168.Constants;
 // import org.team2168.commands.drivetrain.DriveWithJoystick; Commented out for now, no commmands
@@ -30,8 +43,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Drivetrain extends SubsystemBase implements Loggable {    private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
-    private final boolean[] ABSOLUTE_ENCODER_INVERTED = {true, true, true, true};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {186.503906, 196.083984, 215.244141, 177.011719};
+    private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.Clockwise_Positive, SensorDirectionValue.Clockwise_Positive, 
+        SensorDirectionValue.Clockwise_Positive, SensorDirectionValue.Clockwise_Positive};
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.5180664055555556, 0.5446777333333333, 0.5979003916666667, 0.4916992194444444};
+    // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
     private final double CONTINUOUS_DRIVE_CURRENT_LIMIT = 30.0; // amps
@@ -74,70 +89,85 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         // TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         Slot0Configs driveSlot0Config = new Slot0Configs();
         Slot0Configs azimuthSlot0Config = new Slot0Configs();
-        Slot0Configs azimuthEncoderSlot0Config = new Slot0Configs();
+        MagnetSensorConfigs azimuthEncoderMagnetConfig = new MagnetSensorConfigs();
 
-        SupplyCurrentLimitConfiguration driveTalonCurrentLimit, azimuthTalonCurrentLimit;
-        driveTalonCurrentLimit = new SupplyCurrentLimitConfiguration(ENABLE_DRIVE_CURRENT_LIMIT,
-        CONTINUOUS_DRIVE_CURRENT_LIMIT, TRIGGER_DRIVE_THRESHOLD_LIMIT, TRIGGER_DRIVE_THRESHOLD_TIME);
+        MotorOutputConfigs driveOutputConfig = new MotorOutputConfigs();
+        MotorOutputConfigs azimuthOutputConfig = new MotorOutputConfigs();
 
-        azimuthTalonCurrentLimit = new SupplyCurrentLimitConfiguration(ENABLE_AZIMUTH_CURRENT_LIMIT,
-        CONTINUOUS_AZIMUTH_CURRENT_LIMIT, TRIGGER_AZIMUTH_THRESHOLD_LIMIT, TRIGGER_AZIMUTH_THRESHOLD_TIME);
+        CurrentLimitsConfigs driveCurrentConfig = new CurrentLimitsConfigs();
+        CurrentLimitsConfigs azimuthCurrentConfig = new CurrentLimitsConfigs();
+
+        FeedbackConfigs driveFeedbackConfig = new FeedbackConfigs();
+        FeedbackConfigs azimuthFeedbackConfig = new FeedbackConfigs();
+
+        MotionMagicConfigs driveMotionMagicConfig = new MotionMagicConfigs();
+        MotionMagicConfigs azimuthMotionMagicConfig = new MotionMagicConfigs();
+
+        azimuthCurrentConfig.withSupplyCurrentLimitEnable(ENABLE_AZIMUTH_CURRENT_LIMIT);
+        azimuthCurrentConfig.withSupplyCurrentLimit(CONTINUOUS_AZIMUTH_CURRENT_LIMIT);
+        azimuthCurrentConfig.withSupplyCurrentThreshold(TRIGGER_AZIMUTH_THRESHOLD_LIMIT);
+        azimuthCurrentConfig.withSupplyTimeThreshold(TRIGGER_AZIMUTH_THRESHOLD_TIME);
+
+        driveCurrentConfig.withSupplyCurrentLimitEnable(ENABLE_DRIVE_CURRENT_LIMIT);
+        driveCurrentConfig.withSupplyCurrentLimit(CONTINUOUS_DRIVE_CURRENT_LIMIT);
+        driveCurrentConfig.withSupplyCurrentThreshold(TRIGGER_DRIVE_THRESHOLD_LIMIT);
+        driveCurrentConfig.withSupplyTimeThreshold(TRIGGER_DRIVE_THRESHOLD_TIME);
 
         FilterConfiguration azimuthFilterConfig = new FilterConfiguration();
         azimuthFilterConfig.remoteSensorSource = RemoteSensorSource.CANCoder;
 
-        azimuthSlot0Config.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
-        azimuthSlot0Config.remoteFilter0 = azimuthFilterConfig;
-        azimuthSlot0Config.kP = 0.6; // 0.5
-        System.out.println("slot0 kP set");
-        azimuthSlot0Config.kI = 0.001;
-        azimuthSlot0Config.kD = 0.0;
-        azimuthSlot0Config.kV = 0.0;
-        azimuthSlot0Config.integralZone = 500;
-        azimuthSlot0Config.slot0.allowableClosedloopError = 0; //Wheel.degreesToTicksAzimuth(0.1);
-        azimuthSlot0Config.motionAcceleration = Wheel.DPSToTicksPer100msAzimuth(360 * 10); // 10_000;
-        azimuthSlot0Config.motionCruiseVelocity = Wheel.DPSToTicksPer100msAzimuth(360 * 4); // 800;
-        driveSlot0Config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        driveSlot0Config.kP = 0.5; //0.35
-        driveSlot0Config.kI = 0.001;
-        driveSlot0Config.kD = 0.4;
-        driveSlot0Config.kV = 0.00;  // 0.032 TODO: tune these
-        driveSlot0Config.integralZone = 1000;
-        driveSlot0Config.maxIntegralAccumulator = 250;
-        driveSlot0Config.allowableClosedloopError = 0;
-        driveSlot0Config.motionAcceleration = Wheel.DPSToTicksPer100msDW(1000); // 500;
-        driveSlot0Config.motionCruiseVelocity = Wheel.DPSToTicksPer100msDW(400); // 100;
+        azimuthFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
+        azimuthSlot0Config.withKP(0.6);
+        azimuthSlot0Config.withKI(0.001);
+        azimuthSlot0Config.withKD(0.0);
+        azimuthSlot0Config.withKV(0.0);
+        // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
+        azimuthMotionMagicConfig.withMotionMagicAcceleration(Wheel.DPSToTicksPer100msAzimuth(360 * 10)); // 10_000;
+        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(Wheel.DPSToTicksPer100msAzimuth(360 * 4)); // 800;
+        driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+        driveSlot0Config.withKP(0.5); //0.35
+        driveSlot0Config.withKI(0.001);
+        driveSlot0Config.withKD(0.4);
+        driveSlot0Config.withKV(0.0);  // 0.032 TODO: tune these
+        // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
+        driveMotionMagicConfig.withMotionMagicAcceleration(Wheel.DPSToTicksPer100msDW(1000)); // 500;
+        driveMotionMagicConfig.withMotionMagicCruiseVelocity(Wheel.DPSToTicksPer100msDW(400)); // 100;
 
-        azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        // azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
-            azimuthEncoderConfig.magnetOffsetDegrees = ABSOLUTE_ENCODER_OFFSET[i];
-            azimuthEncoderConfig.sensorDirection = ABSOLUTE_ENCODER_INVERTED[i];
+            // azimuthEncoderConfig.magnetOffsetDegrees = ABSOLUTE_ENCODER_OFFSET[i];
+            // azimuthEncoderConfig.sensorDirection = ABSOLUTE_ENCODER_INVERTED[i];
+            azimuthEncoderMagnetConfig.withAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf);
+            azimuthEncoderMagnetConfig.withMagnetOffset(ABSOLUTE_ENCODER_OFFSET[i]);
+            azimuthEncoderMagnetConfig.withSensorDirection(ABSOLUTE_ENCODER_INVERTED[i]);
 
             CANcoder azimuthEncoder = new CANcoder(Constants.CANDevices.CANCODER_ID[i]);
-            azimuthEncoder.configAllSettings(azimuthEncoderConfig);
+            azimuthEncoder.getConfigurator().apply(azimuthEncoderMagnetConfig);
 
-            azimuthFilterConfig.remoteSensorDeviceID = Constants.CANDevices.CANCODER_ID[i];
+            azimuthFeedbackConfig.withFeedbackRemoteSensorID(Constants.CANDevices.CANCODER_ID[i]);
 
-            TalonFX azimuthTalon = new TalonFXHelper(Constants.CANDevices.AZIMUTH_MODULES[i]);
-            azimuthTalon.configFactoryDefault();
-            azimuthTalon.getConfigurator().apply(driveSlot0Config, 0.05);
+            TalonFX azimuthTalon = new TalonFX(Constants.CANDevices.AZIMUTH_MODULES[i]);
+            azimuthTalon.getConfigurator().apply(new TalonFXConfiguration()); // sets factory default
+            azimuthTalon.getConfigurator().apply(azimuthSlot0Config);
+            azimuthTalon.getConfigurator().apply(azimuthFeedbackConfig);
+            azimuthTalon.getConfigurator().apply(azimuthMotionMagicConfig);
+            azimuthTalon.getConfigurator().apply(azimuthOutputConfig);
+            azimuthTalon.getConfigurator().apply(azimuthCurrentConfig);
             azimuthTalon.setInverted(true);
-            azimuthTalon.setSensorPhase(false);
-            azimuthTalon.configAllSettings(azimuthConfig);
-            azimuthTalon.configClosedLoopStatusFrameRates();
-            System.out.println("configured azimuth motor: " + i);
-            azimuthTalon.configSupplyCurrentLimit(azimuthTalonCurrentLimit);
-            azimuthTalon.setNeutralMode(NeutralMode.Brake);
+            azimuthTalon.setNeutralMode(NeutralModeValue.Brake);
+            // System.out.println("configured azimuth motor: " + i);
 
-            TalonFXHelper driveTalon = new TalonFXHelper(Constants.CANDevices.DRIVE_MOTORS[i]);
-            driveTalon.configFactoryDefault();
+            TalonFX driveTalon = new TalonFX(Constants.CANDevices.DRIVE_MOTORS[i]);
+            driveTalon.getConfigurator().apply(new TalonFXConfiguration());
+            driveTalon.getConfigurator().apply(driveSlot0Config);
+            driveTalon.getConfigurator().apply(driveFeedbackConfig);
+            driveTalon.getConfigurator().apply(driveMotionMagicConfig);
+            driveTalon.getConfigurator().apply(driveOutputConfig);
+            driveTalon.getConfigurator().apply(driveCurrentConfig);
             driveTalon.setInverted(DRIVE_INVERTED[i]);
-            driveTalon.configAllSettings(driveConfig);
-            driveTalon.configClosedLoopStatusFrameRates();
-            System.out.println("configured drive motor: " + i);
-            driveTalon.configSupplyCurrentLimit(driveTalonCurrentLimit);
-            driveTalon.setNeutralMode(NeutralMode.Brake);
+            // System.out.println("configured drive motor: " + i);
+            driveTalon.setNeutralMode(NeutralModeValue.Brake);
 
             Wheel wheel = new Wheel(azimuthTalon, driveTalon);
             _wheels[i] = wheel;

@@ -12,7 +12,10 @@ import java.util.Objects;
 import java.util.function.DoubleConsumer;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.team2168.utils.TalonFXHelper;
@@ -58,9 +61,12 @@ public class Wheel {
   private static final double EXTERNAL_ENCODER_TICKS_PER_REV = 360.0 * TICKS_PER_DEGREE_AZIMUTH;
   private static final double FREE_SPEED_RPM = 6380;
   private static final double FREE_SPEED_RPS = FREE_SPEED_RPM / 60.0;
-  private static final double DRIVE_SETPOINT_MAX = (INTERNAL_ENCODER_TICKS * FREE_SPEED_RPS) / 10.0; // ticks/100 ms
-  private final BaseTalon driveTalon;
+  private static final double DRIVE_SETPOINT_MAX = FREE_SPEED_RPS / 10.0; // rotations/100 ms, new phoenix 6 libs
+  private final TalonFX driveTalon;
   private final TalonFX azimuthTalon;
+  private final DutyCycleOut percentOutDutyCycle;
+  private final VelocityDutyCycle velocityDutyCycle;
+  private final MotionMagicDutyCycle motionMagicDutyCycle;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
   private static final int PRIMARY_PID = 0;
@@ -81,9 +87,14 @@ public class Wheel {
    * @param azimuth the configured azimuth TalonFX
    * @param drive   the configured drive TalonFX
    */
-  public Wheel(TalonFXHelper azimuth, TalonFXHelper drive) {
+  public Wheel(TalonFX azimuth, TalonFX drive) {
     azimuthTalon = Objects.requireNonNull(azimuth);
     driveTalon = Objects.requireNonNull(drive);
+
+    percentOutDutyCycle = new DutyCycleOut(0.0);
+    motionMagicDutyCycle = new MotionMagicDutyCycle(0.0);
+    velocityDutyCycle = new VelocityDutyCycle(0.0);
+
   }
 
   /**
@@ -100,19 +111,20 @@ public class Wheel {
     // driver.accept(0d);
     // return;
     // }
-    azimuth *= -EXTERNAL_ENCODER_TICKS_PER_REV; // flip azimuth, hardware configuration dependent
+    // azimuth *= -EXTERNAL_ENCODER_TICKS_PER_REV; // flip azimuth, hardware configuration dependent (everything uses encoder rotations now)
+    azimuth *= -1.0;
 
-    double azimuthPosition = azimuthTalon.getSelectedSensorPosition(PRIMARY_PID);
-    double azimuthError = Math.IEEEremainder((azimuth - azimuthPosition), EXTERNAL_ENCODER_TICKS_PER_REV);
+    double azimuthPosition = azimuthTalon.getRotorPosition().getValue();
+    double azimuthError =  azimuth - azimuthPosition;
 
     // minimize azimuth rotation, reversing drive if necessary
-    isInverted = Math.abs(azimuthError) > 0.25 * EXTERNAL_ENCODER_TICKS_PER_REV;
+    isInverted = Math.abs(azimuthError) > 0.25 ;
     if (isInverted) {
-      azimuthError -= Math.copySign(0.5 * EXTERNAL_ENCODER_TICKS_PER_REV, azimuthError);
+      azimuthError -= Math.copySign(0.5, azimuthError);
       drive = -drive;
     }
 
-    azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
+    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(azimuthPosition + azimuthError));
     driver.accept(drive);
   }
 
@@ -121,8 +133,8 @@ public class Wheel {
    *
    * @param position position in encoder ticks.
    */
-  public void setAzimuthMotorPosition(int position) {
-    azimuthTalon.set(MotionMagic, position);
+  public void setAzimuthMotorPosition(double position) {
+    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(position));
   }
 
   /**
@@ -135,7 +147,7 @@ public class Wheel {
   }
 
   public void disableAzimuth() {
-    azimuthTalon.neutralOutput();
+    azimuthTalon.disable();
   }
 
   /**
@@ -160,12 +172,12 @@ public class Wheel {
     switch (driveMode) {
       case OPEN_LOOP:
       case TELEOP:
-        driver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
+        driver = (setpoint) -> driveTalon.setControl(percentOutDutyCycle.withOutput(setpoint));
         break;
       case CLOSED_LOOP:
       case TRAJECTORY:
       case AZIMUTH:
-        driver = (setpoint) -> driveTalon.set(Velocity, setpoint * DRIVE_SETPOINT_MAX);
+        driver = (setpoint) -> driveTalon.setControl(velocityDutyCycle.withVelocity(setpoint * DRIVE_SETPOINT_MAX));
         break;
     }
   }
