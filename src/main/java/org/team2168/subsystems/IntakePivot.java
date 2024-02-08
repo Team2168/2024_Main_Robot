@@ -103,6 +103,7 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerTwo.apply(currentConfigs);
     // intakeRaiseAndLower.apply(motionMagicConfigs);
     
+    //sets the same settings to the motor intakePivotTwo from intakePivotOne
     intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
     
   }

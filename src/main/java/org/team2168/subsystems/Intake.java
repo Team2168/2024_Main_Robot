@@ -4,17 +4,7 @@
 
 package org.team2168.subsystems;
 
-import org.team2168.utils.TalonFXHelper;
-
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel;
@@ -25,7 +15,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 
 public class Intake extends SubsystemBase {
-  private static CANSparkMax intakeRollerOne = new CANSparkMax(1, CANSparkLowLevel.MotorType.kBrushless); 
+  private static CANSparkMax intakeRollerOne = new CANSparkMax(1, CANSparkLowLevel.MotorType.kBrushless); // TODO: deviceId
   private static CANSparkMax intakeRollerTwo = new CANSparkMax(2, CANSparkLowLevel.MotorType.kBrushless);
 
   private static Intake instance = null;
@@ -49,7 +39,6 @@ public class Intake extends SubsystemBase {
   private double neutralDeadband = 0.05;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
-
   private final double TICKS_PER_REV = 2048;
   private final double GEAR_RATIO = 0; // TODO: Add later
 
@@ -59,6 +48,7 @@ public class Intake extends SubsystemBase {
     intakeRollerOne.restoreFactoryDefaults();
     intakeRollerTwo.restoreFactoryDefaults();
 
+    //gives the motor intakeRollerTwo the same settings as intakeMotorOne
     intakeRollerTwo.follow(intakeRollerOne);
     
   }
