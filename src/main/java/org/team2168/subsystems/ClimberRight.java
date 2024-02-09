@@ -5,6 +5,8 @@
 package org.team2168.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
+import org.team2168.subsystems.ClimberLeft;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -13,26 +15,42 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
-import org.team2168.subsystems.ClimberLeft;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.math.controller.PIDController;
 
 import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
+
 
 public class ClimberRight extends SubsystemBase {
   /** Creates a new ClimberRight. */
-  private TalonFX climberMotorRight;
+  private CANSparkMax climberMotorRight;
 
   static ClimberRight instance = null;
   private static final double TIME_UNITS_OF_VELOCITY = 0.1;
@@ -45,6 +63,9 @@ public class ClimberRight extends SubsystemBase {
   private RelativeEncoder m_encoder;
   private static final double kMaxOutput = 0;// placeholder
   private static final double kMinOutput = 0;// placeholder
+  private static final double kMaxVel= inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxAcc= inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
   private static final double kD = 0;// placeholder
@@ -55,15 +76,16 @@ public class ClimberRight extends SubsystemBase {
   private static final double NEUTRAL_DEADBAND = 0.001;
 
   private static final double kPeakOutput = 1.0;
-  private static final double ACCELERATION_LIMIT = ClimberLeft.inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY; // placeholder
-  private static final double CRUISE_VELOCITY_LIMIT = ClimberLeft.inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY; // placeholder
 
   private static final int kPIDLoopIdx = 0;
   private static final int kTimeoutMs = 30; // placeholder 
   private static boolean kSensorPhase = false;
 
+  public String kEnable;
+  public String kDisable;
+
   private static final double CURRENT_LIMIT = 0.0; // it limits when the feature is activited (in amps)
-  private static final double THRESHOLD_CURRENT = 0.0; // it tells what the threshold should be for the limit to be activited (in amps)
+  private static final double FREE_LIMIT = 0.0; // it tells what the threshold should be for the limit to be activited (in amps)
   private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
@@ -74,38 +96,33 @@ public class ClimberRight extends SubsystemBase {
   private static final double MAX_HEIGHT_INCHES = 0.5; //placeholder
 
   public ClimberRight() {
-    climberMotorRight = new TalonFX(ClimberMotors.CLIMBER_MOTOR_RIGHT);
-    climberMotorRight.getConfigurator().apply(new TalonFXConfiguration());
+    climberMotorRight = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR_RIGHT, MotorType.kBrushless);
 
-    var motorConfigs = new MotorOutputConfigs();
-    var currentConfigs = new CurrentLimitsConfigs();
-    var gains = new Slot0Configs();
-    var feedbackConfigs = new FeedbackConfigs();
+    m_pidController = climberMotorRight.getPIDController();
+    m_pidController.setFeedbackDevice(m_encoder);
+    m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
+   
+    // Encoder object created to display position values
+    m_encoder = climberMotorRight.getEncoder();
 
-    motorConfigs.Inverted = inversion;
-    motorConfigs.withNeutralMode(NeutralModeValue.Brake);
-    motorConfigs.withDutyCycleNeutralDeadband(NEUTRAL_DEADBAND);
-    motorConfigs.withPeakForwardDutyCycle(MAX_HEIGHT_INCHES);
-    motorConfigs.withPeakReverseDutyCycle(MIN_HEIGHT_INCHES);
+    m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
+    m_pidController.setSmartMotionMaxAccel(kMaxAcc, 0);
 
-    currentConfigs.withSupplyCurrentLimit(CURRENT_LIMIT);
-    currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
-    currentConfigs.withSupplyCurrentThreshold(THRESHOLD_CURRENT);
-    currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
+    //sets PID gains
+    m_pidController.setP(kP);
+    m_pidController.setI(kI);
+    m_pidController.setD(kD);
+    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    //set the gains
-    gains.withKP(kP)
-    .withKI(kI)
-    .withKD(kD);
-    //another way to set gains (accessing the member variable directly to change it):
-    gains.kP = kP;
-    gains.kI = kI;
-    gains.kD = kD;
-    //climberMotor.config_kF(kPIDLoopIdx, kF, kTimeoutMs);
+    climberMotorRight.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    climberMotorRight.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
+    climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
-    /* Feedback Configurations */
-    feedbackConfigs.withFeedbackRemoteSensorID(ClimberMotors.FEEDBACK_SENSOR);
-
+    climberMotorLeft.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+    //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
+    //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
+    
     climberSimRight = new ElevatorSim(
       DCMotor.getFalcon500(1), 
       GEAR_RATIO, 
@@ -125,22 +142,22 @@ public class ClimberRight extends SubsystemBase {
   }
 
   public void setMotorBrake() {
-    climberMotorRight.setNeutralMode(NeutralModeValue.Brake);
+    //climberMotorRight.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void setMotorCoast() {
-    climberMotorRight.setNeutralMode(NeutralModeValue.Coast);
+    //climberMotorRight.setNeutralMode(NeutralModeValue.Coast);
   }
 
    //@Config()
   public void setSpeedVelocity(double speed){
-    climberMotorRight.set(ClimberLeft.inchesToTicks(speed) * TIME_UNITS_OF_VELOCITY);
+    //climberMotorRight.set(ClimberLeft.inchesToTicks(speed) * TIME_UNITS_OF_VELOCITY);
   }
 
   //@Config()
   public void setPosition(double inches){
     //this.position = position;
-    climberMotorRight.setPosition(ClimberLeft.inchesToTicks(inches), kTimeoutMs);
+    //climberMotorRight.setPosition(ClimberLeft.inchesToTicks(inches), kTimeoutMs);
   }
 
   /* //@Config()
@@ -149,41 +166,41 @@ public class ClimberRight extends SubsystemBase {
   }*/
 
   public void setToZero(){
-    climberMotorRight.setPosition(0, kTimeoutMs);
+    //climberMotorRight.setPosition(0, kTimeoutMs);
   }
 
   public void setInvertPosition(boolean invert){
-    climberMotorRight.setInverted(invert);
+    //climberMotorRight.setInverted(invert);
   }
 
   public void setPercentOutput(double percentOutput) {
-    climberMotorRight.setVoltage(percentOutput);
+    //climberMotorRight.setVoltage(percentOutput);
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getCurrentSpeed(){
-    return climberMotorRight.get();
+    //return climberMotorRight.get();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getspeedVelocity(){
-    return (ClimberLeft.ticksToInches(climberMotorRight.get()) / TIME_UNITS_OF_VELOCITY);
+    // why does this have "climberLeft" //return (ClimberLeft.ticksToInches(climberMotorRight.get()) / TIME_UNITS_OF_VELOCITY);
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public boolean getInvertPosition(){
-    return climberMotorRight.getInverted();
+    //return climberMotorRight.getInverted();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getPosition(){
-    return ticksToInches(climberMotorRight.get());
+    //return ticksToInches(climberMotorRight.get());
   }
 
 
   private double ticksToInches(double d) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'ticksToInches'");
+   // throw new UnsupportedOperationException("Unimplemented method 'ticksToInches'");
   }
 
   @Override
