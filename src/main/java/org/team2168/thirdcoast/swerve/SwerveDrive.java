@@ -209,13 +209,14 @@ public class SwerveDrive implements Loggable {
    */
   public void saveAzimuthPositions() {
     for (int encoderID : Constants.CANDevices.CANCODER_ID) {
-      CANcoder canCoder = new CANcoder(encoderID);
-      double zeroPos = canCoder.getAbsolutePosition().getValue();
-      Preferences.initDouble(getPreferenceKeyForWheel(encoderID), zeroPos);
-      // canCoder.configMagnetOffset(zeroPos); // removed for phoenix 6
-      System.out.println(String.format("azimuth id %d: saved zero %f", encoderID, zeroPos));
+      CANcoder canCoder = new CANcoder(encoderID, "rio");
+      canCoder.close();
+        double zeroPos = canCoder.getAbsolutePosition().getValue();
+        Preferences.initDouble(getPreferenceKeyForWheel(encoderID), zeroPos);
+        // canCoder.configMagnetOffset(zeroPos); // removed for phoenix 6
+        System.out.println(String.format("azimuth id %d: saved zero %f", encoderID, zeroPos));
+      }
     }
-  }
 
 
   /**

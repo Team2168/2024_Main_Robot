@@ -84,9 +84,6 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
      * @return a configured SwerveDrive
      */
     private SwerveDrive configSwerve() {
-        // TalonFXConfiguration azimuthConfig = new TalonFXConfiguration();
-        // CANCoderConfiguration azimuthEncoderConfig = new CANCoderConfiguration();
-        // TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         Slot0Configs driveSlot0Config = new Slot0Configs();
         Slot0Configs azimuthSlot0Config = new Slot0Configs();
         MagnetSensorConfigs azimuthEncoderMagnetConfig = new MagnetSensorConfigs();
@@ -136,17 +133,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         // azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
-            // azimuthEncoderConfig.magnetOffsetDegrees = ABSOLUTE_ENCODER_OFFSET[i];
-            // azimuthEncoderConfig.sensorDirection = ABSOLUTE_ENCODER_INVERTED[i];
             azimuthEncoderMagnetConfig.withAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf);
             azimuthEncoderMagnetConfig.withMagnetOffset(ABSOLUTE_ENCODER_OFFSET[i]);
             azimuthEncoderMagnetConfig.withSensorDirection(ABSOLUTE_ENCODER_INVERTED[i]);
 
-            CANcoder azimuthEncoder = new CANcoder(Constants.CANDevices.CANCODER_ID[i]);
+            CANcoder azimuthEncoder = new CANcoder(Constants.CANDevices.CANCODER_ID[i], "rio");
             azimuthEncoder.getConfigurator().apply(azimuthEncoderMagnetConfig);
+            azimuthEncoder.close();
             azimuthFeedbackConfig.withFeedbackRemoteSensorID(Constants.CANDevices.CANCODER_ID[i]);
 
-            TalonFX azimuthTalon = new TalonFX(Constants.CANDevices.AZIMUTH_MODULES[i]);
+            TalonFX azimuthTalon = new TalonFX(Constants.CANDevices.AZIMUTH_MODULES[i], "rio");
             azimuthTalon.getConfigurator().apply(new TalonFXConfiguration()); // sets factory default
             azimuthTalon.getConfigurator().apply(azimuthSlot0Config);
             azimuthTalon.getConfigurator().apply(azimuthFeedbackConfig);
@@ -157,7 +153,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
             azimuthTalon.setNeutralMode(NeutralModeValue.Brake);
             // System.out.println("configured azimuth motor: " + i);
 
-            TalonFX driveTalon = new TalonFX(Constants.CANDevices.DRIVE_MOTORS[i]);
+            TalonFX driveTalon = new TalonFX(Constants.CANDevices.DRIVE_MOTORS[i], "rio");
             driveTalon.getConfigurator().apply(new TalonFXConfiguration());
             driveTalon.getConfigurator().apply(driveSlot0Config);
             driveTalon.getConfigurator().apply(driveFeedbackConfig);
