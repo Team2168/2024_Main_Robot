@@ -8,6 +8,7 @@ import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
+import org.team2168.commands.Drivetrain.ZeroSwerve;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.utils.F310;
@@ -57,10 +58,11 @@ public class RobotContainer {
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
     
-    drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
+    // drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    oi.driverJoystick.ButtonX().onTrue(new ZeroSwerve(drivetrain));
   }
 
   /**

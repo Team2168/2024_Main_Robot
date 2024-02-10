@@ -43,9 +43,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Drivetrain extends SubsystemBase implements Loggable {    private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
-    private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.Clockwise_Positive, SensorDirectionValue.Clockwise_Positive, 
-        SensorDirectionValue.Clockwise_Positive, SensorDirectionValue.Clockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.5180664055555556, 0.5446777333333333, 0.5979003916666667, 0.4916992194444444};
+    private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
+        SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.0, 0.0, 0.0, 0.0};
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         // azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
-            azimuthEncoderMagnetConfig.withAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf);
+            azimuthEncoderMagnetConfig.withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1);
             azimuthEncoderMagnetConfig.withMagnetOffset(ABSOLUTE_ENCODER_OFFSET[i]);
             azimuthEncoderMagnetConfig.withSensorDirection(ABSOLUTE_ENCODER_INVERTED[i]);
 

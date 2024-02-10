@@ -4,17 +4,13 @@
  */
 package org.team2168.thirdcoast.swerve;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic;
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity;
-
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
@@ -64,8 +60,8 @@ public class Wheel {
   private final TalonFX driveTalon;
   private final TalonFX azimuthTalon;
   private final DutyCycleOut percentOutDutyCycle;
-  private final VelocityDutyCycle velocityDutyCycle;
-  private final MotionMagicDutyCycle motionMagicDutyCycle;
+  private final VelocityVoltage velocityVoltage;
+  private final MotionMagicVoltage motionMagicVoltage;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
   private static final int PRIMARY_PID = 0;
@@ -91,8 +87,8 @@ public class Wheel {
     driveTalon = Objects.requireNonNull(drive);
 
     percentOutDutyCycle = new DutyCycleOut(0.0);
-    motionMagicDutyCycle = new MotionMagicDutyCycle(0.0);
-    velocityDutyCycle = new VelocityDutyCycle(0.0);
+    motionMagicVoltage = new MotionMagicVoltage(0.0);
+    velocityVoltage = new VelocityVoltage(0.0);
 
   }
 
@@ -113,17 +109,17 @@ public class Wheel {
     // azimuth *= -EXTERNAL_ENCODER_TICKS_PER_REV; // flip azimuth, hardware configuration dependent (everything uses encoder rotations now)
     azimuth *= -1.0;
 
-    double azimuthPosition = azimuthTalon.getRotorPosition().getValue();
+    double azimuthPosition = azimuthTalon.getPosition().getValue();
     double azimuthError =  azimuth - azimuthPosition;
 
     // minimize azimuth rotation, reversing drive if necessary
-    isInverted = Math.abs(azimuthError) > 0.25 ;
+    isInverted = Math.abs(azimuthError) > 0.25;
     if (isInverted) {
       azimuthError -= Math.copySign(0.5, azimuthError);
       drive = -drive;
     }
 
-    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(azimuthPosition + azimuthError));
+    azimuthTalon.setControl(motionMagicVoltage.withPosition(azimuthPosition + azimuthError));
     driver.accept(drive);
   }
 
@@ -133,7 +129,7 @@ public class Wheel {
    * @param position position in encoder ticks.
    */
   public void setAzimuthMotorPosition(double position) {
-    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(position));
+    azimuthTalon.setControl(motionMagicVoltage.withPosition(position));
   }
 
   /**
@@ -176,7 +172,7 @@ public class Wheel {
       case CLOSED_LOOP:
       case TRAJECTORY:
       case AZIMUTH:
-        driver = (setpoint) -> driveTalon.setControl(velocityDutyCycle.withVelocity(setpoint * DRIVE_SETPOINT_MAX));
+        driver = (setpoint) -> driveTalon.setControl(velocityVoltage.withVelocity(setpoint * DRIVE_SETPOINT_MAX));
         break;
     }
   }
@@ -188,7 +184,7 @@ public class Wheel {
    * previous setpoint.
    */
   public void stop() {
-    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(azimuthTalon.getRotorPosition().getValue()));
+    azimuthTalon.setControl(motionMagicVoltage.withPosition(azimuthTalon.getPosition().getValue()));
     driver.accept(0d);
   }
 
@@ -218,7 +214,7 @@ public class Wheel {
     System.out.println("zero: " + zero);
     System.out.println("current pos: " + getAzimuthPosition());
     azimuthTalon.setPosition(-azimuthSetpoint);
-    azimuthTalon.setControl(motionMagicDutyCycle.withPosition(-azimuthSetpoint));
+    // azimuthTalon.setControl(motionMagicVoltage.withPosition(-azimuthSetpoint));
     System.out.println("SETPOINT: " + -azimuthSetpoint);
   }
 
@@ -344,17 +340,17 @@ public class Wheel {
   /**
    * Returns the module heading, taking into account the gear ratio.
    *
-   * @return position in rotor rotations
+   * @return position in azimuth encoder rotations
    */
   public double getAzimuthPosition() {
-    return azimuthTalon.getRotorPosition().getValue();
+    return azimuthTalon.getPosition().getValue();
   }
 
   /**
    * @return speed of drive wheel in rotations per 100 ms
    */
   public double getDWSpeed() {
-    return driveTalon.getRotorVelocity().getValue();
+    return driveTalon.getVelocity().getValue();
   }
 
   /**

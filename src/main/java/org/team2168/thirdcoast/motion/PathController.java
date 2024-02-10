@@ -87,7 +87,7 @@ public class PathController implements Runnable {
         DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
 
         for (int i = 0; i < NUM_WHEELS; i++) {
-          start[i] = wheels[i].getDriveTalon().getRotorPosition().getValue();
+          start[i] = wheels[i].getDriveTalon().getPosition().getValue();
         }
 
         double currentAngle = DRIVE.getHeading();
