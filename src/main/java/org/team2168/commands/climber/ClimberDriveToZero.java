@@ -46,7 +46,7 @@ public class ClimberDriveToZero extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (climberLeft.getPosition() == 0) && (climberRight.getPosition() == 0);
+    return (climberLeft.getPositionInches() == 0) && (climberRight.getPositionInches() == 0);
   
 }
 }

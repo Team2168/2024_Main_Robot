@@ -99,12 +99,11 @@ public class ClimberRight extends SubsystemBase {
     climberMotorRight = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR_RIGHT, MotorType.kBrushless);
 
     m_pidController = climberMotorRight.getPIDController();
+    m_encoder = climberMotorRight.getEncoder(); // Encoder object created to display position values
+
     m_pidController.setFeedbackDevice(m_encoder);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
-   
-    // Encoder object created to display position values
-    m_encoder = climberMotorRight.getEncoder();
-
+ 
     m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
     m_pidController.setSmartMotionMaxAccel(kMaxAcc, 0);
 
@@ -185,8 +184,8 @@ public class ClimberRight extends SubsystemBase {
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
-  public double getPosition(){
-    return ClimberLeft.ticksToInches(climberMotorRight.get());
+  public double getPositionInches(){
+    return ClimberLeft.degreesToInches(Units.rotationsToDegrees(m_encoder.getPosition()));
   }
 
   public double getVoltage(){

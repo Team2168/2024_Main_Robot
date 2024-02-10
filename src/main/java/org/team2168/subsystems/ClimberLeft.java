@@ -106,11 +106,10 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR_LEFT, MotorType.kBrushless);
 
     m_pidController = climberMotorLeft.getPIDController();
+    m_encoder = climberMotorLeft.getEncoder(); // Encoder object created to display position values
+
     m_pidController.setFeedbackDevice(m_encoder);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
-   
-    // Encoder object created to display position values
-    m_encoder = climberMotorLeft.getEncoder();
 
     m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
     m_pidController.setSmartMotionMaxAccel(kMaxAcc, 0);
@@ -165,6 +164,10 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     return ((ticks / TICKS_PER_REV) / GEAR_RATIO) * INCHES_PER_REV;
   }
 
+  public static double degreesToInches(double degrees){
+    return ticksToInches(degreesToTicks(degrees));
+  }
+
   public void setMotorBrake() {
     climberMotorLeft.setIdleMode(IdleMode.kBrake);
   }
@@ -210,8 +213,8 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
-  public double getPosition(){
-    return ticksToInches(climberMotorLeft.get());
+  public double getPositionInches(){
+    return degreesToInches(Units.rotationsToDegrees(m_encoder.getPosition()));
   }
 
   public double getVoltage(){

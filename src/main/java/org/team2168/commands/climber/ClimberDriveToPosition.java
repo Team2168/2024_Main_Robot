@@ -42,8 +42,8 @@ public class ClimberDriveToPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((climberLeft.getPosition() >= (inches - acceptableErrorTolerance) && climberLeft.getPosition() <= (inches + acceptableErrorTolerance)) && 
-    (climberRight.getPosition() >= (inches - acceptableErrorTolerance) && climberRight.getPosition() <= (inches + acceptableErrorTolerance)));
+    return ((climberLeft.getPositionInches() >= (inches - acceptableErrorTolerance) && climberLeft.getPositionInches() <= (inches + acceptableErrorTolerance)) && 
+    (climberRight.getPositionInches() >= (inches - acceptableErrorTolerance) && climberRight.getPositionInches() <= (inches + acceptableErrorTolerance)));
   }
   
 }
