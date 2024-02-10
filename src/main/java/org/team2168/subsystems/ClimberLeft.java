@@ -191,6 +191,10 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft.setInverted(invert);
   }
 
+  public void setPercentOutput(double speed){
+    m_pidController.setReference(speed, ControlType.kVoltage,0, kArbitraryFeedForward); //functions the same as "SetVolt()" expect it isn't a set and forget method
+  }
+
   public void setVolt(double volt) {
     climberMotorLeft.setVoltage(volt);
   }

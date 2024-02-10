@@ -38,7 +38,7 @@ public class ClimberDriveToZero extends Command {
     if(!interrupted){
       climberLeft.setVolt(0.0);
       climberLeft.setToZero();
-      climberRight.setPercentOutput(0.0);
+      climberRight.setVolt(0.0);
       climberRight.setToZero();
     }
   }

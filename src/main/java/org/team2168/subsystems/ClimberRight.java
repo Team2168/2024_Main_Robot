@@ -63,8 +63,8 @@ public class ClimberRight extends SubsystemBase {
   private RelativeEncoder m_encoder;
   private static final double kMaxOutput = 0;// placeholder
   private static final double kMinOutput = 0;// placeholder
-  private static final double kMaxVel= inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
-  private static final double kMaxAcc= inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxVel= ClimberLeft.inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxAcc= ClimberLeft.inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
   
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
@@ -84,8 +84,8 @@ public class ClimberRight extends SubsystemBase {
   public String kEnable;
   public String kDisable;
 
-  private static final double CURRENT_LIMIT = 0.0; // it limits when the feature is activited (in amps)
-  private static final double FREE_LIMIT = 0.0; // it tells what the threshold should be for the limit to be activited (in amps)
+  private static final int CURRENT_LIMIT = 0; // it limits when the feature is activited (in amps)
+  private static final int FREE_LIMIT = 0; // it tells what the threshold should be for the limit to be activited (in amps)
   private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
@@ -119,7 +119,7 @@ public class ClimberRight extends SubsystemBase {
     climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
     climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
-    climberMotorLeft.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+    climberMotorRight.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
     //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
     
@@ -140,67 +140,62 @@ public class ClimberRight extends SubsystemBase {
     }
     return instance;
   }
-
   public void setMotorBrake() {
-    //climberMotorRight.setNeutralMode(NeutralModeValue.Brake);
+    climberMotorRight.setIdleMode(IdleMode.kBrake);
   }
 
   public void setMotorCoast() {
-    //climberMotorRight.setNeutralMode(NeutralModeValue.Coast);
+    climberMotorRight.setIdleMode(IdleMode.kCoast);
   }
 
    //@Config()
-  public void setSpeedVelocity(double speed){
-    //climberMotorRight.set(ClimberLeft.inchesToTicks(speed) * TIME_UNITS_OF_VELOCITY);
+  public void setSpeedVelocity(double velocity){
+    m_pidController.setReference(ClimberLeft.inchesToTicks(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
 
   //@Config()
-  public void setPosition(double inches){
-    //this.position = position;
-    //climberMotorRight.setPosition(ClimberLeft.inchesToTicks(inches), kTimeoutMs);
+  public void setPosition(double in){
+    m_pidController.setReference(ClimberLeft.inchesToTicks(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
-  /* //@Config()
-  public void setPercentOutput(double percentOutput) {
-    climberMotor.set(ControlMode.PercentOutput, percentOutput, DemandType.ArbitraryFeedForward, kArbitraryFeedForward);
-  }*/
+  public void setPercentOutput(double speed){
+    m_pidController.setReference(speed, ControlType.kVoltage,0, kArbitraryFeedForward); //functions the same as "SetVolt()" expect it isn't a set and forget method
+  }
 
   public void setToZero(){
-    //climberMotorRight.setPosition(0, kTimeoutMs);
+    m_pidController.setReference(0, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
   public void setInvertPosition(boolean invert){
-    //climberMotorRight.setInverted(invert);
+    climberMotorRight.setInverted(invert);
   }
 
-  public void setPercentOutput(double percentOutput) {
-    //climberMotorRight.setVoltage(percentOutput);
+  public void setVolt(double volt) {
+    climberMotorRight.setVoltage(volt);
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getCurrentSpeed(){
-    //return climberMotorRight.get();
+    return climberMotorRight.get();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getspeedVelocity(){
-    // why does this have "climberLeft" //return (ClimberLeft.ticksToInches(climberMotorRight.get()) / TIME_UNITS_OF_VELOCITY);
-  }
-
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
-  public boolean getInvertPosition(){
-    //return climberMotorRight.getInverted();
+    return (ClimberLeft.ticksToInches(climberMotorRight.get()) / TIME_UNITS_OF_VELOCITY);
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getPosition(){
-    //return ticksToInches(climberMotorRight.get());
+    return ClimberLeft.ticksToInches(climberMotorRight.get());
   }
 
+  public double getVoltage(){
+    return climberMotorRight.getBusVoltage();
+  }
 
-  private double ticksToInches(double d) {
-    // TODO Auto-generated method stub
-   // throw new UnsupportedOperationException("Unimplemented method 'ticksToInches'");
+  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  public boolean getInvertPosition(){
+    return climberMotorRight.getInverted();
   }
 
   @Override
