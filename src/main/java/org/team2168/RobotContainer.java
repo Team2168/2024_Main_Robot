@@ -58,7 +58,7 @@ public class RobotContainer {
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
     
-    // drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
+    drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());

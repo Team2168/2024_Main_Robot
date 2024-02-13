@@ -214,7 +214,7 @@ public class Wheel {
     System.out.println("zero: " + zero);
     System.out.println("current pos: " + getAzimuthPosition());
     azimuthTalon.setPosition(-azimuthSetpoint);
-    // azimuthTalon.setControl(motionMagicVoltage.withPosition(-azimuthSetpoint));
+    azimuthTalon.setControl(motionMagicVoltage.withPosition(-azimuthSetpoint));
     System.out.println("SETPOINT: " + -azimuthSetpoint);
   }
 

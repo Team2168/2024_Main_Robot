@@ -45,7 +45,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.0, 0.0, 0.0, 0.0};
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.485840, 0.208008, 0.152344, 0.255859};
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
@@ -54,8 +54,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     private final double TRIGGER_DRIVE_THRESHOLD_TIME = 0.2; // seconds
 
     private final boolean ENABLE_AZIMUTH_CURRENT_LIMIT = true;
-    private final double CONTINUOUS_AZIMUTH_CURRENT_LIMIT = 10.0; // amps
-    private final double TRIGGER_AZIMUTH_THRESHOLD_LIMIT = 10.0; // amps
+    private final double CONTINUOUS_AZIMUTH_CURRENT_LIMIT = 20.0; // amps
+    private final double TRIGGER_AZIMUTH_THRESHOLD_LIMIT = 20.0; // amps
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
     private static Drivetrain instance = null;
@@ -119,16 +119,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         azimuthSlot0Config.withKD(0.0);
         azimuthSlot0Config.withKV(0.0);
         // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
-        azimuthMotionMagicConfig.withMotionMagicAcceleration(10.0);
-        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(4.0);
+        azimuthMotionMagicConfig.withMotionMagicAcceleration(100);
+        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
         driveSlot0Config.withKP(0.5); //0.35
         driveSlot0Config.withKI(0.001);
         driveSlot0Config.withKD(0.4);
         driveSlot0Config.withKV(0.0);  // 0.032 TODO: tune these
         // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
-        driveMotionMagicConfig.withMotionMagicAcceleration(3.0); // 500;
-        driveMotionMagicConfig.withMotionMagicCruiseVelocity(1.5); // 100;
+        driveMotionMagicConfig.withMotionMagicAcceleration(30); // 500;
+        driveMotionMagicConfig.withMotionMagicCruiseVelocity(15); // 100;
 
         // azimuthEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
