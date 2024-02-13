@@ -6,6 +6,7 @@ package org.team2168.subsystems.ShooterSubsystem;
 
 import org.team2168.Constants;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterPivot extends SubsystemBase {
 
+  private static ShooterPivot shooterPivot = null;
   private TalonFX pivotMotor;
   private MotionMagicVoltage motionMagic;
   private MotionMagicConfigs motionMagicConfigs;
@@ -92,6 +94,13 @@ public class ShooterPivot extends SubsystemBase {
     pivotMotor.getConfigurator().apply(pivotMotorConfigs);
   }
 
+  public static ShooterPivot getInstance() {
+    if(shooterPivot == null) {
+      shooterPivot = new ShooterPivot();
+    }
+    return shooterPivot;
+  }
+
   public double rpmToRpMM(double rpm) {
     return (rpm * GEAR_RATIO) / 60;
   }
@@ -110,6 +119,10 @@ public class ShooterPivot extends SubsystemBase {
 
   public void setToStowAngle() {
     pivotMotor.setControl(motionMagic.withPosition(Units.degreesToRotations(STOW_ANGLE)));
+  }
+
+  public StatusSignal<Double> getAngle() {
+    return pivotMotor.getPosition();
   }
 
   @Override

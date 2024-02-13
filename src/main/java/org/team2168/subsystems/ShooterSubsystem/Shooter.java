@@ -6,6 +6,7 @@ package org.team2168.subsystems.ShooterSubsystem;
 
 import org.team2168.Constants;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DifferentialSensorsConfigs;
@@ -120,8 +121,12 @@ public class Shooter extends SubsystemBase {
     firstShooterMotor.setControl(percentOutput.withOutput(input));
   }
 
+  public StatusSignal<Double> getVelocity() {
+    return firstShooterMotor.getVelocity();
+  }
+
   @Override
   public void periodic() {
-    firstShooterMotor.getVelocity();
+    
   }
 }
