@@ -4,24 +4,12 @@
 
 package org.team2168.commands.LEDs;
 
-import org.team2168.subsystems.LEDs;
-
 import edu.wpi.first.wpilibj2.command.Command;
-/**sets the green LED to be on or off
- * @param i am not very smart
- */
-public class SetGreenLED extends Command {
-  /** Creates a new SetGreenLED. */
-  private LEDs leds;
-  private boolean isOn;
 
-
-  public SetGreenLED(LEDs leds, boolean isOn) {
+public class RainbowLED extends Command {
+  /** Creates a new RainbowLED. */
+  public RainbowLED() {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.leds = leds;
-    this.isOn = isOn;
-
-    addRequirements(leds);
   }
 
   // Called when the command is initially scheduled.
@@ -30,17 +18,11 @@ public class SetGreenLED extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    leds.greenlight(true);
-leds.bluelight(false);
-leds.redlight(false);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    leds.greenlight(false);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
