@@ -5,8 +5,10 @@
 package org.team2168.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel;
 
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
@@ -48,11 +50,15 @@ public class Intake extends SubsystemBase {
     intakeRollerOne.restoreFactoryDefaults();
     intakeRollerTwo.restoreFactoryDefaults();
 
+    intakeRollerOne.setInverted(true);
+    intakeRollerOne.setIdleMode(IdleMode.kCoast);
+    intakeRollerOne.setSmartCurrentLimit(20);
+
+
     //gives the motor intakeRollerTwo the same settings as intakeMotorOne
-    intakeRollerTwo.follow(intakeRollerOne);
+    intakeRollerTwo.follow(intakeRollerOne, true);
     
   }
-
   /**
    * sets the speed in percentage
    * @param speed value is between -1.0 and 1.0

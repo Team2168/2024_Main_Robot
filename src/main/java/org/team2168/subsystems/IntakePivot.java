@@ -5,19 +5,26 @@
 package org.team2168.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class IntakePivot extends SubsystemBase {
 
@@ -50,7 +57,8 @@ public class IntakePivot extends SubsystemBase {
   private double motionMagicCruiseVelocity = 10.0;
   private double kV = 0.12;
   private double kA = 0.1;
-  final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+  final MotionMagicTorqueCurrentFOC motionMagicTorqueCurrent = new MotionMagicTorqueCurrentFOC(0); // TODO: change maybe to sensor offset
+  private double sensorOffset = degreesToRot(-120);
 
   private final double TICKS_PER_REV = 2048;
   private final static double GEAR_RATIO = 0;
@@ -58,19 +66,26 @@ public class IntakePivot extends SubsystemBase {
   private double kP = 0;
   private double kI = 0;
   private double kD = 0;
+  private double kG = 14;
+  private GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
+
+
 
   private IntakePivot() {
     intakePivotOne.getConfigurator().apply(new TalonFXConfiguration()); //resets leader motor to its factory default
     intakePivotTwo.getConfigurator().apply(new TalonFXConfiguration()); //resets follower motor to its factory default
 
     var currentConfigs = new CurrentLimitsConfigs();
-    var PIDconfigs = new Slot0Configs();
+    var PIDconfigs = new SlotConfigs();
     var motionMagicConfigs = new MotionMagicConfigs();
     var leaderMotorConfigs = new MotorOutputConfigs();
     var followerMotorConfigs = new MotorOutputConfigs();
 
     leaderMotorConfigs.withInverted(intakeInvertOne);
     leaderMotorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    leaderMotorConfigs.withPeakForwardDutyCycle(maxForwardOutput);
+    leaderMotorConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
+
    // followerMotorConfigs.withInverted(intakeInvertTwo);
 
     currentConfigs
@@ -84,7 +99,9 @@ public class IntakePivot extends SubsystemBase {
     PIDconfigs
       .withKP(kP)
       .withKI(kI)
-      .withKD(kD);
+      .withKD(kD)
+      .withKG(kG)
+      .withGravityType(gravityType);
 
     motionMagicConfigs
       .withMotionMagicAcceleration(motionMagicAcceleration)
@@ -102,10 +119,13 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerTwo.apply(followerMotorConfigs);
     intakeRaiseAndLowerTwo.apply(currentConfigs);
     // intakeRaiseAndLower.apply(motionMagicConfigs);
+
+    intakePivotOne.setNeutralMode(NeutralModeValue.Coast);
+
+    intakePivotOne.setPosition(sensorOffset);
     
     //sets the same settings to the motor intakePivotTwo from intakePivotOne
     intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
-    
   }
 
   /**
@@ -126,10 +146,25 @@ public class IntakePivot extends SubsystemBase {
     return (degrees/360) * GEAR_RATIO;
   }
 
+  public double degreesToTicks(double degrees) {
+    return (degrees/360.0) * GEAR_RATIO * TICKS_PER_REV;
+  }
+
+  /**
+   * sets intake position using motion maagic torque current
+   * @param degrees amount of degrees of position
+   */
   private void setIntakePosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
-    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
+    intakePivotOne.setControl(motionMagicTorqueCurrent.withPosition((degreesToRot(demand))));
   }
+
+  @Log(name = "Position (deg)", rowIndex = 0, columnIndex = 0)
+
+  public double getIntakePosition() {
+    return rotToDegrees(intakePivotOne.getPosition().getValueAsDouble());
+  }
+
 
   @Override
   public void periodic() {
