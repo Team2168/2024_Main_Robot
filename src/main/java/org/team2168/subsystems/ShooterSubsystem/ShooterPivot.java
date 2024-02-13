@@ -11,7 +11,9 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -31,12 +33,12 @@ public class ShooterPivot extends SubsystemBase {
   private FeedbackConfigs feedbackConfig;
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
-  private final double GEAR_RATIO = 0.0; // placeholder
+  private final double GEAR_RATIO = 45.024; // placeholder
   private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(0);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = Units.degreesToRotations(90); // placeholder for softlimit
   private final double STOW_ANGLE = Units.degreesToRotations(80);
-  private final double PEAK_FORWARD_OUTPUT = 20;
-  private final double PEAK_REVERSE_OUTPUT = 20;
+  private final double PEAK_FORWARD_OUTPUT = 0.9;
+  private final double PEAK_REVERSE_OUTPUT = -0.9;
   private final InvertedValue pivotInvert = InvertedValue.Clockwise_Positive;
   private double supplyCurrentLimit = 20; // placeholder
   private boolean supplyCurrentLimitEnable = true; // placeholder
@@ -45,6 +47,8 @@ public class ShooterPivot extends SubsystemBase {
   private double kP = 1.00; //placeholder
   private double kI = 0.04; //placeholder
   private double kD = 0.0025; //placeholder
+  private SoftwareLimitSwitchConfigs rotationLimits;
+  private DutyCycleOut percentOutput;
 
   public ShooterPivot() {
     pivotMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SHOOTER_PIVOT_ID);
@@ -56,6 +60,8 @@ public class ShooterPivot extends SubsystemBase {
     feedbackConfig = pivotMotorConfigs.Feedback;
     motorOutputConfig = pivotMotorConfigs.MotorOutput;
     motorCurrentConfig = pivotMotorConfigs.CurrentLimits;
+    rotationLimits = pivotMotorConfigs.SoftwareLimitSwitch;
+    percentOutput = new DutyCycleOut(0.0);
 
     motionMagicConfigs.withMotionMagicAcceleration(degreesPerSecondToRotationsPerSecond(36)); //placeholder
     motionMagicConfigs.withMotionMagicCruiseVelocity(degreesPerSecondToRotationsPerSecond(18)); //placeholder
@@ -63,6 +69,8 @@ public class ShooterPivot extends SubsystemBase {
 
     motorOutputConfig.withInverted(pivotInvert);
     motorOutputConfig.withNeutralMode(NeutralModeValue.Brake);
+    motorOutputConfig.withPeakForwardDutyCycle(PEAK_FORWARD_OUTPUT);
+    motorOutputConfig.withPeakReverseDutyCycle(PEAK_REVERSE_OUTPUT);
 
     motorCurrentConfig.withSupplyCurrentLimit(supplyCurrentLimit);
     motorCurrentConfig.withSupplyCurrentLimitEnable(supplyCurrentLimitEnable);
@@ -76,12 +84,20 @@ public class ShooterPivot extends SubsystemBase {
     
     feedbackConfig.withSensorToMechanismRatio(12.8);
 
+    rotationLimits.withForwardSoftLimitEnable(true);
+    rotationLimits.withReverseSoftLimitEnable(true);
+    rotationLimits.withForwardSoftLimitThreshold(MAXIMUM_LIMIT_ANGLE);
+    rotationLimits.withReverseSoftLimitThreshold(MINIMUM_LIMIT_ANGLE);
+    
     pivotMotor.getConfigurator().apply(pivotMotorConfigs);
-
   }
 
   public double rpmToRpMM(double rpm) {
     return (rpm * GEAR_RATIO) / 60;
+  }
+
+  public void setPercentOutput(double input) {
+    pivotMotor.setControl(percentOutput.withOutput(input));
   }
 
   public double degreesPerSecondToRotationsPerSecond(double degreesPerSecond) {

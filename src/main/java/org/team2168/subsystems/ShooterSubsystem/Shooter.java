@@ -15,6 +15,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
@@ -41,8 +42,8 @@ public class Shooter extends SubsystemBase {
 
   private MotorOutputConfigs firstOutputConfigs;
 
-  private final double PEAK_FORWARD_DUTY_CYCLE = 10.00; //placeholder
-  private final double PEAK_REVERSE_DUTY_CYCLE = 10.00; //placeholder
+  private final double PEAK_FORWARD_DUTY_CYCLE = 0.9; //placeholder
+  private final double PEAK_REVERSE_DUTY_CYCLE = -0.9; //placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
 
   private double first_kP = 0.1; // placeholder
@@ -53,6 +54,7 @@ public class Shooter extends SubsystemBase {
   private final double GEAR_RATIO = 2.345;
   private final double ACCELERATION = rpmToRpMM(25); //placeholder
   private VelocityVoltage velocityVoltage;
+  private DutyCycleOut percentOutput;
 
   public Shooter() {
     firstShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.FIRST_SHOOTER_ID);
@@ -63,6 +65,7 @@ public class Shooter extends SubsystemBase {
     firstOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
     velocityVoltage = new VelocityVoltage(0.0);
+    percentOutput = new DutyCycleOut(0.0);
 
     firstShooterMotor.clearStickyFaults();
     secondShooterMotor.clearStickyFaults();
@@ -111,6 +114,10 @@ public class Shooter extends SubsystemBase {
 
   public void setVelocity(double velocity) {
     firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRpMM(velocity)));
+  }
+
+  public void setPercentOutput(double input) {
+    firstShooterMotor.setControl(percentOutput.withOutput(input));
   }
 
   @Override
