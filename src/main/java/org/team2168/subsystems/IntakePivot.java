@@ -4,11 +4,6 @@
 
 package org.team2168.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -16,7 +11,6 @@ import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -39,15 +33,15 @@ public class IntakePivot extends SubsystemBase {
   }
 
   private static InvertedValue intakeInvertOne = InvertedValue.Clockwise_Positive; //TODO: check value
-  private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
+ // private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
 
-  private static int intakeTimeoutMs = 30;
-  private static double peakOutput = 1.0;
+ // private static int intakeTimeoutMs = 30;
+ // private static double peakOutput = 1.0;
   private final boolean ENABLE_CURRENT_LIMIT = true;
   private final double CONTINUOUS_CURRENT_LIMIT = 20.0;
   private final double TRIGGER_THRESHOLD_LIMIT = 25;
   private final double TRIGGER_THRESHOLD_TIME = 0.2;
-  private final double minuteInHundredMs = 600.0;
+ // private final double minuteInHundredMs = 600.0;
   private double neutralDeadband = 0.05;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
@@ -129,23 +123,28 @@ public class IntakePivot extends SubsystemBase {
   }
 
   /**
-   * 
-   * @param ticks talonfx motor conversion
-   * @return intakeupanddown is relative to its lowered position (0.0)
+   * converts rotation to degrees
+   * @param ticks amount of rotations
+   * @return amount degrees from amount of rotations
    */
   public static double rotToDegrees(double rot) {
     return (rot) / GEAR_RATIO * 360.0;
   }
 
   /**
-   * commands the intakeupanddown to a specific position relative to the zero positon (0.0)
-   * 
-   * @param degrees amount of degrees/angles to move intakeupanddown up
+   * converts degrees to rotations
+   * @param degrees amount of degrees/angles to move intakepivot up
+   * @return amount of degrees from amount of rotations
    */
   public static double degreesToRot(double degrees) {
     return (degrees/360) * GEAR_RATIO;
   }
 
+  /**
+   * converts degrees to ticks
+   * @param degrees amount of degrees
+   * @return amount of ticks from amount degrees
+   */
   public double degreesToTicks(double degrees) {
     return (degrees/360.0) * GEAR_RATIO * TICKS_PER_REV;
   }
@@ -161,6 +160,10 @@ public class IntakePivot extends SubsystemBase {
 
   @Log(name = "Position (deg)", rowIndex = 0, columnIndex = 0)
 
+  /**
+   * gets the positon of the intake
+   * @return position of intake in degrees
+   */
   public double getIntakePosition() {
     return rotToDegrees(intakePivotOne.getPosition().getValueAsDouble());
   }
