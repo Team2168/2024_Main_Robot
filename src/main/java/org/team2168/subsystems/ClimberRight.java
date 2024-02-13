@@ -4,7 +4,8 @@
 
 package org.team2168.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
 import org.team2168.subsystems.ClimberLeft;
 import edu.wpi.first.math.VecBuilder;
@@ -171,17 +172,17 @@ public class ClimberRight extends SubsystemBase {
     climberMotorRight.setVoltage(volt);
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Current Set Speed", rowIndex = 1, columnIndex = 0)
   public double getCurrentSetSpeed(){
     return climberMotorRight.get();
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Speed Velocity", rowIndex = 1, columnIndex = 1)
   public double getspeedVelocity(){
     return (ClimberLeft.rotationsToInches(m_encoder.getVelocity()) / 60); 
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Position in inches", rowIndex = 1, columnIndex = 2)
   public double getPositionInches(){
     return ClimberLeft.degreesToInches(Units.rotationsToDegrees(m_encoder.getPosition()));
   }
@@ -190,7 +191,7 @@ public class ClimberRight extends SubsystemBase {
     return climberMotorRight.getBusVoltage();
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Invert Position", rowIndex = 1, columnIndex = 3)
   public boolean getInvertPosition(){
     return climberMotorRight.getInverted();
   }

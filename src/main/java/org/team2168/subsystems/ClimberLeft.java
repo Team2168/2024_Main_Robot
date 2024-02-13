@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -169,7 +171,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft.setIdleMode(IdleMode.kCoast);
   }
 
-   //@Config()
+  //@Config()
   public void setSpeedVelocity(double velocity){
     m_pidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
@@ -195,17 +197,17 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft.setVoltage(volt);
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Current Set Speed", rowIndex = 0, columnIndex = 0)
   public double getCurrentSetSpeed(){
     return climberMotorLeft.get();
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Speed Velocity", rowIndex = 0, columnIndex = 1)
   public double getspeedVelocity(){
     return (rotationsToInches(m_encoder.getVelocity()) / 60); 
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Position in inches", rowIndex = 0, columnIndex = 2)
   public double getPositionInches(){
     return degreesToInches(Units.rotationsToDegrees(m_encoder.getPosition()));
   }
@@ -214,7 +216,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     return climberMotorLeft.getBusVoltage();
   }
 
-  //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
+  @Log(name = "Invert Position", rowIndex = 0, columnIndex = 3)
   public boolean getInvertPosition(){
     return climberMotorLeft.getInverted();
   }
