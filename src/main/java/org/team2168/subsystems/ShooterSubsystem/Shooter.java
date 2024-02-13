@@ -53,7 +53,7 @@ public class Shooter extends SubsystemBase {
   private double first_kVolts = 0.12; // placeholder
 
   private final double GEAR_RATIO = 2.345;
-  private final double ACCELERATION = rpmToRpMM(25); //placeholder
+  private final double ACCELERATION = rpmToRps(25); //placeholder
   private VelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
 
@@ -98,7 +98,7 @@ public class Shooter extends SubsystemBase {
     firstShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
     secondShooterMotor.setControl(new Follower(firstShooterMotor.getDeviceID(), true));
-    velocityVoltage.withAcceleration(rpmToRpMM(ACCELERATION));
+    velocityVoltage.withAcceleration(rpmToRps(ACCELERATION));
     velocityVoltage.withSlot(0);
   }
 
@@ -109,12 +109,12 @@ public class Shooter extends SubsystemBase {
     return instance;
   }
 
-  public double rpmToRpMM(double rpm) {
+  public double rpmToRps(double rpm) {
     return (rpm * GEAR_RATIO) / 60;
   }
 
   public void setVelocity(double velocity) {
-    firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRpMM(velocity)));
+    firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRps(velocity)));
   }
 
   public void setPercentOutput(double input) {

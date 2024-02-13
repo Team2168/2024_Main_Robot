@@ -101,7 +101,7 @@ public class ShooterPivot extends SubsystemBase {
     return shooterPivot;
   }
 
-  public double rpmToRpMM(double rpm) {
+  public double rpmToRps(double rpm) {
     return (rpm * GEAR_RATIO) / 60;
   }
 
