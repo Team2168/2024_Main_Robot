@@ -53,18 +53,16 @@ public class ClimberRight extends SubsystemBase {
   private CANSparkMax climberMotorRight;
 
   static ClimberRight instance = null;
-  private static final double TIME_UNITS_OF_VELOCITY = 0.1;
-  private static final double TICKS_PER_REV = 2048;
-  private static final double GEAR_RATIO = 0; // placeholder number
-  private static final double SPROCKET_RADIUS_IN = 0; // placeholder number
-  private static final double INCHES_PER_REV = SPROCKET_RADIUS_IN * 2 * Math.PI;
+  private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
+  private static final double GEAR_RATIO = 79; 
+  private static final double MOTOR_DIAMETER_IN = 1.73228; 
 
     private SparkPIDController m_pidController;
   private RelativeEncoder m_encoder;
   private static final double kMaxOutput = 0;// placeholder
   private static final double kMinOutput = 0;// placeholder
-  private static final double kMaxVel= ClimberLeft.inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
-  private static final double kMaxAcc= ClimberLeft.inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxVel= ClimberLeft.inchesToRotations(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxAcc= ClimberLeft.inchesToRotations(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
   
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
@@ -126,7 +124,7 @@ public class ClimberRight extends SubsystemBase {
       DCMotor.getFalcon500(1), 
       GEAR_RATIO, 
       CARRIAGE_MASS_KG, 
-      Units.inchesToMeters(SPROCKET_RADIUS_IN), 
+      Units.inchesToMeters(MOTOR_DIAMETER_IN), 
       Units.inchesToMeters(MIN_HEIGHT_INCHES), 
       Units.inchesToMeters(MAX_HEIGHT_INCHES), 
       kSensorPhase, 
@@ -149,12 +147,12 @@ public class ClimberRight extends SubsystemBase {
 
    //@Config()
   public void setSpeedVelocity(double velocity){
-    m_pidController.setReference(ClimberLeft.inchesToTicks(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
+    m_pidController.setReference(ClimberLeft.inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
 
   //@Config()
   public void setPosition(double in){
-    m_pidController.setReference(ClimberLeft.inchesToTicks(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    m_pidController.setReference(ClimberLeft.inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
   public void setPercentOutput(double speed){
@@ -174,13 +172,13 @@ public class ClimberRight extends SubsystemBase {
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
-  public double getCurrentSpeed(){
+  public double getCurrentSetSpeed(){
     return climberMotorRight.get();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getspeedVelocity(){
-    return (ClimberLeft.ticksToInches(climberMotorRight.get()) / TIME_UNITS_OF_VELOCITY);
+    return (ClimberLeft.rotationsToInches(m_encoder.getVelocity()) / 60); 
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)

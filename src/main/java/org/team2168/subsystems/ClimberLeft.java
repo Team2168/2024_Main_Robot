@@ -34,36 +34,27 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-
-
 
 public class ClimberLeft extends SubsystemBase {
 
   private CANSparkMax climberMotorLeft;
 
   static ClimberLeft instance = null;
-  private static final double TIME_UNITS_OF_VELOCITY = 0.1;
-  private static final double TICKS_PER_REV = 2048;
-  private static final double GEAR_RATIO = 0; // placeholder number
-  private static final double SPROCKET_RADIUS_IN = 0; // placeholder number
-  private static final double INCHES_PER_REV = SPROCKET_RADIUS_IN * 2 * Math.PI;
+  private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
+  private static final double GEAR_RATIO = 79; 
+  private static final double MOTOR_DIAMETER_IN = 1.73228; 
+  private static final double INCHES_PER_REV = MOTOR_DIAMETER_IN * Math.PI;
 
   private SparkPIDController m_pidController;
   private RelativeEncoder m_encoder;
   private static final double kMaxOutput = 0;// placeholder
   private static final double kMinOutput = 0;// placeholder
-  private static final double kMaxVel= inchesToTicks(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
-  private static final double kMaxAcc= inchesToTicks(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxVel= inchesToRotations(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxAcc= inchesToRotations(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
 
   private static final double kP = 0;// placeholder
   private static final double kI = 0;// placeholder
@@ -133,13 +124,15 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     DCMotor.getFalcon500(1), 
     GEAR_RATIO, 
     CARRIAGE_MASS_KG, 
-    Units.inchesToMeters(SPROCKET_RADIUS_IN), 
+    Units.inchesToMeters(MOTOR_DIAMETER_IN), 
     Units.inchesToMeters(MIN_HEIGHT_INCHES), 
     Units.inchesToMeters(MAX_HEIGHT_INCHES), 
     kSensorPhase, 
     0, VecBuilder.fill(0.1));
 
   }
+
+  
 
   public static ClimberLeft getInstance() {
     if (instance == null) {
@@ -148,24 +141,24 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     return instance;
   }
 
-  public static double degreesToTicks(double degrees) {
-    return (degrees / 360 * TICKS_PER_REV);
+  public static double degreesToRotations(double degrees) {
+    return (degrees / 360);
   }
 
-  public static double ticksToDegrees(double ticks) {
-    return (ticks / TICKS_PER_REV * 360);
+  public static double rotationsToDegrees(double rotations) {
+    return (rotations * 360);
   }
 
-  public static double inchesToTicks(double inches) {
-    return (inches / INCHES_PER_REV) * GEAR_RATIO * TICKS_PER_REV;
+  public static double inchesToRotations(double inches) {
+    return inches / INCHES_PER_REV;
   }
 
-  public static double ticksToInches(double ticks) {
-    return ((ticks / TICKS_PER_REV) / GEAR_RATIO) * INCHES_PER_REV;
+  public static double rotationsToInches(double rotations){
+    return rotations * INCHES_PER_REV;
   }
 
   public static double degreesToInches(double degrees){
-    return ticksToInches(degreesToTicks(degrees));
+    return INCHES_PER_REV * (degreesToRotations(degrees));
   }
 
   public void setMotorBrake() {
@@ -178,12 +171,12 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
 
    //@Config()
   public void setSpeedVelocity(double velocity){
-    m_pidController.setReference(inchesToTicks(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
+    m_pidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
 
   //@Config()
   public void setPosition(double in){
-    m_pidController.setReference(inchesToTicks(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    m_pidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
   public void setToZero(){
@@ -203,13 +196,13 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
-  public double getCurrentSpeed(){
+  public double getCurrentSetSpeed(){
     return climberMotorLeft.get();
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
   public double getspeedVelocity(){
-    return (ticksToInches(climberMotorLeft.get()) / TIME_UNITS_OF_VELOCITY);
+    return (rotationsToInches(m_encoder.getVelocity()) / 60); 
   }
 
   //@Log(name = "placeholder", rowIndex = 0, columnIndex = 0)
