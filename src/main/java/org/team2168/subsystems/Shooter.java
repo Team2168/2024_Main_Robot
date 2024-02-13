@@ -26,6 +26,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -49,8 +50,8 @@ public class Shooter extends SubsystemBase {
   private double first_kD = 0.001; // placeholder
   private double first_kVolts = 0.12; // placeholder
 
-  private final double GEAR_RATIO = 0.0;
-  private final double ACCELERATION = rpmToTicksPer100ms(25); //placeholder
+  private final double GEAR_RATIO = 2.345;
+  private final double ACCELERATION = rpmToRpMM(25); //placeholder
   private VelocityVoltage velocityVoltage;
 
   public Shooter() {
@@ -93,7 +94,7 @@ public class Shooter extends SubsystemBase {
     firstShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
     secondShooterMotor.setControl(new Follower(firstShooterMotor.getDeviceID(), true));
-    velocityVoltage.withAcceleration(rpmToTicksPer100ms(ACCELERATION));
+    velocityVoltage.withAcceleration(rpmToRpMM(ACCELERATION));
     velocityVoltage.withSlot(0);
   }
 
@@ -104,12 +105,12 @@ public class Shooter extends SubsystemBase {
     return instance;
   }
 
-  public double rpmToTicksPer100ms(double rpm) {
-    return (rpm * GEAR_RATIO * 2048) / 600;
+  public double rpmToRpMM(double rpm) {
+    return (rpm * GEAR_RATIO) / 60;
   }
 
   public void setVelocity(double velocity) {
-    firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToTicksPer100ms(velocity)));
+    firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRpMM(velocity)));
   }
 
   @Override
