@@ -8,7 +8,7 @@ import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.Command;
 /**sets the green LED to be on or off
- * @param i am not very smart
+ * @param 
  */
 public class SetGreenLED extends Command {
   /** Creates a new SetGreenLED. */

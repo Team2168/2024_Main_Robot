@@ -7,13 +7,21 @@ package org.team2168.commands.LEDs;
 import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.Command;
-//Sets the blue LED on or off
+/**
+ * @param
+ * Sets the blue LED on or off
+ */
 public class SetBlueLED extends Command {
   /** Creates a new SetBlueLED. */
   private LEDs leds;
   private boolean isOn;
+  
   public SetBlueLED(LEDs leds, boolean isOn) {
-    // Use addRequirements() here to declare subsystem dependencies.
+    /** 
+     * 
+     * Gives the sub system some things that it depends on
+     */
+  
     this.leds = leds;
     this.isOn = isOn;
 
