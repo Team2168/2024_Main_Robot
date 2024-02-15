@@ -1,6 +1,28 @@
 package org.team2168.subsystems;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.math.ComputerVisionUtil;
+import edu.wpi.first.math.geometry.CoordinateSystem;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -15,28 +37,33 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     private static boolean isLimelightEnabled;
     private static NetworkTableEntry getPipeline;
-    private static NetworkTableEntry targetPoseCamera;
-    private static NetworkTableEntry targetPoseRobot; 
-
+    private static NetworkTableEntry pipeline;
+    private static NetworkTableEntry camMode;
+  
     private static NetworkTableEntry tx;
     private static NetworkTableEntry ty;
     private static NetworkTableEntry ta;
     private static NetworkTableEntry tv;
-    private static NetworkTableEntry pipeline;
-    private static NetworkTableEntry camMode;
+    
+
+    public double aprilTagSize = 0.1651;
+    public double fx = 2592.0;
+    public double fy = 1944.0;
+    public double cx = 1296.0;
+    public double cy = 972.0;
+
+    public int horizontalScanX = 320;
+    public int horizontalScanY = 160;
+
+    public AprilTagFieldLayout aprilTagFieldLayout;
+
+    public Pose3d aprilTagInView;
 
    
     AprilTagDetector detector = new AprilTagDetector();
     AprilTagDetector.Config config = new AprilTagDetector.Config();
-    
-    public Limelight() {
 
-        detector.setConfig(config);
-        detector.addFamily("tag32h11");
-    }
-    
-
-
+    AprilTagDetection detectionSoftware;
 
     public enum Pipeline {
         APRIL_TAGS(0),
@@ -45,22 +72,30 @@ public class Limelight extends SubsystemBase implements Loggable {
         PIPELINE_THREE(3),
         PIPELINE_FOUR(4);
 
-        public final int pipelineValue;
+        private final int pipelineValue;
 
         private Pipeline(int pipelineValue) {
             this.pipelineValue = pipelineValue;
         }
     }
 
-    public enum CamMode {
-        VISION_PROCESSOR(1);
 
-        public final int camMode;
+   
+    
+    public Limelight() {
 
-        private CamMode(int camMode) {
-            this.camMode = camMode;
-        }
+        networkTable = NetworkTableInstance.getDefault().getTable("limelight");
+        init();
+        isLimelightEnabled = false;
+
     }
+
+    
+
+    
+
+
+    
 
 
 
@@ -76,7 +111,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     return tv.getDouble(0.0) == 1.0;
   }
 
-  @Log(name = "Horizontal Angle: ", rowIndex = 2, columnIndex = 3)
+  @Log(name = "Horizontal Angle", rowIndex = 2, columnIndex = 3)
   public double getOffsetX() {
     return tx.getDouble(0.0);
   }
@@ -86,19 +121,21 @@ public class Limelight extends SubsystemBase implements Loggable {
     return ty.getDouble(0.0);
   }
 
+
+
     public double getTargetArea() {
         return ta.getDouble(0.0);
     }
 
     public void enableVision(boolean turnOn) {
-        camMode.setNumber(turnOn ? 0 : 1);
+        setCamMode(1);
         isLimelightEnabled = true;
     }
 
     public void enableBaseCameraSettings() {
         enableVision(true);
-        camMode.setNumber(0);
-        pipeline.setNumber(1);
+        setCamMode(0);
+        setPipeline(1);
         isLimelightEnabled = true;
     }
 
@@ -111,7 +148,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     }
 
     public void pauseLimelight() {
-        setCamMode(1);
+        setCamMode(0);
         setPipeline(0);
         isLimelightEnabled = false;
     }
@@ -135,21 +172,14 @@ public class Limelight extends SubsystemBase implements Loggable {
         getPipeline = networkTable.getEntry("getpipe");
         camMode = networkTable.getEntry("camMode");
         pipeline = networkTable.getEntry("pipeline");
-        targetPoseCamera = networkTable.getEntry("targetpose_cameraspace");
-        targetPoseRobot = networkTable.getEntry("targetpose_robotspace");
+
+        
     }
 
 
-
+ 
     public void periodic() {
         // This method will be called once per scheduler run\
-    
-        if (!isLimelightEnabled) {
-          pauseLimelight();
-        } else {
-    
-          enableVision(true);
-        }
     
     }
     
