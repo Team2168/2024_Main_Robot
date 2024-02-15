@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
   
   private final double minuteInHundredMs = 600.0;
   private final double TICKS_PER_REV = 2048;
-  private final double GEAR_RATIO = 0; // TODO: Add later
+  private final double GEAR_RATIO = 4.628;
   private final int SMART_CURRENT_LIMIT = 20;
   private boolean isInverted = true;
   private IdleMode coast = IdleMode.kCoast;
@@ -60,8 +60,8 @@ public class Intake extends SubsystemBase {
   }
   /**
    * converts RPM to ticks per one hundred ms
-   * @param speedRPM amount of speed rpm
-   * @return ticks from rpm
+   * @param speedRPM amount of speed in rpm
+   * @return amount of ticks from rpm
    */
   private double RPMToTicksPerOneHundredMS(double speedRPM) {
     return (speedRPM/minuteInHundredMs) * (TICKS_PER_REV/GEAR_RATIO);
@@ -70,7 +70,7 @@ public class Intake extends SubsystemBase {
   /**
    * converts ticks per one hundred ms to rpm
    * @param ticksPerHundredMs amount of ticks per hundred ms
-   * @return rpm from ticks
+   * @return amount of rpm from ticks
    */
   private double TicksPerOneHundredMSToRPM(double ticksPerHundredMs) {
     return ticksPerHundredMs * (GEAR_RATIO/TICKS_PER_REV) * minuteInHundredMs;
@@ -79,8 +79,8 @@ public class Intake extends SubsystemBase {
 @Log(name = "speed (rotations per minutes)", rowIndex = 3, columnIndex = 1)
 
   /**
-   * gets the speedrpm for the intakeroller encoder
-   * @return intakerollerencoder's speedrpm
+   * gets the speed in rpm
+   * @return the speedrpm
    */
   public double getSpeedRPM () {
     return TicksPerOneHundredMSToRPM(intakeRollerEncoder.getVelocity());

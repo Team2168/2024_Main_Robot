@@ -55,7 +55,7 @@ public class IntakePivot extends SubsystemBase {
   private double sensorOffset = degreesToRot(-120);
 
   private final double TICKS_PER_REV = 2048;
-  private final static double GEAR_RATIO = 0;
+  private final static double GEAR_RATIO = 28.14;
 
   private double kP = 0;
   private double kI = 0;
@@ -150,10 +150,10 @@ public class IntakePivot extends SubsystemBase {
   }
 
   /**
-   * sets intake position using motion maagic torque current
+   * sets intake position using motion magic torque current
    * @param degrees amount of degrees of position
    */
-  private void setIntakePosition(double degrees) {
+  public void setIntakePivotPosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
     intakePivotOne.setControl(motionMagicTorqueCurrent.withPosition((degreesToRot(demand))));
   }
@@ -162,9 +162,9 @@ public class IntakePivot extends SubsystemBase {
 
   /**
    * gets the positon of the intake
-   * @return position of intake in degrees
+   * @return the position of intake in degrees
    */
-  public double getIntakePosition() {
+  public double getIntakePivotPosition() {
     return rotToDegrees(intakePivotOne.getPosition().getValueAsDouble());
   }
 
