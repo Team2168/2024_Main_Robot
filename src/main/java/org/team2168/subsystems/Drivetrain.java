@@ -110,22 +110,23 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         driveCurrentConfig.withSupplyCurrentThreshold(TRIGGER_DRIVE_THRESHOLD_LIMIT);
         driveCurrentConfig.withSupplyTimeThreshold(TRIGGER_DRIVE_THRESHOLD_TIME);
 
-        FilterConfiguration azimuthFilterConfig = new FilterConfiguration();
-        azimuthFilterConfig.remoteSensorSource = RemoteSensorSource.CANCoder;
-
         azimuthFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
-        azimuthSlot0Config.withKP(0.6);
-        azimuthSlot0Config.withKI(0.001);
+        azimuthSlot0Config.withKP(4.0);
+        azimuthSlot0Config.withKI(0.15);
         azimuthSlot0Config.withKD(0.0);
-        azimuthSlot0Config.withKV(0.0);
+        azimuthSlot0Config.withKV(0.075);
+        azimuthSlot0Config.withKA(0.075);
+        azimuthSlot0Config.withKS(0.005);
         // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
-        azimuthMotionMagicConfig.withMotionMagicAcceleration(100);
-        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
+        azimuthMotionMagicConfig.withMotionMagicAcceleration(5);
+        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(2);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
         driveSlot0Config.withKP(0.5); //0.35
         driveSlot0Config.withKI(0.001);
         driveSlot0Config.withKD(0.4);
-        driveSlot0Config.withKV(0.0);  // 0.032 TODO: tune these
+        driveSlot0Config.withKV(0.1);  // 0.032 TODO: tune these
+        driveSlot0Config.withKA(0.1);
+        driveSlot0Config.withKS(0.005);
         // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
         driveMotionMagicConfig.withMotionMagicAcceleration(30); // 500;
         driveMotionMagicConfig.withMotionMagicCruiseVelocity(15); // 100;
