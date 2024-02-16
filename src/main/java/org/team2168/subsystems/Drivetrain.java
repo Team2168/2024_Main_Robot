@@ -55,8 +55,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     private final double TRIGGER_DRIVE_THRESHOLD_TIME = 0.2; // seconds
 
     private final boolean ENABLE_AZIMUTH_CURRENT_LIMIT = true;
-    private final double CONTINUOUS_AZIMUTH_CURRENT_LIMIT = 20.0; // amps
-    private final double TRIGGER_AZIMUTH_THRESHOLD_LIMIT = 20.0; // amps
+    private final double CONTINUOUS_AZIMUTH_CURRENT_LIMIT = 10.0; // amps
+    private final double TRIGGER_AZIMUTH_THRESHOLD_LIMIT = 10.0; // amps
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
     private static Drivetrain instance = null;
@@ -115,12 +115,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         azimuthSlot0Config.withKP(7.0);
         azimuthSlot0Config.withKI(0.32);
         azimuthSlot0Config.withKD(0.0);
-        azimuthSlot0Config.withKV(0.0);
-        azimuthSlot0Config.withKA(0.0);
-        azimuthSlot0Config.withKS(0.0);
+        azimuthSlot0Config.withKV(0.01);
+        azimuthSlot0Config.withKA(0.01);
+        azimuthSlot0Config.withKS(0.04);
         // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
-        azimuthMotionMagicConfig.withMotionMagicAcceleration(10);
-        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(4);
+        azimuthMotionMagicConfig.withMotionMagicAcceleration(150);
+        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
         driveSlot0Config.withKP(0.5); //0.35
         driveSlot0Config.withKI(0.001);

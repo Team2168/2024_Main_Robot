@@ -107,19 +107,19 @@ public class Wheel {
     // return;
     // }
     // azimuth *= -EXTERNAL_ENCODER_TICKS_PER_REV; // flip azimuth, hardware configuration dependent (everything uses encoder rotations now)
-    azimuth *= -EXTERNAL_ENCODER_TICKS_PER_REV;
+    azimuth *= -1.0;
 
     double azimuthPosition = azimuthTalon.getPosition().getValue();
-    double azimuthError = Math.IEEEremainder((azimuth - azimuthPosition), EXTERNAL_ENCODER_TICKS_PER_REV);
+    double azimuthError = azimuth - azimuthPosition;
 
     // minimize azimuth rotation, reversing drive if necessary
-    isInverted = Math.abs(azimuthError) > 0.25 * EXTERNAL_ENCODER_TICKS_PER_REV;
+    isInverted = Math.abs(azimuthError) > 0.25;
     if (isInverted) {
-      azimuthError -= Math.copySign(0.5 * EXTERNAL_ENCODER_TICKS_PER_REV, azimuthError);
+      azimuthError -= Math.copySign(0.5, azimuthError);
       drive = -drive;
     }
 
-    azimuthTalon.setControl(motionMagicVoltage.withPosition((azimuthPosition + azimuthError)/EXTERNAL_ENCODER_TICKS_PER_REV));
+    azimuthTalon.setControl(motionMagicVoltage.withPosition((azimuthPosition + azimuthError)));
     driver.accept(drive);
   }
 
