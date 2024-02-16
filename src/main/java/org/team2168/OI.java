@@ -25,18 +25,18 @@ public class OI {
 	private LinearInterpolator driverFlightStickZInterpolator;
 	private double[][] driverJoystickYArray = {
 		{-1.0, -0.7}, //don't scale turning max
-		{-0.6, -0.45},
+		{-0.6, -0.5},
 		{-0.15, 0.00}, //set neutral deadband to 15%
 		{+0.15, 0.00}, // reduced driving motor speed
-		{+0.6, 0.45},
+		{+0.6, 0.5},
 		{+1.00,+0.7}
 	};
 	private double[][] driverJoystickXArray = {
 		{-1.0, -0.7},  //don't scale turning max
-		{-0.6, -0.45},
+		{-0.6, -0.5},
 		{-0.15, 0.00}, //set neutral deadband to 15%
 		{+0.15, 0.00}, // reduced driving motor speed
-		{+0.6, 0.45},
+		{+0.6, 0.5},
 		{+1.00,+0.7}
 	};
 	private double[][] driverJoystickZArray = {
