@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -45,7 +46,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.485840, 0.208008, 0.152344, 0.255859};
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.484375, 0.206299, 0.152832, 0.261230}; // the magnet offsets should be set to the opposite sign of these encoder values
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
@@ -111,15 +112,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         driveCurrentConfig.withSupplyTimeThreshold(TRIGGER_DRIVE_THRESHOLD_TIME);
 
         azimuthFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
-        azimuthSlot0Config.withKP(4.0);
-        azimuthSlot0Config.withKI(0.15);
+        azimuthSlot0Config.withKP(7.0);
+        azimuthSlot0Config.withKI(0.32);
         azimuthSlot0Config.withKD(0.0);
-        azimuthSlot0Config.withKV(0.075);
-        azimuthSlot0Config.withKA(0.075);
-        azimuthSlot0Config.withKS(0.005);
+        azimuthSlot0Config.withKV(0.0);
+        azimuthSlot0Config.withKA(0.0);
+        azimuthSlot0Config.withKS(0.0);
         // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
-        azimuthMotionMagicConfig.withMotionMagicAcceleration(5);
-        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(2);
+        azimuthMotionMagicConfig.withMotionMagicAcceleration(10);
+        azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(4);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
         driveSlot0Config.withKP(0.5); //0.35
         driveSlot0Config.withKI(0.001);
@@ -135,7 +136,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
 
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
             azimuthEncoderMagnetConfig.withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1);
-            azimuthEncoderMagnetConfig.withMagnetOffset(ABSOLUTE_ENCODER_OFFSET[i]);
+            azimuthEncoderMagnetConfig.withMagnetOffset(-ABSOLUTE_ENCODER_OFFSET[i]);
             azimuthEncoderMagnetConfig.withSensorDirection(ABSOLUTE_ENCODER_INVERTED[i]);
 
             CANcoder azimuthEncoder = new CANcoder(Constants.CANDevices.CANCODER_ID[i], "rio");

@@ -206,16 +206,16 @@ public class Wheel {
    *             is zeroed.
    */
   public void setAzimuthZero(double zero) {
-    double azimuthSetpoint = (double) getAzimuthPosition() - zero;
+    // double azimuthSetpoint = (double) getAzimuthPosition() - zero;
     // ErrorCode err =
     // azimuthTalon.setSelectedSensorPosition(externalToInternalTicks(azimuthSetpoint),
     // primaryPID, 10);
     // Errors.check(err, logger);
-    System.out.println("zero: " + zero);
-    System.out.println("current pos: " + getAzimuthPosition());
-    azimuthTalon.setPosition(-azimuthSetpoint);
-    azimuthTalon.setControl(motionMagicVoltage.withPosition(-azimuthSetpoint));
-    System.out.println("SETPOINT: " + -azimuthSetpoint);
+    System.out.println("magnetOffset: " + zero);
+    System.out.println("current relative pos: " + getAzimuthPosition());
+    // azimuthTalon.setPosition(-azimuthSetpoint);
+    azimuthTalon.setControl(motionMagicVoltage.withPosition(0.0));
+    // System.out.println("SETPOINT: " + -azimuthSetpoint);
   }
 
   /**
