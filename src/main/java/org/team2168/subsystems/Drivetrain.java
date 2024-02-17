@@ -19,6 +19,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -180,7 +181,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
 
         SwerveDriveConfig config = new SwerveDriveConfig();
         config.wheels = _wheels;
-        config.gyro = new PigeonIMU(Constants.CANDevices.PIGEON_IMU_CAN_ID);
+        config.gyro = new Pigeon2(Constants.CANDevices.PIGEON_IMU_CAN_ID, "rio");
         config.gyro.setYaw(0.0);
         return new SwerveDrive(config);
     }
@@ -213,9 +214,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
      */
     @Log (name="Gyro Heading")
     public double getHeading() {
-      double ypr_deg[] = new double[3];
-      _sd.getGyro().getYawPitchRoll(ypr_deg);
-      return -ypr_deg[0];
+      return -_sd.getGyro().getYaw().getValue();
     }
 
     /**

@@ -5,6 +5,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,7 +35,7 @@ public class SwerveDrive implements Loggable {
   private static final int WHEEL_COUNT = 4;
   private static final double GYRO_INIT_MAX_WAIT_S = 5.0; //seconds
   private static final double GYRO_POLL_DELAY_S = 0.25; //wait (sec) between checking if the gyro is ready on init
-  private final PigeonIMU gyro;
+  private final Pigeon2 gyro;
   private final double kLengthComponent;
   private final double kWidthComponent;
   // private final double kGyroRateCorrection; seems to be an unused feature
@@ -62,14 +63,14 @@ public class SwerveDrive implements Loggable {
 
     if(gyro != null) {
       double delayed_time = 0.0;
-
+      gyroIsConnected = true;
       //The NavX needed some time to initialize on startup.
       //Wait for up to GYRO_INIT_MAX_WAIT_S, checking every GYRO_POLL_DELAY_S if it's ready yet.
-      while(gyro.getState() != PigeonState.Ready && delayed_time <= GYRO_INIT_MAX_WAIT_S) {
-        delayed_time += GYRO_POLL_DELAY_S;
-        Timer.delay(GYRO_POLL_DELAY_S); //Seconds
-      }
-      gyroIsConnected = gyro.getState() == PigeonState.Ready;
+      // while(gyro.getState() != PigeonState.Ready && delayed_time <= GYRO_INIT_MAX_WAIT_S) {
+      //   delayed_time += GYRO_POLL_DELAY_S;
+      //   Timer.delay(GYRO_POLL_DELAY_S); //Seconds
+      // }
+      // gyroIsConnected = gyro.getState() == PigeonState.Ready;
     }
 
     setFieldOriented(gyroIsConnected);
@@ -81,7 +82,8 @@ public class SwerveDrive implements Loggable {
       // gyro.enableLogging(config.gyroLoggingEnabled);
       double robotPeriod = config.robotPeriod;
       double gyroRateCoeff = config.gyroRateCoeff;
-      int rate = gyro.getStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR);
+      // int rate = gyro.getStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR);
+      double rate = gyro.getYaw().getAppliedUpdateFrequency();
       double gyroPeriod = 1.0 / rate;
       // kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
     }
@@ -142,7 +144,10 @@ public class SwerveDrive implements Loggable {
 
     //verify which direction yaw is positive and negative in
     if (isFieldOriented) {
-      gyro.getYawPitchRoll(ypr);
+      ypr[0] = gyro.getYaw().getValue();
+      ypr[1] = gyro.getPitch().getValue();
+      ypr[2] = gyro.getRoll().getValue();
+      // gyro.getYawPitchRoll(ypr);
       double angle = -ypr[0];
       // angle += gyro.getRate() * kGyroRateCorrection; // Disable this, as we aren't actually using this feature
       angle = Math.IEEEremainder(angle, 360.0);
@@ -242,7 +247,7 @@ public class SwerveDrive implements Loggable {
    *
    * @return the gyro instance.
    */
-  public PigeonIMU getGyro() {
+  public Pigeon2 getGyro() {
     return gyro;
   }
 

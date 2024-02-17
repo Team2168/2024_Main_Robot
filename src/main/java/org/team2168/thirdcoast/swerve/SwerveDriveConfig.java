@@ -1,6 +1,7 @@
 package org.team2168.thirdcoast.swerve;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 public class SwerveDriveConfig {
@@ -9,7 +10,7 @@ public class SwerveDriveConfig {
    * PigeonIMU gyro connected to CAN bus, used for field-oriented driving. If null, field-oriented
    * driving is disabled.
    */
-  public PigeonIMU gyro;
+  public Pigeon2 gyro;
 
   /** Initialize with four initialized wheels, in order from wheel 0 to wheel 3.
    *  0 is front left, 1 is front right, 2 is back left, and 3 is back right
