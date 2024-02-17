@@ -181,7 +181,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
 
         SwerveDriveConfig config = new SwerveDriveConfig();
         config.wheels = _wheels;
-        config.gyro = new Pigeon2(Constants.CANDevices.PIGEON_IMU_CAN_ID, "rio");
+        config.gyro = new Pigeon2(Constants.CANDevices.PIGEON_CAN_ID, "rio");
         config.gyro.setYaw(0.0);
         return new SwerveDrive(config);
     }

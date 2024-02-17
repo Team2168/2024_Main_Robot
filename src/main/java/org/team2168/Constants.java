@@ -42,7 +42,7 @@ public final class Constants {
   
       public static final int[] CANCODER_ID = {CANCODER_0_CAN_ID, CANCODER_1_CAN_ID, CANCODER_2_CAN_ID, CANCODER_3_CAN_ID}; 
   
-      public static final int PIGEON_IMU_CAN_ID = 17;
+      public static final int PIGEON_CAN_ID = 17;
     }
 
   public static class Controllers {
