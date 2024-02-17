@@ -7,16 +7,12 @@ package org.team2168.thirdcoast.swerve;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
 
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
-import org.team2168.utils.TalonFXHelper;
-
-import edu.wpi.first.wpilibj.AnalogInput;
 
 /**
  * Controls a swerve drive wheel azimuth and drive motors.

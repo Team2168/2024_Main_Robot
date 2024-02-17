@@ -1,6 +1,5 @@
 package org.team2168.thirdcoast.swerve;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.wpilibj.TimedRobot;
 
