@@ -50,6 +50,7 @@ public class Wheel {
   private static final double DRIVE_CIRCUMFERENCE_FT = ((Math.PI * 4.0) / 12.0);
   private static final int INTERNAL_ENCODER_TICKS = 2048;
   private static final int EXTERNAL_ENCODER_TICKS = 4096;
+  private static final double AZIMUTH_ERROR_TOLERANCE_DEG = 2.0;
   private static final double TICKS_PER_DEGREE_AZIMUTH = ((1.0 / 360.0) * EXTERNAL_ENCODER_TICKS);
   private static final double TICKS_PER_DEGREE_DW = ((1.0 / 360.0) * DRIVE_GEAR_RATIO * INTERNAL_ENCODER_TICKS);
   public static final double ROTS_PER_FOOT_DW = ((1.0 / DRIVE_CIRCUMFERENCE_FT) * DRIVE_GEAR_RATIO); // TODO: check math?
@@ -113,7 +114,7 @@ public class Wheel {
     double azimuthError = azimuth - azimuthPosition;
 
     // minimize azimuth rotation, reversing drive if necessary
-    isInverted = Math.abs(azimuthError) > 0.25;
+    isInverted = Math.abs(azimuthError) > (0.25 + degToRotations(AZIMUTH_ERROR_TOLERANCE_DEG));
     if (isInverted) {
       azimuthError -= Math.copySign(0.5, azimuthError);
       drive = -drive;
@@ -244,6 +245,15 @@ public class Wheel {
   //   return (int) (degrees * TICKS_PER_DEGREE_AZIMUTH);
   // }
 
+  /**
+   * Converts degrees into Phoenix 6 new sensor units
+   * 
+   * @param deg the number of degrees to be converted
+   * @return conversion of degree values to rotations
+   */
+  public double degToRotations(double deg) {
+    return (deg/360.0);
+  }
   /**
    * Converts degrees of rotation into external encoder ticks
    * 

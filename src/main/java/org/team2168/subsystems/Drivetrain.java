@@ -112,12 +112,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         driveCurrentConfig.withSupplyTimeThreshold(TRIGGER_DRIVE_THRESHOLD_TIME);
 
         azimuthFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
-        azimuthSlot0Config.withKP(7.0);
-        azimuthSlot0Config.withKI(0.32);
+        azimuthSlot0Config.withKP(40.0);
+        azimuthSlot0Config.withKI(1.28);
         azimuthSlot0Config.withKD(0.0);
-        azimuthSlot0Config.withKV(0.01);
-        azimuthSlot0Config.withKA(0.01);
-        azimuthSlot0Config.withKS(0.04);
+        azimuthSlot0Config.withKV(0.001);
+        azimuthSlot0Config.withKA(0.001);
+        azimuthSlot0Config.withKS(0.08);
         // azimuthSlot0Config.slot0.allowableClosedloopError = 0; // omitted from phoenix 6
         azimuthMotionMagicConfig.withMotionMagicAcceleration(150);
         azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
