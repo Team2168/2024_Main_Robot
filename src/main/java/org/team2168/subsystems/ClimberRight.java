@@ -187,6 +187,7 @@ public class ClimberRight extends SubsystemBase {
     return ClimberLeft.degreesToInches(Units.rotationsToDegrees(m_encoder.getPosition()));
   }
 
+  @Log(name = "Voltage", rowIndex = 1, columnIndex = 4)
   public double getVoltage(){
     return climberMotorRight.getBusVoltage();
   }
