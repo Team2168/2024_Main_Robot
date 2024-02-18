@@ -4,16 +4,15 @@
 
 package org.team2168.commands.climber;
 
-import org.team2168.subsystems.ClimberLeft;
-import org.team2168.subsystems.ClimberRight;
+import org.team2168.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ClimberDriveToZero extends Command {
-  ClimberLeft climberLeft;
-  ClimberRight climberRight;
+  Climber climberLeft;
+  Climber climberRight;
   /** Creates a new ClimberDriveToZero. */
-  public ClimberDriveToZero(ClimberLeft climberLeft, ClimberRight climberRight) {
+  public ClimberDriveToZero(Climber climberLeft, Climber climberRight) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.climberLeft = climberLeft;
     this.climberRight = climberRight;
@@ -28,25 +27,25 @@ public class ClimberDriveToZero extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberLeft.setToZero();
-    climberRight.setToZero();
+    climberLeft.setLeftToZero();
+    climberRight.setRightToZero();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     if(!interrupted){
-      climberLeft.setVolt(0.0);
-      climberLeft.setToZero();
-      climberRight.setVolt(0.0);
-      climberRight.setToZero();
+      climberLeft.setLeftVolt(0.0);
+      climberLeft.setLeftToZero();
+      climberRight.setRightVolt(0.0);
+      climberRight.setRightToZero();
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (climberLeft.getPositionInches() == 0) && (climberRight.getPositionInches() == 0);
+    return (climberLeft.getLeftPositionInches() == 0) && (climberRight.getRightPositionInches() == 0);
   
 }
 }

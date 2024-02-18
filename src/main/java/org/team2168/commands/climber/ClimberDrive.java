@@ -5,8 +5,7 @@
 package org.team2168.commands.climber;
 import java.util.function.DoubleSupplier;
 
-import org.team2168.subsystems.ClimberLeft;
-import org.team2168.subsystems.ClimberRight;
+import org.team2168.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -14,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimberDrive extends InstantCommand {
-  ClimberLeft climberLeft;
-  ClimberRight climberRight;
+  Climber climberLeft;
+  Climber climberRight;
   DoubleSupplier speed;
 
   public ClimberDrive(ClimberLeft climberLeft, ClimberRight climberRight, DoubleSupplier s) {
@@ -35,13 +34,13 @@ public class ClimberDrive extends InstantCommand {
   public void execute() {
     //elevator.setPercentOutput(elevatorPercentOutput);
   // if (elevator.isInRange()) {
-    climberLeft.setVolt(speed.getAsDouble());
-    climberRight.setVolt(speed.getAsDouble());
+    climberLeft.setLeftVolt(speed.getAsDouble());
+    climberRight.setRightVolt(speed.getAsDouble());
   }
 
   @Override
   public void end(boolean interrupted) {
-    climberLeft.setVolt(0);
-    climberRight.setVolt(0);
+    climberLeft.setLeftVolt(0);
+    climberRight.setRightVolt(0);
 }
 }

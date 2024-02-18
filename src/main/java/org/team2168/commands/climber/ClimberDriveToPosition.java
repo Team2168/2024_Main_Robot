@@ -4,18 +4,17 @@
 
 package org.team2168.commands.climber;
 
-import org.team2168.subsystems.ClimberLeft;
-import org.team2168.subsystems.ClimberRight;
+import org.team2168.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ClimberDriveToPosition extends Command {
-  ClimberLeft climberLeft;
-  ClimberRight climberRight;
+  Climber climberLeft;
+  Climber climberRight;
   double inches;
   double acceptableErrorTolerance = 0.5;
   /** Creates a new ClimberDriveToPosition. */
-  public ClimberDriveToPosition(ClimberLeft climberLeft, ClimberRight climberRight, double in) {
+  public ClimberDriveToPosition(Climber climberLeft, Climber climberRight, double in) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.climberLeft = climberLeft;
     this.climberRight = climberRight;
@@ -31,8 +30,8 @@ public class ClimberDriveToPosition extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberLeft.setPosition(inches);
-    climberRight.setPosition(inches);
+    climberLeft.setLeftPosition(inches);
+    climberRight.setRightPosition(inches);
   }
 
   // Called once the command ends or is interrupted.
@@ -42,8 +41,8 @@ public class ClimberDriveToPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((climberLeft.getPositionInches() >= (inches - acceptableErrorTolerance) && climberLeft.getPositionInches() <= (inches + acceptableErrorTolerance)) && 
-    (climberRight.getPositionInches() >= (inches - acceptableErrorTolerance) && climberRight.getPositionInches() <= (inches + acceptableErrorTolerance)));
+    return ((climberLeft.getLeftPositionInches() >= (inches - acceptableErrorTolerance) && climberLeft.getLeftPositionInches() <= (inches + acceptableErrorTolerance)) && 
+    (climberRight.getRightPositionInches() >= (inches - acceptableErrorTolerance) && climberRight.getRightPositionInches() <= (inches + acceptableErrorTolerance)));
   }
   
 }

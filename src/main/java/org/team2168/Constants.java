@@ -18,9 +18,9 @@ public final class Constants {
   }
 
   public static final class ClimberMotors{
-    public static final int CLIMBER_MOTOR_LEFT = 14; //placeholder
-    public static final int CLIMBER_MOTOR_RIGHT = 15;  //placeholder
-    public static final double UPDATE_TIME = 0; //placeholder
-    public static final int FEEDBACK_SENSOR = 0; //placeholder
+    public static final int CLIMBER_MOTOR_LEFT = 18; 
+    public static final int CLIMBER_MOTOR_RIGHT = 19;  
+    //public static final double UPDATE_TIME = 0; //placeholder
+    //public static final int FEEDBACK_SENSOR = 0; //placeholder
   }
 }

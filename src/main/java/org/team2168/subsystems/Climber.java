@@ -41,20 +41,23 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class ClimberLeft extends SubsystemBase {
+public class Climber extends SubsystemBase {
 
   private CANSparkMax climberMotorLeft;
+  private CANSparkMax climberMotorRight;
 
-  static ClimberLeft instance = null;
+  static Climber instance = null;
   private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
   private static final double GEAR_RATIO = 79; 
   private static final double MOTOR_DIAMETER_IN = 1.73228; 
   private static final double INCHES_PER_REV = MOTOR_DIAMETER_IN * Math.PI;
 
-  private SparkPIDController m_pidController;
-  private RelativeEncoder m_encoder;
-  private static final double kMaxOutput = 0;// placeholder
-  private static final double kMinOutput = 0;// placeholder
+  private SparkPIDController m_leftpidController;
+  private SparkPID Controller m_rightpidController;
+  private RelativeEncoder m_leftEncoder;
+  private RelativeEncoder m_rightEncoder;
+  private static final double kMaxOutput = 1;// placeholder
+  private static final double kMinOutput = 0.1;// placeholder
   private static final double kMaxVel= inchesToRotations(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
   private static final double kMaxAcc= inchesToRotations(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
 
@@ -64,28 +67,19 @@ public class ClimberLeft extends SubsystemBase {
   //private static final double kF = 0;// placeholder
   private static final double kArbitraryFeedForward = 0;// placeholder 
 
-
-  private InvertedValue inversion = InvertedValue.Clockwise_Positive;
   private static final double NEUTRAL_DEADBAND = 0.001;
 
-  private static final double kPeakOutput = 1.0;
-
   private static final int kPIDLoopIdx = 0;
-  private static final int kTimeoutMs = 30; // placeholder 
   private static boolean kSensorPhase = false;
 
   //private SparkLimitSwitch forwardLimit;
   //private SparkLimitSwitch reverseLimit;
-
-  public String kEnable;
-  public String kDisable;
 
  private static final int CURRENT_LIMIT = 0; // it limits when the feature is activited (in amps)
 private static final int FREE_LIMIT = 0; // it tells what the threshold should be for the limit to be activited (in amps)
   private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
-
   private static ElevatorSim climberSimLeft;
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
   private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
@@ -95,30 +89,51 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
 
 
   /** Creates a new Climber. */
-  public ClimberLeft() {
+  public Climber() {
     climberMotorLeft = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR_LEFT, MotorType.kBrushless);
+    climberMotorRight = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR_RIGHT, MotorType.kBrushless);
 
-    m_pidController = climberMotorLeft.getPIDController();
-    m_encoder = climberMotorLeft.getEncoder(); // Encoder object created to display position values
+    m_leftpidController = climberMotorLeft.getPIDController();
+    m_leftEncoder = climberMotorLeft.getEncoder(); // Encoder object created to display position values
+    m_rightpidController = climberMotorRight.getPIDController();
+    m_rightEncoder = climberMotorRight.getEncoder(); // Encoder object created to display position values
 
-    m_pidController.setFeedbackDevice(m_encoder);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
+    m_leftpidController.setFeedbackDevice(m_leftEncoder);
+    m_leftpidController.setOutputRange(kMinOutput, kMaxOutput); 
 
-    m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
-    m_pidController.setSmartMotionMaxAccel(kMaxAcc, 0);
+    m_leftpidController.setSmartMotionMaxVelocity(kMaxVel, 0);
+    m_leftpidController.setSmartMotionMaxAccel(kMaxAcc, 0);
 
     //sets PID gains
-    m_pidController.setP(kP);
-    m_pidController.setI(kI);
-    m_pidController.setD(kD);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+    m_leftpidController.setP(kP);
+    m_leftpidController.setI(kI);
+    m_leftpidController.setD(kD);
+    m_leftpidController.setOutputRange(kMinOutput, kMaxOutput);
 
     climberMotorLeft.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     climberMotorLeft.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
     climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
+    m_rightpidController.setFeedbackDevice(m_rightEncoder);
+    m_rightpidController.setOutputRange(kMinOutput, kMaxOutput); 
+
+    m_rightpidController.setSmartMotionMaxVelocity(kMaxVel, 0);
+    m_rightpidController.setSmartMotionMaxAccel(kMaxAcc, 0);
+
+    //sets PID gains
+    m_rightpidController.setP(kP);
+    m_rightpidController.setI(kI);
+    m_rightpidController.setD(kD);
+    m_rightpidController.setOutputRange(kMinOutput, kMaxOutput);
+
+    climberMotorRight.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    climberMotorRight.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
+    climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
+
     climberMotorLeft.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+    climberMotorRight.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
     //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
 
@@ -134,11 +149,9 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
 
   }
 
-  
-
-  public static ClimberLeft getInstance() {
+  public static Climber getInstance() {
     if (instance == null) {
-      instance = new ClimberLeft();
+      instance = new Climber();
     }
     return instance;
   }
@@ -163,62 +176,121 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     return INCHES_PER_REV * (degreesToRotations(degrees));
   }
 
-  public void setMotorBrake() {
+  public void setLeftMotorBrake() {
     climberMotorLeft.setIdleMode(IdleMode.kBrake);
   }
 
-  public void setMotorCoast() {
+  public void setLeftMotorCoast() {
     climberMotorLeft.setIdleMode(IdleMode.kCoast);
   }
 
-  //@Config()
-  public void setSpeedVelocity(double velocity){
-    m_pidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
+  public void setRightMotorBrake() {
+    climberMotorRight.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void setRightMotorCoast() {
+    climberMotorRight.setIdleMode(IdleMode.kCoast);
   }
 
   //@Config()
-  public void setPosition(double in){
-    m_pidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+  public void setLeftSpeedVelocity(double velocity){
+    m_leftpidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
 
-  public void setToZero(){
-    m_pidController.setReference(0, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+  //@Config()
+  public void setLeftPosition(double in){
+    m_leftpidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
-  public void setInvertPosition(boolean invert){
+  public void setLeftToZero(){
+    m_leftpidController.setReference(0, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+  }
+
+  public void setLeftInvertPosition(boolean invert){
     climberMotorLeft.setInverted(invert);
   }
 
-  public void setPercentOutput(double speed){
-    m_pidController.setReference(speed, ControlType.kVoltage,0, kArbitraryFeedForward); //functions the same as "SetVolt()" expect it isn't a set and forget method
+  public void setLeftPercentOutput(double speed){
+    m_leftpidController.setReference(speed, ControlType.kVoltage,0, kArbitraryFeedForward); //functions the same as "SetVolt()" expect it isn't a set and forget method
   }
 
-  public void setVolt(double volt) {
+  public void setLeftVolt(double volt) {
     climberMotorLeft.setVoltage(volt);
   }
 
+    public void setRightSpeedVelocity(double velocity){
+    m_rightpidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
+  }
+
+  //@Config()
+  public void setRightPosition(double in){
+    m_rightpidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+  }
+
+  public void setRightPercentOutput(double speed){
+    m_rightpidController.setReference(speed, ControlType.kVoltage,0, kArbitraryFeedForward); //functions the same as "SetVolt()" expect it isn't a set and forget method
+  }
+
+  public void setRightToZero(){
+    m_rightpidController.setReference(0, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+  }
+
+  public void setRightInvertPosition(boolean invert){
+    climberMotorRight.setInverted(invert);
+  }
+
+  public void setRightVolt(double volt) {
+    climberMotorRight.setVoltage(volt);
+  }
+
+  @Log(name = "Current Set Speed", rowIndex = 1, columnIndex = 0)
+  public double getRightCurrentSetSpeed(){
+    return climberMotorRight.get();
+  }
+
+  @Log(name = "Speed Velocity", rowIndex = 1, columnIndex = 1)
+  public double getRightspeedVelocity(){
+    return (rotationsToInches(m_rightEncoder.getVelocity()) / 60); 
+  }
+
   @Log(name = "Current Set Speed", rowIndex = 0, columnIndex = 0)
-  public double getCurrentSetSpeed(){
+  public double getLeftCurrentSetSpeed(){
     return climberMotorLeft.get();
   }
 
   @Log(name = "Speed Velocity", rowIndex = 0, columnIndex = 1)
-  public double getspeedVelocity(){
-    return (rotationsToInches(m_encoder.getVelocity()) / 60); 
+  public double getLeftspeedVelocity(){
+    return (rotationsToInches(m_leftEncoder.getVelocity()) / 60); 
   }
 
   @Log(name = "Position in inches", rowIndex = 0, columnIndex = 2)
-  public double getPositionInches(){
-    return degreesToInches(Units.rotationsToDegrees(m_encoder.getPosition()));
+  public double getLeftPositionInches(){
+    return degreesToInches(Units.rotationsToDegrees(m_leftEncoder.getPosition()));
   }
 
-  public double getVoltage(){
+  @Log(name = "Voltage", rowIndex = 1, columnIndex = 4)
+  public double getLeftVoltage(){
     return climberMotorLeft.getBusVoltage();
   }
 
   @Log(name = "Invert Position", rowIndex = 0, columnIndex = 3)
-  public boolean getInvertPosition(){
+  public boolean getLeftInvertPosition(){
     return climberMotorLeft.getInverted();
+  }
+
+  @Log(name = "Position in inches", rowIndex = 1, columnIndex = 2)
+  public double getRightPositionInches(){
+    return degreesToInches(Units.rotationsToDegrees(m_rightEncoder.getPosition()));
+  }
+
+  @Log(name = "Voltage", rowIndex = 1, columnIndex = 4)
+  public double getRightVoltage(){
+    return climberMotorRight.getBusVoltage();
+  }
+
+  @Log(name = "Invert Position", rowIndex = 1, columnIndex = 3)
+  public boolean getRightInvertPosition(){
+    return climberMotorRight.getInverted();
   }
 
   @Override
