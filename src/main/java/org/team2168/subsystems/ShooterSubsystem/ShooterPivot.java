@@ -82,6 +82,7 @@ public class ShooterPivot extends SubsystemBase {
     pivotMotorGains.withKP(kP);
     pivotMotorGains.withKI(kI);
     pivotMotorGains.withKD(kD);
+    // pivotMotorGains.withGravityType(GravityTypeValue.Arm_Cosine); //shooterhood is basically an arm.
     
     feedbackConfig.withSensorToMechanismRatio(12.8);
 
