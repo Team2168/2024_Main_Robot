@@ -114,7 +114,7 @@ public class ShooterPivot extends SubsystemBase {
   }
 
   public void setPositionDegrees(double degrees) {
-    pivotMotor.setControl(motionMagic.withPosition(Units.degreesToRotations(degrees)));
+    pivotMotor.setControl(motionMagic.withPosition(Units.degreesToRotations(degrees)).withFeedForward(0.025));
   }
 
   public void setToStowAngle() {

@@ -28,13 +28,15 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   private static Shooter instance = null;
-  private TalonFX firstShooterMotor;
-  private TalonFX secondShooterMotor;
+  private TalonFX leftShooterMotor;
+  private TalonFX rightShooterMotor;
   private TalonFXConfiguration firstMotorConfiguration;
   private Slot0Configs firstMotorGains;
   private CurrentLimitsConfigs currentLimitConfigs;
@@ -43,8 +45,8 @@ public class Shooter extends SubsystemBase {
 
   private MotorOutputConfigs firstOutputConfigs;
 
-  private final double PEAK_FORWARD_DUTY_CYCLE = 0.9; //placeholder
-  private final double PEAK_REVERSE_DUTY_CYCLE = -0.9; //placeholder
+  private final double PEAK_FORWARD_DUTY_CYCLE = 0.9; // placeholder
+  private final double PEAK_REVERSE_DUTY_CYCLE = -0.9; // placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
 
   private double first_kP = 0.1; // placeholder
@@ -53,13 +55,17 @@ public class Shooter extends SubsystemBase {
   private double first_kVolts = 0.12; // placeholder
 
   private final double GEAR_RATIO = 2.345;
-  private final double ACCELERATION = rpmToRps(25); //placeholder
+  private final double ACCELERATION = rpmToRps(25); // placeholder
   private VelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
+  private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
+
+  private InterpolatingTreeMap velocityLookupTable; // judge velocity of shooter based on distance with interpolating
+                                                    // look-up table
 
   public Shooter() {
-    firstShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.FIRST_SHOOTER_ID);
-    secondShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SECOND_SHOOTER_ID);
+    leftShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.LEFT_SHOOTER_ID);
+    rightShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.RIGHT_SHOOTER_ID);
     firstMotorConfiguration = new TalonFXConfiguration();
     currentLimitConfigs = new CurrentLimitsConfigs();
     firstFeedbackConfigs = new FeedbackConfigs();
@@ -68,8 +74,8 @@ public class Shooter extends SubsystemBase {
     velocityVoltage = new VelocityVoltage(0.0);
     percentOutput = new DutyCycleOut(0.0);
 
-    firstShooterMotor.clearStickyFaults();
-    secondShooterMotor.clearStickyFaults();
+    leftShooterMotor.clearStickyFaults();
+    rightShooterMotor.clearStickyFaults();
 
     currentLimitConfigs.withSupplyCurrentLimit(20.0);
     currentLimitConfigs.withSupplyCurrentLimitEnable(true);
@@ -95,9 +101,9 @@ public class Shooter extends SubsystemBase {
     firstMotorConfiguration.withFeedback(firstFeedbackConfigs);
     firstMotorConfiguration.withMotorOutput(firstOutputConfigs);
 
-    firstShooterMotor.getConfigurator().apply(firstMotorConfiguration);
+    leftShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
-    secondShooterMotor.setControl(new Follower(firstShooterMotor.getDeviceID(), true));
+    rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
     velocityVoltage.withAcceleration(rpmToRps(ACCELERATION));
     velocityVoltage.withSlot(0);
   }
@@ -114,19 +120,25 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setVelocity(double velocity) {
-    firstShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRps(velocity)));
+    leftShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRps(velocity)));
+    
   }
 
   public void setPercentOutput(double input) {
-    firstShooterMotor.setControl(percentOutput.withOutput(input));
+    leftShooterMotor.setControl(percentOutput.withOutput(input));
   }
 
   public StatusSignal<Double> getVelocity() {
-    return firstShooterMotor.getVelocity();
+    return leftShooterMotor.getVelocity();
   }
 
   @Override
   public void periodic() {
-    
+
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    flywheelSim.setInputVoltage(1);
   }
 }
