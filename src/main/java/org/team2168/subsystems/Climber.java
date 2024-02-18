@@ -115,6 +115,8 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
     climberMotorLeft.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
+    climberMotorLeft.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+
     m_rightpidController.setFeedbackDevice(m_rightEncoder);
     m_rightpidController.setOutputRange(kMinOutput, kMaxOutput); 
 
@@ -131,8 +133,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorRight.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);
     climberMotorRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
-
-    climberMotorLeft.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+    
     climberMotorRight.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
     //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
@@ -184,14 +185,6 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft.setIdleMode(IdleMode.kCoast);
   }
 
-  public void setRightMotorBrake() {
-    climberMotorRight.setIdleMode(IdleMode.kBrake);
-  }
-
-  public void setRightMotorCoast() {
-    climberMotorRight.setIdleMode(IdleMode.kCoast);
-  }
-
   //@Config()
   public void setLeftSpeedVelocity(double velocity){
     m_leftpidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
@@ -216,6 +209,14 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
 
   public void setLeftVolt(double volt) {
     climberMotorLeft.setVoltage(volt);
+  }
+
+  public void setRightMotorBrake() {
+    climberMotorRight.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void setRightMotorCoast() {
+    climberMotorRight.setIdleMode(IdleMode.kCoast);
   }
 
     public void setRightSpeedVelocity(double velocity){
@@ -243,16 +244,6 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorRight.setVoltage(volt);
   }
 
-  @Log(name = "Current Set Speed", rowIndex = 1, columnIndex = 0)
-  public double getRightCurrentSetSpeed(){
-    return climberMotorRight.get();
-  }
-
-  @Log(name = "Speed Velocity", rowIndex = 1, columnIndex = 1)
-  public double getRightspeedVelocity(){
-    return (rotationsToInches(m_rightEncoder.getVelocity()) / 60); 
-  }
-
   @Log(name = "Current Set Speed", rowIndex = 0, columnIndex = 0)
   public double getLeftCurrentSetSpeed(){
     return climberMotorLeft.get();
@@ -276,6 +267,16 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   @Log(name = "Invert Position", rowIndex = 0, columnIndex = 3)
   public boolean getLeftInvertPosition(){
     return climberMotorLeft.getInverted();
+  }
+
+   @Log(name = "Current Set Speed", rowIndex = 1, columnIndex = 0)
+  public double getRightCurrentSetSpeed(){
+    return climberMotorRight.get();
+  }
+
+  @Log(name = "Speed Velocity", rowIndex = 1, columnIndex = 1)
+  public double getRightspeedVelocity(){
+    return (rotationsToInches(m_rightEncoder.getVelocity()) / 60); 
   }
 
   @Log(name = "Position in inches", rowIndex = 1, columnIndex = 2)
