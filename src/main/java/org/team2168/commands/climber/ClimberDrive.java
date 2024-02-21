@@ -17,7 +17,7 @@ public class ClimberDrive extends InstantCommand {
   Climber climberRight;
   DoubleSupplier speed;
 
-  public ClimberDrive(ClimberLeft climberLeft, ClimberRight climberRight, DoubleSupplier s) {
+  public ClimberDrive(Climber climberLeft, Climber climberRight, DoubleSupplier s) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.climberLeft = climberLeft;
     this.climberRight = climberRight;

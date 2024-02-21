@@ -53,7 +53,7 @@ public class Climber extends SubsystemBase {
   private static final double INCHES_PER_REV = MOTOR_DIAMETER_IN * Math.PI;
 
   private SparkPIDController m_leftpidController;
-  private SparkPID Controller m_rightpidController;
+  private SparkPIDController m_rightpidController;
   private RelativeEncoder m_leftEncoder;
   private RelativeEncoder m_rightEncoder;
   private static final double kMaxOutput = 1;// placeholder
