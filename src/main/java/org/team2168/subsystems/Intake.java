@@ -7,6 +7,9 @@ package org.team2168.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
+
+import org.team2168.Constants.CANDevices;
+
 import com.revrobotics.CANSparkLowLevel;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,7 +17,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 
 public class Intake extends SubsystemBase {
-  private static CANSparkMax intakeRollerOne = new CANSparkMax(22, CANSparkLowLevel.MotorType.kBrushless);
+  private static CANSparkMax intakeRollerOne = new CANSparkMax(CANDevices.intakeRoller, CANSparkLowLevel.MotorType.kBrushless);
  // private static CANSparkMax intakeRollerTwo = new CANSparkMax(2, CANSparkLowLevel.MotorType.kBrushless);
 
   private static Intake instance = null;
