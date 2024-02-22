@@ -7,6 +7,7 @@ package org.team2168;
 import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
+import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.Intake;
@@ -63,7 +64,15 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    oi.testJoystick.ButtonA().onTrue(new SetIntakeSpeed(null, 0));
+    oi.testJoystick.ButtonA().onTrue(new SetIntakeSpeed(null, 1.0));
+    oi.testJoystick.ButtonB().onTrue(new SetIntakeSpeed(null, 0.5));
+    oi.testJoystick.ButtonX().onTrue(new SetIntakeSpeed(null, -1.0));
+    oi.testJoystick.ButtonY().onTrue(new SetIntakeSpeed(null, -0.5));
+
+    oi.testJoystick.ButtonRightDPad().onTrue(new SetIntakePivotPosition(intakePivot, -20));
+    oi.testJoystick.ButtonLeftDPad().onTrue(new SetIntakePivotPosition(intakePivot, -50));
+    oi.testJoystick.ButtonDownDPad().onTrue(new SetIntakePivotPosition(intakePivot, 10));
+    oi.testJoystick.ButtonUpDPad().onTrue(new SetIntakePivotPosition(intakePivot, 0));
   }
 
   /**
