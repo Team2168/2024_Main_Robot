@@ -374,6 +374,15 @@ public class Wheel {
   }
 
   /**
+   * sets the relative encoder position of the drive motor
+   * 
+   * @param pos position for encoder to be set to
+   */
+  public void setDrivePosition(double pos) {
+    driveTalon.setPosition(pos);
+  }
+
+  /**
    * Returns the circumference of the module wheel in meters
    * 
    * @return circumference in meters

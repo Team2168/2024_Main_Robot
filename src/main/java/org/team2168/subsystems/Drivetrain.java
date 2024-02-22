@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -249,6 +250,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         for(int i = 0; i < SwerveDrive.getWheelCount(); i++) {
             SmartDashboard.putNumber("External encoder pos " + i, wheels[i].getAzimuthPosition());
         }
+    }
+
+    public void resetDriveEncoders() {
+        for(int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            _wheels[i].setDrivePosition(0.0);
+        }
+    }
+
+    public void resetOdometry(Pose2d pose, boolean preserveHeading) {
+        odometry.resetPosition(_sd.getGyro().getRotation2d(), modulePositions, pose); // TODO: reset modulePosition distance
     }
 
 
