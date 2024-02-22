@@ -176,6 +176,10 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         config.gyro = new Pigeon2(Constants.CANDevices.PIGEON_CAN_ID, "rio");
         config.gyro.setYaw(0.0);
 
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            modulePositions[i] = new SwerveModulePosition(0.0, new Rotation2d(0.0));
+        }
+
         odometry = new SwerveDriveOdometry(new SwerveDriveKinematics(
             new Translation2d(config.lengthFromCenterToWheel, config.widthFromCenterToWheel), // Configures the position of swerve modules
             new Translation2d(config.lengthFromCenterToWheel, -config.widthFromCenterToWheel), // in order 0-3 (FL to BR)
@@ -281,7 +285,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         putEncoderPositions();
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
             modulePositions[i] = new SwerveModulePosition(Wheel.getDriveCircumferenceMeters() * _wheels[i].getDrivePosition(), 
-            new Rotation2d(Wheel.rotToRadians(-_wheels[i].getAzimuthPosition())));
+            new Rotation2d(Wheel.rotToRadians(-_wheels[i].getAzimuthPosition()))); // negative for counterclockwise
         }
         odometry.update(_sd.getGyro().getRotation2d(), modulePositions);
     }
