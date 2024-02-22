@@ -15,6 +15,11 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Preferences;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,7 +32,9 @@ import org.team2168.Constants;
 import org.team2168.thirdcoast.swerve.*;
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
 
-public class Drivetrain extends SubsystemBase implements Loggable {    private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
+public class Drivetrain extends SubsystemBase implements Loggable {
+    private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[SwerveDrive.getWheelCount()];
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
@@ -45,6 +52,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
     private static Drivetrain instance = null;
+
+    private SwerveDriveOdometry odometry;
 
     private Drivetrain() {
         // put the zeros for each module to the dashboard
@@ -162,11 +171,19 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
             _wheels[i].setDriveMode(DriveMode.OPEN_LOOP);
             SmartDashboard.putNumber("Abs position on init, module " + i, wheel.getAzimuthPosition());
         }
-
         SwerveDriveConfig config = new SwerveDriveConfig();
         config.wheels = _wheels;
         config.gyro = new Pigeon2(Constants.CANDevices.PIGEON_CAN_ID, "rio");
         config.gyro.setYaw(0.0);
+
+        odometry = new SwerveDriveOdometry(new SwerveDriveKinematics(
+            new Translation2d(config.lengthFromCenterToWheel, config.widthFromCenterToWheel), // Configures the position of swerve modules
+            new Translation2d(config.lengthFromCenterToWheel, -config.widthFromCenterToWheel), // in order 0-3 (FL to BR)
+            new Translation2d(-config.lengthFromCenterToWheel, config.widthFromCenterToWheel), // +x towards front of chassis, +y towards left of chassis
+            new Translation2d(-config.lengthFromCenterToWheel, -config.widthFromCenterToWheel)),
+        config.gyro.getRotation2d(),
+        modulePositions);
+
         return new SwerveDrive(config);
     }
 
@@ -262,6 +279,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
     @Override
     public void periodic() {
         putEncoderPositions();
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            modulePositions[i] = new SwerveModulePosition(Wheel.getDriveCircumferenceMeters() * _wheels[i].getDrivePosition(), 
+            new Rotation2d(Wheel.rotToRadians(-_wheels[i].getAzimuthPosition())));
+        }
+        odometry.update(_sd.getGyro().getRotation2d(), modulePositions);
     }
 }
 

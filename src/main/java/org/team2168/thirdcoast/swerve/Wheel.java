@@ -44,6 +44,7 @@ public class Wheel {
                                                                                  // output; placeholder
   private static final double DRIVE_GEAR_RATIO = 7.13 / 1; // (60.0/15.0) * (20.0/24.0) * (38.0/18.0);
   private static final double DRIVE_CIRCUMFERENCE_FT = ((Math.PI * 4.0) / 12.0);
+  private static final double DRIVE_CIRCUMFERENCE_M = 0.3048 * DRIVE_CIRCUMFERENCE_FT;
   private static final int INTERNAL_ENCODER_TICKS = 2048;
   private static final int EXTERNAL_ENCODER_TICKS = 4096;
   private static final double AZIMUTH_ERROR_TOLERANCE_DEG = 2.0;
@@ -250,6 +251,17 @@ public class Wheel {
   public double degToRotations(double deg) {
     return (deg/360.0);
   }
+
+  /**
+   * Converts rotations into radians for Rotation2d
+   * 
+   * @param rot the number of rotations to be converted
+   * @return conversion of phoenix sensor values to rotation2d units
+   */
+  public static double rotToRadians(double rot) {
+    return rot * 2.0 * Math.PI;
+  }
+
   /**
    * Converts degrees of rotation into external encoder ticks
    * 
@@ -350,6 +362,24 @@ public class Wheel {
    */
   public double getAzimuthPosition() {
     return azimuthTalon.getPosition().getValue();
+  }
+
+  /**
+   * Returns the native encoder position of the drive motor
+   * 
+   * @return position in relative drive encoder rotations
+   */
+  public double getDrivePosition() {
+    return driveTalon.getPosition().getValue();
+  }
+
+  /**
+   * Returns the circumference of the module wheel in meters
+   * 
+   * @return circumference in meters
+   */
+  public static double getDriveCircumferenceMeters() {
+    return DRIVE_CIRCUMFERENCE_M;
   }
 
   /**
