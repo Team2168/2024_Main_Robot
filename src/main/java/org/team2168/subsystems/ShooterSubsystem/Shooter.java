@@ -4,6 +4,8 @@
 
 package org.team2168.subsystems.ShooterSubsystem;
 
+import java.util.TreeMap;
+
 import org.team2168.Constants;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -27,7 +29,10 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.Interpolator;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -60,8 +65,18 @@ public class Shooter extends SubsystemBase {
   private DutyCycleOut percentOutput;
   private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
 
-  private InterpolatingTreeMap velocityLookupTable; // judge velocity of shooter based on distance with interpolating
-                                                    // look-up table
+  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() {
+    {
+      put(1.0, 1000.0); // these motorspeeds to meters values are all placeholders, need to actually
+                        // calculate appropriate motorspeed from corresponding distance;
+      put(2.0, 2000.0);
+      put(3.0, 3000.0);
+      put(4.0, 4000.0);
+      put(5.0, 5000.0);
+      put(6.0, 6000.0);
+      put(7.0, 7000.0);
+    }
+  };
 
   public Shooter() {
     leftShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.LEFT_SHOOTER_ID);
@@ -108,6 +123,11 @@ public class Shooter extends SubsystemBase {
     velocityVoltage.withSlot(0);
   }
 
+  public void setMotorSpeedFromDistance(double distanceFromObject) {
+    double motorSpeedFromDistance = velocityLookup.get(distanceFromObject);
+    setVelocity(motorSpeedFromDistance);
+  }
+
   public static Shooter getInstance() {
     if (instance == null) {
       instance = new Shooter();
@@ -121,7 +141,7 @@ public class Shooter extends SubsystemBase {
 
   public void setVelocity(double velocity) {
     leftShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRps(velocity)));
-    
+
   }
 
   public void setPercentOutput(double input) {
