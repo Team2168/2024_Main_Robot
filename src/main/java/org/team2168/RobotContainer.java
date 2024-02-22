@@ -7,7 +7,12 @@ package org.team2168;
 import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
+import org.team2168.commands.LEDs.SetBlueLED;
+import org.team2168.commands.LEDs.SetGreenLED;
+import org.team2168.commands.LEDs.SetRedLED;
 import org.team2168.subsystems.ExampleSubsystem;
+import org.team2168.subsystems.LEDs;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,6 +27,8 @@ import io.github.oblarg.oblog.Logger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final OI oi = OI.getInstance();
+  private final LEDs leds = new LEDs();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -34,6 +41,8 @@ public class RobotContainer {
     configureBindings();
   }
 
+  
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -44,6 +53,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
+    oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
+    oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //     .OnTrue(new ExampleCommand(m_exampleSubsystem));
