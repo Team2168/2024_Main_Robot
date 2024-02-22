@@ -4,10 +4,13 @@
 
 package org.team2168.subsystems;
 
+import org.team2168.Constants.CANDevices;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.SlotConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -22,8 +25,8 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class IntakePivot extends SubsystemBase {
 
-  private static TalonFX intakePivotOne = new TalonFX(20); // leader motor
-  private static TalonFX intakePivotTwo = new TalonFX(21); // follower motor
+  private static TalonFX intakePivotOne = new TalonFX(CANDevices.intakePivotL); // leader motor
+  private static TalonFX intakePivotTwo = new TalonFX(CANDevices.intakePivotR); // follower motor
   private static IntakePivot instance = null;
 
   public static IntakePivot getInstance() {
@@ -74,6 +77,7 @@ public class IntakePivot extends SubsystemBase {
     var motionMagicConfigs = new MotionMagicConfigs();
     var leaderMotorConfigs = new MotorOutputConfigs();
     var followerMotorConfigs = new MotorOutputConfigs();
+    var softLimitsConfigs = new SoftwareLimitSwitchConfigs();
 
     leaderMotorConfigs.withInverted(intakeInvertOne);
     leaderMotorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
@@ -102,6 +106,12 @@ public class IntakePivot extends SubsystemBase {
       .withMotionMagicCruiseVelocity(motionMagicCruiseVelocity)
       .withMotionMagicExpo_kA(kA)
       .withMotionMagicExpo_kV(kV);
+
+    softLimitsConfigs
+      .withForwardSoftLimitThreshold(degreesToRot(30))
+      .withForwardSoftLimitEnable(true)
+      .withReverseSoftLimitThreshold(degreesToRot(-90))
+      .withReverseSoftLimitEnable(true);
 
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
     var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
