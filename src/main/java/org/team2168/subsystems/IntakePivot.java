@@ -22,11 +22,11 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class IntakePivot extends SubsystemBase {
 
-  private static TalonFX intakePivotOne = new TalonFX(0); // leader motor
-  private static TalonFX intakePivotTwo = new TalonFX(0); // follower motor
+  private static TalonFX intakePivotOne = new TalonFX(20); // leader motor
+  private static TalonFX intakePivotTwo = new TalonFX(21); // follower motor
   private static IntakePivot instance = null;
 
-  public IntakePivot getInstance() {
+  public static IntakePivot getInstance() {
     if(instance == null)
     instance = new IntakePivot();
     return instance;

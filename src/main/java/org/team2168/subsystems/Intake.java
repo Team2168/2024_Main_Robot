@@ -14,14 +14,14 @@ import io.github.oblarg.oblog.annotations.Log;
 
 
 public class Intake extends SubsystemBase {
-  private static CANSparkMax intakeRollerOne = new CANSparkMax(1, CANSparkLowLevel.MotorType.kBrushless); // TODO: deviceId
-  private static CANSparkMax intakeRollerTwo = new CANSparkMax(2, CANSparkLowLevel.MotorType.kBrushless);
+  private static CANSparkMax intakeRollerOne = new CANSparkMax(22, CANSparkLowLevel.MotorType.kBrushless);
+ // private static CANSparkMax intakeRollerTwo = new CANSparkMax(2, CANSparkLowLevel.MotorType.kBrushless);
 
   private static Intake instance = null;
   
   private static RelativeEncoder intakeRollerEncoder = intakeRollerOne.getEncoder();
 
-  public Intake getInstance() {
+  public static Intake getInstance() {
     if(instance == null)
     instance = new Intake();
     return instance;
@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
   private Intake() {
 
     intakeRollerOne.restoreFactoryDefaults();
-    intakeRollerTwo.restoreFactoryDefaults();
+   // intakeRollerTwo.restoreFactoryDefaults();
 
     intakeRollerOne.setInverted(isInverted);
     intakeRollerOne.setIdleMode(coast);
@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
 
 
     //gives the motor intakeRollerTwo the same settings as intakeMotorOne
-    intakeRollerTwo.follow(intakeRollerOne, true);
+   // intakeRollerTwo.follow(intakeRollerOne, true);
     
   }
   
