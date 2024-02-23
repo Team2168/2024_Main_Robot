@@ -247,11 +247,17 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   }
 
   public void setTiltEven(){
-    if (gyroTilt > 0){
-      m_rightpidController.setReference(inchesToRotations(getLeftPositionInches()), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    if (gyroTilt < 0){
+      m_rightpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+      m_leftpidController.setSmartMotionMaxVelocity(kMaxVel + inchesToRotations(1), 0); //May require a PID Controller to work properly
+      m_leftpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+       m_leftpidController.setSmartMotionMaxVelocity(kMaxVel, 0);
     }
-    else if (gyroTilt < 0){
-      m_leftpidController.setReference(inchesToRotations(getRightPositionInches()), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    else if (gyroTilt > 0){
+      m_leftpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+      m_rightpidController.setSmartMotionMaxVelocity(kMaxVel + inchesToRotations(1), 0);
+      m_rightpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+      m_rightpidController.setSmartMotionMaxVelocity(kMaxVel, 0);
     }
   }
   
