@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -54,7 +55,9 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     private static Drivetrain instance = null;
 
+    private SwerveDriveKinematics swerveKinematics;
     private SwerveDriveOdometry odometry;
+    private ChassisSpeeds chassisSpeeds;
 
     private Drivetrain() {
         // put the zeros for each module to the dashboard
@@ -170,6 +173,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             // _wheels[i].setAzimuthZero(Preferences.getInt(SwerveDrive.getPreferenceKeyForWheel(i), SwerveDrive.DEFAULT_ABSOLUTE_AZIMUTH_OFFSET));
             _wheels[i].setAzimuthZero(ABSOLUTE_ENCODER_OFFSET[i]);
             _wheels[i].setDriveMode(DriveMode.OPEN_LOOP);
+            modulePositions[i] = new SwerveModulePosition(0.0, new Rotation2d(0.0));
             SmartDashboard.putNumber("Abs position on init, module " + i, wheel.getAzimuthPosition());
         }
         SwerveDriveConfig config = new SwerveDriveConfig();
@@ -177,17 +181,14 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         config.gyro = new Pigeon2(Constants.CANDevices.PIGEON_CAN_ID, "rio");
         config.gyro.setYaw(0.0);
 
-        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
-            modulePositions[i] = new SwerveModulePosition(0.0, new Rotation2d(0.0));
-        }
-
-        odometry = new SwerveDriveOdometry(new SwerveDriveKinematics(
+        swerveKinematics = new SwerveDriveKinematics(
             new Translation2d(config.lengthFromCenterToWheel, config.widthFromCenterToWheel), // Configures the position of swerve modules
             new Translation2d(config.lengthFromCenterToWheel, -config.widthFromCenterToWheel), // in order 0-3 (FL to BR)
             new Translation2d(-config.lengthFromCenterToWheel, config.widthFromCenterToWheel), // +x towards front of chassis, +y towards left of chassis
-            new Translation2d(-config.lengthFromCenterToWheel, -config.widthFromCenterToWheel)),
-        config.gyro.getRotation2d(),
-        modulePositions);
+            new Translation2d(-config.lengthFromCenterToWheel, -config.widthFromCenterToWheel));
+
+        odometry = new SwerveDriveOdometry(swerveKinematics, config.gyro.getRotation2d(), modulePositions);
+        chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(0.0, 0.0, 0.0, config.gyro.getRotation2d());
 
         return new SwerveDrive(config);
     }
@@ -259,7 +260,33 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     public void resetOdometry(Pose2d pose, boolean preserveHeading) {
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            modulePositions[i].distanceMeters = 0.0; // resets distance traveled in all module positions
+        }
+
+        resetDriveEncoders();
+        if (!preserveHeading) {
+            zeroGyro();
+        }
+
         odometry.resetPosition(_sd.getGyro().getRotation2d(), modulePositions, pose); // TODO: reset modulePosition distance
+    }
+
+    /**
+     * returns the robot pose given by the SwerveDriveOdometry class
+     * 
+     * @return the odometry-based robot pose in meters
+     */
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    public SwerveDriveKinematics getKinematicsClass() {
+        return swerveKinematics;
+    }
+
+    public ChassisSpeeds getChassisSpeeds() {
+        return chassisSpeeds;
     }
 
 
