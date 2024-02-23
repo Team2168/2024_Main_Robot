@@ -80,6 +80,8 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
+
+  public static final double gyroTilt = 0.0; //(placeholder variable)
   private static ElevatorSim climberSimLeft;
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
   private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
@@ -244,6 +246,15 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorRight.setVoltage(volt);
   }
 
+  public void setTiltEven(){
+    if (gyroTilt > 0){
+      m_rightpidController.setReference(inchesToRotations(getLeftPositionInches()), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    }
+    else if (gyroTilt < 0){
+      m_leftpidController.setReference(inchesToRotations(getRightPositionInches()), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    }
+  }
+  
   @Log(name = "Current Set Speed", rowIndex = 0, columnIndex = 0)
   public double getLeftCurrentSetSpeed(){
     return climberMotorLeft.get();
