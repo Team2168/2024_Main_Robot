@@ -22,7 +22,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +39,7 @@ import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
 public class Drivetrain extends SubsystemBase implements Loggable {
     private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
     private SwerveModulePosition[] modulePositions = new SwerveModulePosition[SwerveDrive.getWheelCount()];
+    private SwerveModuleState[] moduleStates = new SwerveModuleState[SwerveDrive.getWheelCount()];
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
@@ -54,6 +57,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
     private static Drivetrain instance = null;
+    private Field2d field = new Field2d(); // used to test if odometry is correct
 
     private SwerveDriveKinematics swerveKinematics;
     private SwerveDriveOdometry odometry;
@@ -67,6 +71,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
         //_sd.zeroAzimuthEncoders();
         _sd = configSwerve();
+
+        SmartDashboard.putData("field", field);
     }
 
     /**
@@ -174,6 +180,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             _wheels[i].setAzimuthZero(ABSOLUTE_ENCODER_OFFSET[i]);
             _wheels[i].setDriveMode(DriveMode.OPEN_LOOP);
             modulePositions[i] = new SwerveModulePosition(0.0, new Rotation2d(0.0));
+            moduleStates[i] = new SwerveModuleState(0.0, new Rotation2d(0.0));
             SmartDashboard.putNumber("Abs position on init, module " + i, wheel.getAzimuthPosition());
         }
         SwerveDriveConfig config = new SwerveDriveConfig();
@@ -204,6 +211,17 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         _sd.drive(forward, strafe, azimuth);
     }
 
+    public void driveWithKinematics(double forward, double strafe, double azimuth) {
+        _sd.driveWithKinematics(forward, strafe, azimuth);
+        chassisSpeeds = _sd.getChassisDriver();
+
+        moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            _wheels[i].setWithModuleState(moduleStates[i]);
+        }
+    }
+
     public Wheel[] getWheels() {
         return _wheels;
     }
@@ -222,6 +240,10 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     @Log (name="Gyro Heading")
     public double getHeading() {
       return -_sd.getGyro().getYaw().getValue();
+    }
+
+    public Rotation2d getRotation2d() {
+        return _sd.getGyro().getRotation2d();
     }
 
     /**
@@ -269,7 +291,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             zeroGyro();
         }
 
-        odometry.resetPosition(_sd.getGyro().getRotation2d(), modulePositions, pose); // TODO: reset modulePosition distance
+        odometry.resetPosition(getRotation2d(), modulePositions, pose); // TODO: reset modulePosition distance
     }
 
     /**
@@ -289,6 +311,9 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return chassisSpeeds;
     }
 
+    public void setDriveSpeeds(ChassisSpeeds robotRelSpeeds) {
+        chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelSpeeds, _sd.getGyro().getRotation2d());
+    }
 
     /**
      * Save the wheels' azimuth current position as read by absolute encoder. These values are saved
@@ -325,7 +350,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             modulePositions[i] = new SwerveModulePosition(Wheel.getDriveCircumferenceMeters() * _wheels[i].getDrivePosition(), 
             new Rotation2d(Wheel.rotToRadians(-_wheels[i].getAzimuthPosition()))); // negative for counterclockwise
         }
-        odometry.update(_sd.getGyro().getRotation2d(), modulePositions);
+        odometry.update(getRotation2d(), modulePositions);
+        field.setRobotPose(getPose());
     }
 }
 

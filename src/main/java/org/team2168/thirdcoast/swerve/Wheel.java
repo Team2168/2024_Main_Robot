@@ -12,6 +12,9 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
 
 /**
@@ -57,9 +60,9 @@ public class Wheel {
   private static final double DRIVE_SETPOINT_MAX = FREE_SPEED_RPS / 10.0; // rotations/100 ms, new phoenix 6 libs
   private final TalonFX driveTalon;
   private final TalonFX azimuthTalon;
-  private final DutyCycleOut percentOutDutyCycle;
-  private final VelocityVoltage velocityVoltage;
-  private final MotionMagicVoltage motionMagicVoltage;
+  private DutyCycleOut percentOutDutyCycle;
+  private VelocityVoltage velocityVoltage;
+  private MotionMagicVoltage motionMagicVoltage;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
   private static final int PRIMARY_PID = 0;
@@ -119,6 +122,12 @@ public class Wheel {
 
     azimuthTalon.setControl(motionMagicVoltage.withPosition((azimuthPosition + azimuthError)));
     driver.accept(drive);
+  }
+
+  public void setWithModuleState(SwerveModuleState modState) {
+    SwerveModuleState optimModState = SwerveModuleState.optimize(modState, new Rotation2d(getAzimuthPosition() * 2 * Math.PI)); // optimal module state
+    driveTalon.set(((optimModState.speedMetersPerSecond / DRIVE_CIRCUMFERENCE_M) / DRIVE_SETPOINT_MAX)); // returns m/s drive speed to percentage
+    azimuthTalon.setControl(new MotionMagicVoltage(optimModState.angle.getRotations()));
   }
 
   /**
@@ -418,6 +427,10 @@ public class Wheel {
 
   public static double getDriveSetpointMax() {
     return DRIVE_SETPOINT_MAX;
+  }
+
+  public static double getMaxVelocityMetersPerSec() {
+    return (DRIVE_SETPOINT_MAX * DRIVE_CIRCUMFERENCE_M);
   }
 
   public static double getAzimuthGearRatio() {
