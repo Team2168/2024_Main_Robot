@@ -10,7 +10,7 @@ import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.ExampleSubsystem;
-import org.team2168.subsystems.Intake;
+import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +28,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   static RobotContainer instance = null;
 
-  private final Intake intake = Intake.getInstance();
+  private final IntakeRoller intakeRoller = IntakeRoller.getInstance();
   private final IntakePivot intakePivot = IntakePivot.getInstance();
 
   OI oi = OI.getInstance();
