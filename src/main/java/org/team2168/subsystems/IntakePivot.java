@@ -54,8 +54,8 @@ public class IntakePivot extends SubsystemBase {
   private double motionMagicCruiseVelocity = 10.0;
   private double kV = 0.12;
   private double kA = 0.1;
-  final MotionMagicTorqueCurrentFOC motionMagicTorqueCurrent = new MotionMagicTorqueCurrentFOC(0); // TODO: change maybe to sensor offset
   private double sensorOffset = degreesToRot(-120);
+  final MotionMagicTorqueCurrentFOC motionMagicTorqueCurrent = new MotionMagicTorqueCurrentFOC(0); // TODO: change maybe to sensor offset
 
   private final double TICKS_PER_REV = 2048;
   private final static double GEAR_RATIO = 28.14;
@@ -119,6 +119,7 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerOne.apply(leaderMotorConfigs);
     intakeRaiseAndLowerOne.apply(currentConfigs);
     intakeRaiseAndLowerOne.apply(PIDconfigs);
+    intakeRaiseAndLowerOne.apply(softLimitsConfigs);
 
     intakeRaiseAndLowerTwo.apply(followerMotorConfigs);
     intakeRaiseAndLowerTwo.apply(currentConfigs);
