@@ -16,17 +16,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.annotations.Log;
 
 
-public class Intake extends SubsystemBase {
+public class IntakeRoller extends SubsystemBase {
   private static CANSparkMax intakeRollerOne = new CANSparkMax(CANDevices.intakeRoller, CANSparkLowLevel.MotorType.kBrushless);
- // private static CANSparkMax intakeRollerTwo = new CANSparkMax(2, CANSparkLowLevel.MotorType.kBrushless);
 
-  private static Intake instance = null;
+  private static IntakeRoller instance = null;
   
   private static RelativeEncoder intakeRollerEncoder = intakeRollerOne.getEncoder();
 
-  public static Intake getInstance() {
+  public static IntakeRoller getInstance() {
     if(instance == null)
-    instance = new Intake();
+    instance = new IntakeRoller();
     return instance;
   }
   
@@ -38,18 +37,13 @@ public class Intake extends SubsystemBase {
   private IdleMode coast = IdleMode.kCoast;
 
 
-  private Intake() {
+  private IntakeRoller() {
 
     intakeRollerOne.restoreFactoryDefaults();
-   // intakeRollerTwo.restoreFactoryDefaults();
 
     intakeRollerOne.setInverted(isInverted);
     intakeRollerOne.setIdleMode(coast);
     intakeRollerOne.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
-
-
-    //gives the motor intakeRollerTwo the same settings as intakeMotorOne
-   // intakeRollerTwo.follow(intakeRollerOne, true);
     
   }
   
@@ -61,11 +55,13 @@ public class Intake extends SubsystemBase {
   public void setRollerSpeed(double speed) {
     intakeRollerOne.set(speed);
   }
+
   /**
    * converts RPM to ticks per one hundred ms
    * @param speedRPM amount of speed in rpm
    * @return amount of ticks from rpm
    */
+
   private double RPMToTicksPerOneHundredMS(double speedRPM) {
     return (speedRPM/minuteInHundredMs) * (TICKS_PER_REV/GEAR_RATIO);
   }
