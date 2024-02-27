@@ -6,6 +6,7 @@ package org.team2168.subsystems;
 
 import java.lang.System.Logger;
 
+import org.team2168.Constants.CANDevices;
 import org.team2168.utils.TalonFXHelper;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -13,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -21,12 +23,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import io.github.oblarg.oblog.annotations.Log;
-
-
 public class Indexer extends SubsystemBase {
   /** Creates a new Indexer. */  
- private static TalonFX indexerMotor = new TalonFX(24);
+ private static TalonFX indexerMotor = new TalonFX(CANDevices.INDEXER_MOTOR);
  private static DigitalInput indexerDetector = new DigitalInput(0);
 
  public static SupplyCurrentLimitConfiguration indexerCurrentLimit;
@@ -36,6 +35,7 @@ public class Indexer extends SubsystemBase {
  public static final double TRIGGER_THRESHOLD_TIME = 0.02;
  public static final InvertedValue indexerInvert = InvertedValue.Clockwise_Positive;
  private static NeutralModeValue coast = NeutralModeValue.Coast;
+ private final DutyCycleOut outputRequest = new DutyCycleOut(0.0);
 
  private static Indexer instance = null;
 
@@ -61,7 +61,7 @@ public class Indexer extends SubsystemBase {
     indexerMotor.setNeutralMode(coast);
   }
 
-  private static Indexer getInstance() {
+  public static Indexer getInstance() {
     if(instance == null)
       instance = new Indexer();
     return instance;
@@ -72,17 +72,17 @@ public class Indexer extends SubsystemBase {
    * @param speed value should be between 1.0 and -1.0
    */
   public void setDriveIndexer(double speed) {
-    indexerMotor.set(speed);
+    indexerMotor.setControl(outputRequest.withOutput(speed));
   }
 
   /**
    * detects if a note is in the indexer
    * @return if or if not a note is in the indexer
    */
-  @Log(name = "Is note present?")
-  public boolean isNotePresent() {
-    return !indexerDetector.get();
-  }
+  //@Log(name = "Is note present?")
+  //public boolean isNotePresent() {
+  //  return !indexerDetector.get();
+  //}
 
   @Override
   public void periodic() {
