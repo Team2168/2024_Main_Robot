@@ -36,9 +36,25 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class Shooter extends SubsystemBase {
+
+  public enum SHOOTING_RPM {
+    UP_AGAINST_SPEAKER(1000), // placeholder
+    WHITE_LINE(5000),
+    RED_LINE(4000);
+
+    public double shooterRPS;
+
+    SHOOTING_RPM(double shooterRPS) {
+      this.shooterRPS = shooterRPS;
+    }
+
+  }
+
   private static Shooter instance = null;
   private TalonFX leftShooterMotor;
   private TalonFX rightShooterMotor;
@@ -50,8 +66,8 @@ public class Shooter extends SubsystemBase {
 
   private MotorOutputConfigs firstOutputConfigs;
 
-  private final double PEAK_FORWARD_DUTY_CYCLE = 0.9; // placeholder
-  private final double PEAK_REVERSE_DUTY_CYCLE = -0.9; // placeholder
+  private final double PEAK_FORWARD_DUTY_CYCLE = 1.0; // placeholder
+  private final double PEAK_REVERSE_DUTY_CYCLE = -1.0; // placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
 
   private double first_kP = 0.1; // placeholder
@@ -60,15 +76,17 @@ public class Shooter extends SubsystemBase {
   private double first_kVolts = 0.12; // placeholder
 
   private final double GEAR_RATIO = 2.345;
-  private final double ACCELERATION = rpmToRps(25); // placeholder
+  private final double ACCELERATION = 25 / 60; // placeholder
   private VelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
   private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
 
-  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() { //calculate motorspeed from distance using a interpolating lookup table.
+  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed from
+                                                                                         // distance using a
+                                                                                         // interpolating lookup table.
     {
       put(1.0, 1000.0); // these motorspeeds to meters values are all placeholders, need to actually
-                        // calculate appropriate motorspeed from corresponding distance;
+      // calculate appropriate motorspeed from corresponding distance;
       put(2.0, 2000.0);
       put(3.0, 3000.0);
       put(4.0, 4000.0);
@@ -119,10 +137,17 @@ public class Shooter extends SubsystemBase {
     leftShooterMotor.getConfigurator().apply(firstMotorConfiguration);
 
     rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
-    velocityVoltage.withAcceleration(rpmToRps(ACCELERATION));
+    velocityVoltage.withAcceleration(ACCELERATION);
     velocityVoltage.withSlot(0);
   }
 
+  /**
+   * automaticallly set shooter speed using distance from an object with an
+   * interpolation table.
+   * 
+   * @param distanceFromObject calculated distance from object, preferably using a
+   *                           camera such as limelight aiming at a apriltag
+   */
   public void setMotorSpeedFromDistance(double distanceFromObject) {
     double motorSpeedFromDistance = velocityLookup.get(distanceFromObject);
     setVelocity(motorSpeedFromDistance);
@@ -135,21 +160,42 @@ public class Shooter extends SubsystemBase {
     return instance;
   }
 
-  public double rpmToRps(double rpm) {
-    return (rpm * GEAR_RATIO) / 60;
+  /**
+   * convert rotations per second to rotations per minute
+   * 
+   * @param rps rotations per second
+   * @return rotations per minute
+   */
+  public double rpsToRpm(double rps) {
+    return rps * 60;
   }
 
+  /**
+   * set velocity of shooter using velocityVoltage API
+   * 
+   * @param velocity as rotations per second
+   */
   public void setVelocity(double velocity) {
-    leftShooterMotor.setControl(velocityVoltage.withVelocity(rpmToRps(velocity)));
-
+    leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity*GEAR_RATIO));
   }
 
+  /**
+   * set input of shooter using basic duty cycle out.
+   * 
+   * @param input power input between -1.0 and 1.0.
+   */
+  
   public void setPercentOutput(double input) {
     leftShooterMotor.setControl(percentOutput.withOutput(input));
   }
 
-  public StatusSignal<Double> getVelocity() {
-    return leftShooterMotor.getVelocity();
+  /**
+   * 
+   * @return velocity of shooter in rotations per second.
+   */
+  @Log(name="shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
+  public double getVelocity() {
+    return leftShooterMotor.getVelocity().getValue();
   }
 
   @Override

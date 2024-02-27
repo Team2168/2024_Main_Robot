@@ -22,8 +22,14 @@ public final class Constants {
   public static final class SHOOTER_MOTOR_CONSTANTS {
     public static final int LEFT_SHOOTER_ID = 26; //placeholder
     public static final int RIGHT_SHOOTER_ID = 27; //placeholder
-    public static final int SHOOTER_PIVOT_ID = 25; //placeholder
-    
-    
+    public static final int SHOOTER_PIVOT_ID = 25; //placeholder  
+  }
+
+  public static class Controllers {
+
+    public static final int DRIVER_JOYSTICK = 0;
+    public static final int OPERATOR_JOYSTICK = 1;
+    public static final int TEST_JOYSTICK = 5;
+  
   }
 }

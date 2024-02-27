@@ -2,19 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package org.team2168.commands.ShooterCommands;
+package org.team2168.commands.ShooterCommands.ShooterPivot;
 
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
+import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class SetShooterVelocity extends Command {
-  private Shooter shooter;
-  private double velocity;
-  
-  public SetShooterVelocity(Shooter shooter, double velocity) {
-    this.shooter = shooter;
-    this.velocity = velocity;
+public class BumpShooterAngleDown extends Command {
+  private ShooterPivot shooterPivot;
+  public BumpShooterAngleDown(ShooterPivot shooterPivot) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.shooterPivot = shooterPivot;
   }
 
   // Called when the command is initially scheduled.
@@ -24,13 +23,12 @@ public class SetShooterVelocity extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setVelocity(velocity);
+    shooterPivot.setPositionDegrees(shooterPivot.getAngle() - 1.0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
