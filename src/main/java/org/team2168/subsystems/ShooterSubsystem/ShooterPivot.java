@@ -67,13 +67,9 @@ public class ShooterPivot extends SubsystemBase {
   private SoftwareLimitSwitchConfigs rotationLimits;
   private DutyCycleOut percentOutput;
 
-  private InterpolatingDoubleTreeMap shooterAngleLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed
-                                                                                             // from
-    // distance using a
-    // interpolating lookup table.
+  private InterpolatingDoubleTreeMap shooterAngleLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed                                                                                            // from  // distance using a // interpolating lookup table.
     {
-      put(1.0, 80.0); // these motorspeeds to meters values are all placeholders, need to actually
-                      // calculate appropriate motorspeed from corresponding distance;
+      put(1.0, 80.0); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
       put(2.0, 70.0);
       put(3.0, 60.0);
       put(4.0, 50.0);

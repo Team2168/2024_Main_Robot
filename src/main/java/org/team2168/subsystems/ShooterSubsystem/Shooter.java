@@ -81,12 +81,9 @@ public class Shooter extends SubsystemBase {
   private DutyCycleOut percentOutput;
   private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
 
-  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed from
-                                                                                         // distance using a
-                                                                                         // interpolating lookup table.
+  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed from                                                                                      // distance using a                                                                                     // interpolating lookup table.
     {
-      put(1.0, 1000.0); // these motorspeeds to meters values are all placeholders, need to actually
-      // calculate appropriate motorspeed from corresponding distance;
+      put(1.0, 1000.0); // these motorspeeds to meters values are all placeholders, need to actually // calculate appropriate motorspeed from corresponding distance;
       put(2.0, 2000.0);
       put(3.0, 3000.0);
       put(4.0, 4000.0);
