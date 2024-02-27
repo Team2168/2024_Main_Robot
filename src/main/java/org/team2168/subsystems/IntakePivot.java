@@ -58,7 +58,7 @@ public class IntakePivot extends SubsystemBase {
   final MotionMagicTorqueCurrentFOC motionMagicTorqueCurrent = new MotionMagicTorqueCurrentFOC(0); // TODO: change maybe to sensor offset
 
   private final double TICKS_PER_REV = 2048;
-  private final static double GEAR_RATIO = 28.14;
+  private final static double GEAR_RATIO = 46.9;
 
   private double kP = 0;
   private double kI = 0;
