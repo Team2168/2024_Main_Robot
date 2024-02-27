@@ -28,19 +28,6 @@ import edu.wpi.first.math.controller.PIDController;
 import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FollowerType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
 public class Climber extends SubsystemBase {
 
   private CANSparkMax climberMotorLeft;
@@ -65,7 +52,7 @@ public class Climber extends SubsystemBase {
   private static final double kI = 0;// placeholder
   private static final double kD = 0;// placeholder
   //private static final double kF = 0;// placeholder
-  private static final double kArbitraryFeedForward = 0;// placeholder 
+  public static final double kArbitraryFeedForward = 0;// placeholder 
 
   private static final double NEUTRAL_DEADBAND = 0.001;
 
@@ -81,7 +68,6 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
 
-  public static final double gyroTilt = 0.0; //(placeholder variable)
   private static ElevatorSim climberSimLeft;
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
   private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
@@ -213,6 +199,10 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorLeft.setVoltage(volt);
   }
 
+  public void setLeftMaxVel(double maxvel){
+    m_leftpidController.setSmartMotionMaxVelocity(maxvel, 0);
+  }
+
   public void setRightMotorBrake() {
     climberMotorRight.setIdleMode(IdleMode.kBrake);
   }
@@ -246,21 +236,10 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotorRight.setVoltage(volt);
   }
 
-  public void setTiltEven(){
-    if (gyroTilt < 0){
-      m_rightpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
-      m_leftpidController.setSmartMotionMaxVelocity(kMaxVel + inchesToRotations(1), 0); //May require a PID Controller to work properly
-      m_leftpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
-       m_leftpidController.setSmartMotionMaxVelocity(kMaxVel, 0);
-    }
-    else if (gyroTilt > 0){
-      m_leftpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
-      m_rightpidController.setSmartMotionMaxVelocity(kMaxVel + inchesToRotations(1), 0);
-      m_rightpidController.setReference(inchesToRotations(0), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
-      m_rightpidController.setSmartMotionMaxVelocity(kMaxVel, 0);
-    }
+  public void setRightMaxVel(double maxvel){
+    m_rightpidController.setSmartMotionMaxVelocity(maxvel, 0);
   }
-  
+
   @Log(name = "Current Set Speed", rowIndex = 0, columnIndex = 0)
   public double getLeftCurrentSetSpeed(){
     return climberMotorLeft.get();
