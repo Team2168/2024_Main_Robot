@@ -10,51 +10,55 @@ import org.team2168.utils.TalonFXHelper;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Indexer extends SubsystemBase {
-  /** Creates a new Indexer. */
-  private static DigitalInput detector;
-private static TalonFXHelper motor;
+import io.github.oblarg.oblog.annotations.Log;
 
- private static TalonFX IndexerMotor = new TalonFX(24);
+
+public class Indexer extends SubsystemBase {
+  /** Creates a new Indexer. */  
+ private static TalonFX indexerMotor = new TalonFX(24);
+ private static DigitalInput indexerDetector = new DigitalInput(0);
 
  public static SupplyCurrentLimitConfiguration indexerCurrentLimit;
-  public static final boolean ENABLE_CURRENT_LIMIT = true;
+ public static final boolean ENABLE_CURRENT_LIMIT = true;
  public static final double CONTINUES_CURRENT_LIMIT = 20;
  public static final double TRIGGER_THRESHOLD_LIMIT = 30;
  public static final double TRIGGER_THRESHOLD_TIME = 0.02;
  public static final InvertedValue indexerInvert = InvertedValue.Clockwise_Positive;
-  
-private static Indexer instance = null;
+ private static NeutralModeValue coast = NeutralModeValue.Coast;
+
+ private static Indexer instance = null;
 
   private Indexer() {
-    detector = new DigitalInput(14); //placeholders for the time bieng
-    motor = new TalonFXHelper(24);
+    indexerMotor.getConfigurator().apply(new com.ctre.phoenix6.configs.TalonFXConfiguration());
+
     var currentConfigurations = new CurrentLimitsConfigs();
     var motorConfigs = new MotorOutputConfigs();
-IndexerMotor.getConfigurator().apply(new com.ctre.phoenix6.configs.TalonFXConfiguration());
-motorConfigs.withInverted(indexerInvert);
-var indexerConfigurator = IndexerMotor.getConfigurator();
 
-currentConfigurations
-.withSupplyCurrentLimitEnable(ENABLE_CURRENT_LIMIT)
-.withSupplyCurrentLimit(CONTINUES_CURRENT_LIMIT)
-.withSupplyCurrentThreshold(TRIGGER_THRESHOLD_LIMIT)
-.withSupplyTimeThreshold(TRIGGER_THRESHOLD_TIME);
+    motorConfigs.withInverted(indexerInvert);
 
-indexerConfigurator.apply(currentConfigurations);
-motor.setNeutralMode(NeutralMode.Brake);
+    currentConfigurations
+    .withSupplyCurrentLimitEnable(ENABLE_CURRENT_LIMIT)
+    .withSupplyCurrentLimit(CONTINUES_CURRENT_LIMIT)
+    .withSupplyCurrentThreshold(TRIGGER_THRESHOLD_LIMIT)
+    .withSupplyTimeThreshold(TRIGGER_THRESHOLD_TIME);
 
-motor.configOpenLoopStatusFrameRates();
+    var indexerConfigurator = indexerMotor.getConfigurator();
+
+    indexerConfigurator.apply(currentConfigurations);
+    indexerConfigurator.apply(motorConfigs);
+    
+    indexerMotor.setNeutralMode(coast);
   }
 
   private static Indexer getInstance() {
@@ -63,8 +67,22 @@ motor.configOpenLoopStatusFrameRates();
     return instance;
   }
 
+    /**
+   * sets the speed of the indexer
+   * @param speed value should be between 1.0 and -1.0
+   */
+  public void setDriveIndexer(double speed) {
+    indexerMotor.set(speed);
+  }
 
-  
+  /**
+   * detects if a note is in the indexer
+   * @return if or if not a note is in the indexer
+   */
+  @Log(name = "Is note present?")
+  public boolean isNotePresent() {
+    return !indexerDetector.get();
+  }
 
   @Override
   public void periodic() {
