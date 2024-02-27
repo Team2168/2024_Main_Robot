@@ -10,6 +10,7 @@ import org.team2168.utils.TalonFXHelper;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -63,8 +64,18 @@ motor.configOpenLoopStatusFrameRates();
     return instance;
   }
 
+  public void drive(double speed) {
+    motor.set(speed);
+  }
+   /**
+   * detects if a note is in the indexer
+   * @return if or if not a note is in the indexer
+   */
 
-  
+  //@Log(name = "Is note present?")
+  public boolean isNotePresent() {
+    return !detector.get();
+  }
 
   @Override
   public void periodic() {
