@@ -17,4 +17,9 @@ public final class Constants {
     final int INDEXER_SENSOR = 3; //placeholder for the time being
     public static final int kDriverControllerPort = 0;
   }
+
+  public static final class CANDevices {
+    public static final int INDEXER_MOTOR = 24;
+  }
 }
+
