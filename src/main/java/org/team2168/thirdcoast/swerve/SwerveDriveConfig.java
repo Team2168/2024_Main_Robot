@@ -20,7 +20,7 @@ public class SwerveDriveConfig {
   public double length = 21.25; // inches
 
   /** Wheel base width from left to right of robot. */
-  public double width = 21.25; // inches
+  public double width = 14.75; // inches
 
   /**
    * Robot period is the {@code TimedRobot} period in seconds, defaults to {@code
