@@ -126,12 +126,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         azimuthMotionMagicConfig.withMotionMagicAcceleration(150);
         azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
-        driveSlot0Config.withKP(0.5); //0.35
-        driveSlot0Config.withKI(0.001);
-        driveSlot0Config.withKD(0.4);
-        driveSlot0Config.withKV(0.1);  // 0.032 TODO: tune these
-        driveSlot0Config.withKA(0.1);
-        driveSlot0Config.withKS(0.005);
+        driveSlot0Config.withKP(10.0);
+        driveSlot0Config.withKI(1);
+        driveSlot0Config.withKD(0.0);
+        driveSlot0Config.withKV(0.001);  // TODO: tune these
+        driveSlot0Config.withKA(0.001);
+        driveSlot0Config.withKS(0.08);
         // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
         driveMotionMagicConfig.withMotionMagicAcceleration(30); // 500;
         driveMotionMagicConfig.withMotionMagicCruiseVelocity(15); // 100;
@@ -311,8 +311,14 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return chassisSpeeds;
     }
 
-    public void setDriveSpeeds(ChassisSpeeds robotRelSpeeds) {
+    public void driveToChassisSpeed(ChassisSpeeds robotRelSpeeds) {
         chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelSpeeds, _sd.getGyro().getRotation2d());
+
+        moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            _wheels[i].setWithModuleState(moduleStates[i]);
+        }
     }
 
     /**

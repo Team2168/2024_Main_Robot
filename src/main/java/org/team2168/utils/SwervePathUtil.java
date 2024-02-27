@@ -68,7 +68,7 @@ public class SwervePathUtil {
         return new FollowPathHolonomic(path,
         drive::getPose,
         drive::getChassisSpeeds,
-        drive::setDriveSpeeds, // TODO: verify that this will actually allow chassis to move
+        drive::driveToChassisSpeed, // TODO: verify that this will actually allow chassis to move
         pathFollowConfig,
         () -> getPathInvert(),
         drive);
