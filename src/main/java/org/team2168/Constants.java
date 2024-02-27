@@ -14,6 +14,7 @@ package org.team2168;
  */
 public final class Constants {
   public static class OperatorConstants {
+    final int INDEXER_SENSOR = 3; //placeholder for the time being
     public static final int kDriverControllerPort = 0;
   }
 }
