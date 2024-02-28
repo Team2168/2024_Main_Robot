@@ -36,7 +36,6 @@ public class SwervePathUtil {
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel),
         PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
-    
     public static boolean getPathInvert() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
         return alliance.get() == Alliance.Red;
@@ -58,7 +57,10 @@ public class SwervePathUtil {
             case PRESERVEHEADING:
                 drive.resetOdometry(initialPose, true);
             case DISCARDHEADING:
-                drive.resetOdometry(initialPose, false);
+                // drive.resetOdometry(initialPose, false);
+                drive.setHeading(-initialPose.getRotation().getDegrees()); // negative to convert ccw to cw
+                                                                            // setting heading to initial auto position will allow for
+                                                                            // field relative swerve driving after autos finish
         }
 
         return followPathPlannerCommand(pathName, drive);

@@ -234,6 +234,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     /**
+     * sets gyro heading (yaw) to specified value.
+     */
+    public void setHeading(double angleDeg) {
+        _sd.getGyro().setYaw(angleDeg);
+    }
+
+    /**
      *
      * @return the robot's heading (yaw) in degrees. Yaw positively increases in the CW direction TODO: verify this is accurate
      */
