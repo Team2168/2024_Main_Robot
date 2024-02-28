@@ -7,10 +7,16 @@ package org.team2168;
 import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
+import org.team2168.commands.LEDs.SetBlueLED;
+import org.team2168.commands.LEDs.SetGreenLED;
+import org.team2168.commands.LEDs.SetRedLED;
 import org.team2168.subsystems.ExampleSubsystem;
+import org.team2168.subsystems.LEDs;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import io.github.oblarg.oblog.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final OI oi = OI.getInstance();
+  private final LEDs leds = new LEDs();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -28,23 +36,29 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    Logger.configureLoggingAndConfig(this, false);
     // Configure the trigger bindings
     configureBindings();
   }
 
+  
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+   * predicate, or via the named factories in {@Link
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@Link
    * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
   private void configureBindings() {
+    oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
+    oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
+    oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // new Trigger(m_exampleSubsystem::exampleCondition)
+    //     .OnTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
