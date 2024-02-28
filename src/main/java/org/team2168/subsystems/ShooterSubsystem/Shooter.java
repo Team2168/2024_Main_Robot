@@ -45,7 +45,8 @@ public class Shooter extends SubsystemBase {
   public enum SHOOTING_RPM {
     UP_AGAINST_SPEAKER(1000), // placeholder
     WHITE_LINE(5000),
-    RED_LINE(4000);
+    RED_LINE(4000),
+    UP_AGAINST_AMP(200);  //no provided f310 bindings for this on the button bindings paper.
 
     public double shooterRPS;
 
@@ -142,7 +143,7 @@ public class Shooter extends SubsystemBase {
    * automaticallly set shooter speed using distance from an object with an
    * interpolation table.
    * 
-   * @param distanceFromObject calculated distance from object, preferably using a
+   * @param distanceFromObject calculated distance from object in meters, preferably using a
    *                           camera such as limelight aiming at a apriltag
    */
   public void setMotorSpeedFromDistance(double distanceFromObject) {

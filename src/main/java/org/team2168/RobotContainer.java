@@ -41,7 +41,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController = new CommandXboxController(
       OperatorConstants.kDriverControllerPort);
-  private final F310 operatorJoystick = OI.getInstance().operatorJoystick;
+  private final F310 testJoystick = OI.getInstance().testJoystick;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -76,13 +76,13 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPM.WHITE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.WHITE_LINE.shooterAngle));
-    operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPM.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
-    operatorJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelightDistanceMeters));
-    operatorJoystick.ButtonUpDPad().whileTrue(new BumpShooterSpeed(shooter));
-    operatorJoystick.ButtonDownDPad().whileTrue(new BumpShooterSpeedDown(shooter));
-    operatorJoystick.ButtonStart().whileTrue(new BumpShooterAngle(shooterPivot));
-    operatorJoystick.ButtonBack().whileTrue(new BumpShooterAngleDown(shooterPivot));
+    testJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPM.WHITE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.WHITE_LINE.shooterAngle));
+    testJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPM.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
+    testJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelightDistanceMeters));
+    testJoystick.ButtonUpDPad().whileTrue(new BumpShooterSpeed(shooter));
+    testJoystick.ButtonDownDPad().whileTrue(new BumpShooterSpeedDown(shooter));
+    testJoystick.ButtonStart().whileTrue(new BumpShooterAngle(shooterPivot));
+    testJoystick.ButtonBack().whileTrue(new BumpShooterAngleDown(shooterPivot));
   }
 
   /**

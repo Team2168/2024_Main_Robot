@@ -21,7 +21,7 @@ public class BumpShooterSpeedDown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setVelocity(shooter.getVelocity() - 25);
+    shooter.setVelocity(shooter.getVelocity() - 10);
   }
 
   // Called once the command ends or is interrupted.

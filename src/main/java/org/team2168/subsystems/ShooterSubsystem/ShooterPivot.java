@@ -30,7 +30,8 @@ public class ShooterPivot extends SubsystemBase {
   public enum SHOOTING_ANGLE {
     UP_AGAINST_SPEAKER(87.5), // placeholder
     WHITE_LINE(25.0),
-    RED_LINE(35.0);
+    RED_LINE(35.0),
+    UP_AGAINST_AMP(89.0); //no provided f310 bindings for this on the button bindings paper.
 
     public double shooterAngle;
 
@@ -161,7 +162,12 @@ public class ShooterPivot extends SubsystemBase {
   public void setToStowAngle() {
     pivotMotor.setControl(motionMagic.withPosition(Units.degreesToRotations(STOW_ANGLE)));
   }
-
+  /**
+   * automaticallly set shooter hood angle using distance from an object with an
+   * interpolation table.
+   * @param distanceFromObject calculated distance from object in meters, preferably using a
+   *                           camera such as limelight aiming at a apriltag
+   */
   public void setShooterAngleFromDistance(double distanceFromObject) {
     double shooterAngle = shooterAngleLookup.get(distanceFromObject);
     setPositionDegrees(shooterAngle);
