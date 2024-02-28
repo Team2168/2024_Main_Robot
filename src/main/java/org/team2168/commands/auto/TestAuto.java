@@ -21,7 +21,7 @@ public class TestAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      SwervePathUtil.getPathCommand("B_Score_1_Note_1", drivetrain, InitialPathState.PRESERVEODOMETRY);
+      SwervePathUtil.getPathCommand("B_Score_1_Note_1", drivetrain, InitialPathState.DISCARDHEADING)
     );
   }
 }

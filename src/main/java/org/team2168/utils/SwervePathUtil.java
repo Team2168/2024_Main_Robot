@@ -29,14 +29,15 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /** Add your docs here. */
 public class SwervePathUtil {
-    private SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
-    private ReplanningConfig replanningConfig = new ReplanningConfig();
-    private HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
+    private static final double PATH_MAX_VEL = 4.0; // m/s
+    private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
+    private static ReplanningConfig replanningConfig = new ReplanningConfig();
+    private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel),
-        Wheel.getMaxVelocityMetersPerSec(), Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
+        PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
     
-    public boolean getPathInvert() {
+    public static boolean getPathInvert() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
         return alliance.get() == Alliance.Red;
     }
@@ -47,7 +48,7 @@ public class SwervePathUtil {
         DISCARDHEADING,
     }
 
-    public Command getPathCommand(String pathName, Drivetrain drive, InitialPathState pathState) {
+    public static Command getPathCommand(String pathName, Drivetrain drive, InitialPathState pathState) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
         Pose2d initialPose = path.getPreviewStartingHolonomicPose();
         
@@ -63,13 +64,13 @@ public class SwervePathUtil {
         return followPathPlannerCommand(pathName, drive);
     }
 
-    public Command followPathPlannerCommand(String pathName, Drivetrain drive) {
+    public static Command followPathPlannerCommand(String pathName, Drivetrain drive) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
         return new FollowPathHolonomic(path,
         drive::getPose,
         drive::getChassisSpeeds,
         drive::driveToChassisSpeed, // TODO: verify that this will actually allow chassis to move
-        pathFollowConfig,
+        SwervePathUtil.pathFollowConfig,
         () -> getPathInvert(),
         drive);
     }
