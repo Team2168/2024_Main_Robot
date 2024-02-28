@@ -110,7 +110,7 @@ public class IntakePivot extends SubsystemBase {
     softLimitsConfigs
       .withForwardSoftLimitThreshold(degreesToRot(30))
       .withForwardSoftLimitEnable(true)
-      .withReverseSoftLimitThreshold(degreesToRot(-90))
+      .withReverseSoftLimitThreshold(degreesToRot(-80))
       .withReverseSoftLimitEnable(true);
 
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
