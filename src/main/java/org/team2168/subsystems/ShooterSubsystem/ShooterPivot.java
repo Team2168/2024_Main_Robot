@@ -95,6 +95,7 @@ public class ShooterPivot extends SubsystemBase {
 
     motionMagicConfigs.withMotionMagicAcceleration(degreesPerSecondToRotationsPerSecond(36)); // placeholder
     motionMagicConfigs.withMotionMagicCruiseVelocity(degreesPerSecondToRotationsPerSecond(18)); // placeholder
+    motionMagicConfigs.withMotionMagicJerk(Units.degreesToRotations(0.0025)); //modifying jerk appears to be a necessary config for motion magic according to MotionMagicVoltage.
     // motionMagicConfigs.withMotionMagicJerk(degreesPerSecondToRotationsPerSecond(0.03));
     // //placeholder
 
