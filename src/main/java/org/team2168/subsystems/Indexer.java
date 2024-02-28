@@ -38,7 +38,8 @@ private static TalonFXHelper motor;
 private static Indexer instance = null;
 
   private Indexer() {
-    detector = new DigitalInput(14); //placeholders for the time bieng
+       TalonFX indexerMotor = new TalonFX(24);
+    detector = new DigitalInput(24); //placeholders for the time bieng
     motor = new TalonFXHelper(24);
     var currentConfigurations = new CurrentLimitsConfigs();
     var motorConfigs = new MotorOutputConfigs();
@@ -64,8 +65,8 @@ motor.configOpenLoopStatusFrameRates();
     return instance;
   }
 
-  public void drive(double speed) {
-    motor.set(speed);
+ public void setDriveIndexer(double speed) {
+    IndexerMotor.set(speed);
   }
    /**
    * detects if a note is in the indexer
