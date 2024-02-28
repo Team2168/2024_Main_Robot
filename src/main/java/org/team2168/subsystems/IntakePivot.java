@@ -120,12 +120,13 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerOne.apply(currentConfigs);
     intakeRaiseAndLowerOne.apply(PIDconfigs);
     intakeRaiseAndLowerOne.apply(softLimitsConfigs);
+    intakeRaiseAndLowerOne.apply(motionMagicConfigs);
 
     intakeRaiseAndLowerTwo.apply(followerMotorConfigs);
     intakeRaiseAndLowerTwo.apply(currentConfigs);
-    // intakeRaiseAndLower.apply(motionMagicConfigs);
+    intakeRaiseAndLowerTwo.apply(motionMagicConfigs);
 
-    intakePivotOne.setNeutralMode(NeutralModeValue.Coast);
+    intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
 
     intakePivotOne.setPosition(sensorOffset);
     
