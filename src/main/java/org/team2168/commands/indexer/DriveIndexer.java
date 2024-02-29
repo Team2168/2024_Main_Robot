@@ -27,7 +27,7 @@ public class DriveIndexer extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.setDriveIndexer(0);
+    indexer.setDriveIndexer(speed.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
