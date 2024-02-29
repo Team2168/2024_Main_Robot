@@ -59,6 +59,7 @@ public class RobotContainer {
         .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
+    // drivetrain.setDefaultCommand(new DriveWithChassisSpeedsJoystick(drivetrain)); // TODO: test if this command works to verify chassisSpeed movement
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
