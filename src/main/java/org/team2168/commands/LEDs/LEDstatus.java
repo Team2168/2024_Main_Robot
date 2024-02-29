@@ -5,15 +5,16 @@
 //checklist
 //make sure that leds connect to certain functions of my choosing, and make sure they work sucesfully
 package org.team2168.commands.LEDs;
-
 import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class LEDstatus extends Command {
   /** Creates a new LEDstatus. */
-  public LEDstatus() {
+  private LEDs leds;
+  public LEDstatus(LEDs leds) {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(leds);
   }
 
   // Called when the command is initially scheduled.
