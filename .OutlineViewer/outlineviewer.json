@@ -1,14 +1,11 @@
 {
-    "Clients": {
-      "open": true
-    },
-    "NetworkTables Settings": {
-      "mode": "Server"
-    },
-    "Persistent Values": {
-      "open": false
-    },
-    "Server": {
-      "open": true
-    }
+  "Clients": {
+    "open": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Server"
+  },
+  "Server": {
+    "open": true
   }
+}
