@@ -10,7 +10,7 @@ import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.ExampleSubsystem;
-import org.team2168.subsystems.Indexer;
+//import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
 
@@ -36,7 +36,7 @@ public class RobotContainer {
 
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  private final Indexer indexer = Indexer.getInstance();
+  //private final Indexer indexer = Indexer.getInstance();
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -69,10 +69,10 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    oi.testJoystick.ButtonA().onTrue(new SetIntakeSpeed(null, 1.0));
-    oi.testJoystick.ButtonB().onTrue(new SetIntakeSpeed(null, 0.5));
-    oi.testJoystick.ButtonX().onTrue(new SetIntakeSpeed(null, -1.0));
-    oi.testJoystick.ButtonY().onTrue(new SetIntakeSpeed(null, -0.5));
+    oi.testJoystick.ButtonA().whileTrue(new SetIntakeSpeed(intakeRoller, .35)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
+    oi.testJoystick.ButtonB().whileTrue(new SetIntakeSpeed(intakeRoller, 0.45));
+    oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
+    oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
 
     oi.testJoystick.ButtonRightDPad().onTrue(new SetIntakePivotPosition(intakePivot, -20));
     oi.testJoystick.ButtonLeftDPad().onTrue(new SetIntakePivotPosition(intakePivot, -50));
