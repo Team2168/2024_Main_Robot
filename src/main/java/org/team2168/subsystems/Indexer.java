@@ -79,10 +79,10 @@ public class Indexer extends SubsystemBase {
    * detects if a note is in the indexer
    * @return if or if not a note is in the indexer
    */
-  //@Log(name = "Is note present?")
-  //public boolean isNotePresent() {
-  //  return !indexerDetector.get();
-  //}
+  @Log(name = "Is note present?")
+  public boolean isNotePresent() {
+   return !indexerDetector.get();
+  }
 
   @Override
   public void periodic() {
