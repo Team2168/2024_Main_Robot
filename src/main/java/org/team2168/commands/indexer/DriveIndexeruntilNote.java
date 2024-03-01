@@ -10,17 +10,18 @@ import org.team2168.subsystems.Indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class DriveIndexer extends Command {
+public class DriveIndexeruntilNote extends Command {
   private Indexer indexer;
   private DoubleSupplier speed;
-/** it drives the indexer at a certian speed
+ /** it drives the indexer until there is a note
    * @param indexer indexer subsystem to be used for method
    * @param speed to set the indexer at
    */
-  public DriveIndexer(Indexer indexer, DoubleSupplier speed) {
+  public DriveIndexeruntilNote(Indexer indexer, DoubleSupplier speed) {
     this.indexer = indexer;
     this.speed = speed;
     addRequirements(indexer);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -42,6 +43,6 @@ public class DriveIndexer extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return indexer.isNotePresent();
   }
 }
