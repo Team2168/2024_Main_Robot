@@ -328,6 +328,10 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
     }
 
+    public ChassisSpeeds getChassisSpeedFromModuleStates() {
+
+    }
+
     /**
      * Save the wheels' azimuth current position as read by absolute encoder. These values are saved
      * persistently on the roboRIO and are normally used to calculate the relative encoder offset
