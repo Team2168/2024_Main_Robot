@@ -9,14 +9,17 @@ import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.Drivetrain.ZeroSwerve;
+import org.team2168.commands.auto.TestAuto;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.utils.F310;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Log;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,11 +40,16 @@ public class RobotContainer {
   
   private final F310 driverJoystick = oi.driverJoystick;
 
+  @Log (name = "Auto Chooser", width = 2)
+  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     Logger.configureLoggingAndConfig(this, false);
+    
     configureBindings();
+    configureAutonomousRoutines();
   }
 
   /**
@@ -64,6 +72,10 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     // oi.driverJoystick.ButtonX().onTrue(new ZeroSwerve(drivetrain));
+  }
+
+  private void configureAutonomousRoutines() {
+    autoChooser.setDefaultOption("Test", new TestAuto(drivetrain));
   }
 
   /**
