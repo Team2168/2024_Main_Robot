@@ -1,0 +1,62 @@
+package org.team2168.commands.Drivetrain;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+
+import org.team2168.OI;
+import org.team2168.subsystems.Drivetrain;
+
+public class DriveWithJoystick extends Command {
+
+    private OI oi;
+    private Drivetrain drivetrain;
+    private double chassisRot = 0.0;
+
+
+    public DriveWithJoystick(Drivetrain drivetrain) {
+        // Use addRequirements() here to declare subsystem dependencies.
+    
+        this.drivetrain = drivetrain;
+    
+        addRequirements(drivetrain);
+      }
+
+    // Called when the command is initially scheduled.
+      @Override
+      public void initialize() {
+        oi = OI.getInstance();
+      }
+
+      public void execute() {
+      // chooses button or joystick option for rotating chassis
+        if (OI.joystickChooser.getSelected().equals("flight")) {
+          if (oi.driverJoystick.isPressedButtonA()) {
+            chassisRot = 0.35;
+          }
+          else if (oi.driverJoystick.isPressedButtonB()) {
+            chassisRot = -0.35;
+          }
+          else {
+            chassisRot = 0.0;
+          }
+        }
+        else {
+          chassisRot = oi.getDriverJoystickZValue();
+        }
+
+        if (SmartDashboard.getString("Control Mode", "Joystick").equals("Joystick")) {
+          drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), chassisRot);
+        }
+        else {
+          drivetrain.stop();
+          // drivetrain.drive(SmartDashboard.getNumber("Drive Forward", 0.0), SmartDashboard.getNumber("Drive Strafe", 0.0), SmartDashboard.getNumber("Drive Azimuth", 0.0));
+        }
+        SmartDashboard.putNumber("Joystick Y", oi.getDriverJoystickYValue());
+        SmartDashboard.putNumber("Joystick X", oi.getDriverJoystickXValue());
+        SmartDashboard.putNumber("Joystick Z", oi.getDriverJoystickZValue());
+      }
+    
+
+
+    
+}
