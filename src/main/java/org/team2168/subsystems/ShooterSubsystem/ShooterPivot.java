@@ -93,9 +93,9 @@ public class ShooterPivot extends SubsystemBase {
     rotationLimits = pivotMotorConfigs.SoftwareLimitSwitch;
     percentOutput = new DutyCycleOut(0.0);
 
-    motionMagicConfigs.withMotionMagicAcceleration(degreesPerSecondToRotationsPerSecond(36)); // placeholder
-    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesPerSecondToRotationsPerSecond(18)); // placeholder
-    motionMagicConfigs.withMotionMagicJerk(Units.degreesToRotations(0.0025)); //modifying jerk appears to be a necessary config for motion magic according to MotionMagicVoltage.
+    motionMagicConfigs.withMotionMagicAcceleration(degreesToRotation(36)); // placeholder
+    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(18)); // placeholder
+    motionMagicConfigs.withMotionMagicJerk(degreesToRotation(0.0025)); //modifying jerk appears to be a necessary config for motion magic according to MotionMagicVoltage.
     // motionMagicConfigs.withMotionMagicJerk(degreesPerSecondToRotationsPerSecond(0.03));
     // //placeholder
 
@@ -140,14 +140,14 @@ public class ShooterPivot extends SubsystemBase {
     pivotMotor.setControl(percentOutput.withOutput(input));
   }
 
-  /**
-   * convert degrees per second to rotations per second.
+   /**
+   * convert degrees to rotations.
    * 
-   * @param degreesPerSecond
+   * @param degrees
    * @return rotations per second.
    */
-  public double degreesPerSecondToRotationsPerSecond(double degreesPerSecond) {
-    return degreesPerSecond / 360;
+  public double degreesToRotation(double degrees) {
+    return Units.degreesToRotations(degrees)*GEAR_RATIO;
   }
 
   /**
@@ -156,12 +156,12 @@ public class ShooterPivot extends SubsystemBase {
    * @param degrees
    */
   public void setPositionDegrees(double degrees) {
-    pivotMotor.setControl(motionMagic.withPosition(Units.degreesToRotations(degrees)));
+    pivotMotor.setControl(motionMagic.withPosition(degreesToRotation(degrees)));
   }
 
   /** Preset the stow angle of the shooter hood (80 degrees) */
   public void setToStowAngle() {
-    pivotMotor.setControl(motionMagic.withPosition(Units.degreesToRotations(STOW_ANGLE)));
+    pivotMotor.setControl(motionMagic.withPosition(degreesToRotation(STOW_ANGLE)));
   }
   /**
    * automaticallly set shooter hood angle using distance from an object with an
