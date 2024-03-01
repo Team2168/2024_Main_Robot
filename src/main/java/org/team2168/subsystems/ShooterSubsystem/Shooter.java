@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -78,7 +79,7 @@ public class Shooter extends SubsystemBase {
 
   private final double GEAR_RATIO = 2.345;
   private final double ACCELERATION = 25 / 60; // placeholder
-  private VelocityVoltage velocityVoltage;
+  private MotionMagicVelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
   private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
 
@@ -102,7 +103,7 @@ public class Shooter extends SubsystemBase {
     firstFeedbackConfigs = new FeedbackConfigs();
     firstOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
-    velocityVoltage = new VelocityVoltage(0.0);
+    velocityVoltage = new MotionMagicVelocityVoltage(0.0);
     percentOutput = new DutyCycleOut(0.0);
 
     leftShooterMotor.clearStickyFaults();
