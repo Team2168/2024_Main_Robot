@@ -19,6 +19,8 @@ import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
 
+import org.team2168.subsystems.Limelight;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -46,6 +48,7 @@ public class RobotContainer {
 
   //private final Indexer indexer = Indexer.getInstance();
 
+  private final Limelight limelight = new Limelight();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
