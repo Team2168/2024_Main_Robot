@@ -109,10 +109,10 @@ public class IntakePivot extends SubsystemBase {
       .withMotionMagicExpo_kV(kV);
 
     softLimitsConfigs
-      .withForwardSoftLimitThreshold(degreesToRot(30))
-      .withForwardSoftLimitEnable(false)
-      .withReverseSoftLimitThreshold(degreesToRot(-80))
-      .withReverseSoftLimitEnable(false);
+      .withForwardSoftLimitThreshold(degreesToRot(5.0)) // extra five degrees for error tolerance
+      .withForwardSoftLimitEnable(true)
+      .withReverseSoftLimitThreshold(degreesToRot(-125.0)) // extra five degrees for error tolerance
+      .withReverseSoftLimitEnable(true);
 
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
     var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
