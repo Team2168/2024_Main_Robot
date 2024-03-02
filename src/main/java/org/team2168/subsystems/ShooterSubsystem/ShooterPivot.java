@@ -94,8 +94,8 @@ public class ShooterPivot extends SubsystemBase {
     rotationLimits = pivotMotorConfigs.SoftwareLimitSwitch;
     percentOutput = new DutyCycleOut(0.0);
 
-    motionMagicConfigs.withMotionMagicAcceleration(degreesToRotation(36)); // placeholder
-    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(18)); // placeholder
+    motionMagicConfigs.withMotionMagicAcceleration(degreesToRotation(10)); // placeholder, original 36
+    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(5)); // placeholder, original 18, 36/2
     motionMagicConfigs.withMotionMagicJerk(degreesToRotation(0.0025)); //modifying jerk appears to be a necessary config for motion magic according to MotionMagicVoltage.
     // motionMagicConfigs.withMotionMagicJerk(degreesPerSecondToRotationsPerSecond(0.03));
     // //placeholder
