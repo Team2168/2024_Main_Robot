@@ -329,7 +329,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     public ChassisSpeeds getChassisSpeedFromModuleStates() {
+        SwerveModuleState[] moduleStatesToConvert = new SwerveModuleState[SwerveDrive.getWheelCount()];
 
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            moduleStatesToConvert[i] = new SwerveModuleState(
+                _wheels[i].getDWSpeed() * Wheel.getDriveCircumferenceMeters(), // current wheel speed
+                new Rotation2d(Wheel.rotToRadians(_wheels[i].getAzimuthPosition())) // current module speed
+            );
+        }
+
+        return ChassisSpeeds.fromRobotRelativeSpeeds(swerveKinematics.toChassisSpeeds(moduleStatesToConvert), getRotation2d()); // TODO: verify that this actually converts to field relative
     }
 
     /**
