@@ -20,8 +20,8 @@ public class QueueNote extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      raceWith(new DriveIndexeruntilNote(indexer, () -> 0.4),
-      new SetIntakeSpeed(iRoller, 0.4))
+      new SetIntakeSpeed(iRoller, 0.6).raceWith(new DriveIndexeruntilNote(indexer, () -> 0.6)
+      )
     );
   }
 }

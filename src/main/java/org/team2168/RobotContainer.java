@@ -7,7 +7,9 @@ package org.team2168;
 import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
+import org.team2168.commands.QueueNote;
 import org.team2168.commands.indexer.DriveIndexer;
+import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -72,19 +74,11 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    oi.testJoystick.ButtonA().whileTrue(new SetIntakeSpeed(intakeRoller, .35)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
-    oi.testJoystick.ButtonB().whileTrue(new SetIntakeSpeed(intakeRoller, 0.45));
     // oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
     // oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
-    oi.testJoystick.ButtonX().whileTrue(new DriveIndexer(indexer, () -> 1.0));
-    oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, 0.6));
-
-    oi.testJoystick.ButtonRightDPad().onTrue(new SetIntakePivotPosition(intakePivot, -120));
-    oi.testJoystick.ButtonLeftDPad().onTrue(new SetIntakePivotPosition(intakePivot, -50));
-    oi.testJoystick.ButtonDownDPad().onTrue(new SetIntakePivotPosition(intakePivot, -90));
-    oi.testJoystick.ButtonUpDPad().onTrue(new SetIntakePivotPosition(intakePivot, 0));
-    oi.testJoystick.ButtonLeftTrigger().onTrue(new SetIntakePivotPosition(intakePivot, -40));
-    oi.testJoystick.ButtonRightTrigger().onTrue(new SetIntakePivotPosition(intakePivot, -10));
+    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new QueueNote(intakeRoller, indexer));
+    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 
   }
 

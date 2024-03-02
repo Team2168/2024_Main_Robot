@@ -14,6 +14,7 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -50,20 +51,20 @@ public class IntakePivot extends SubsystemBase {
   private double maxBackwardOutput = -1;
   final double MIN_ANGLE = -120;
   final double MAX_ANGLE = 0;
-  private double motionMagicAcceleration = 2.0;
-  private double motionMagicCruiseVelocity = 2.0;
+  private double motionMagicAcceleration = 9.0;
+  private double motionMagicCruiseVelocity = 4.0;
   private double kV = 0.12;
   private double kA = 0.1;
   private double sensorOffset = degreesToRot(-120);
-  final MotionMagicTorqueCurrentFOC motionMagicTorqueCurrent = new MotionMagicTorqueCurrentFOC(0); // TODO: change maybe to sensor offset
+  final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0.0); // TODO: change maybe to sensor offset
 
   private final double TICKS_PER_REV = 2048;
-  private final static double GEAR_RATIO = 46.9;
+  private final static double GEAR_RATIO = 10.0;
 
-  private double kP = 1.0;
+  private double kP = 10.0;
   private double kI = 0;
-  private double kD = 0;
-  private double kG = -0.05;
+  private double kD = 0.3;
+  private double kG = -0.75;
   private GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
 
@@ -109,9 +110,9 @@ public class IntakePivot extends SubsystemBase {
 
     softLimitsConfigs
       .withForwardSoftLimitThreshold(degreesToRot(30))
-      .withForwardSoftLimitEnable(true)
+      .withForwardSoftLimitEnable(false)
       .withReverseSoftLimitThreshold(degreesToRot(-80))
-      .withReverseSoftLimitEnable(true);
+      .withReverseSoftLimitEnable(false);
 
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
     var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
@@ -125,13 +126,14 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerTwo.apply(followerMotorConfigs);
     intakeRaiseAndLowerTwo.apply(currentConfigs);
     intakeRaiseAndLowerTwo.apply(motionMagicConfigs);
+    intakeRaiseAndLowerTwo.apply(PIDconfigs);
 
     intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
 
     intakePivotOne.setPosition(sensorOffset);
     
     //sets the same settings to the motor intakePivotTwo from intakePivotOne
-    intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), false));
+    intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
   /**
@@ -166,8 +168,13 @@ public class IntakePivot extends SubsystemBase {
    * @param degrees amount of degrees of position
    */
   public void setIntakePivotPosition(double degrees) {
-    var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
-    intakePivotOne.setControl(motionMagicTorqueCurrent.withPosition((degreesToRot(demand))));
+    //var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
+    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(degrees))));
+    //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), false));
+  }
+
+  public void setSpeed(double percentOutput) {
+    intakePivotOne.set(percentOutput);
   }
 
   @Log(name = "Position (deg)", rowIndex = 0, columnIndex = 0)
