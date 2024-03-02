@@ -124,6 +124,8 @@ public class ShooterPivot extends SubsystemBase {
     rotationLimits.withReverseSoftLimitThreshold(MINIMUM_LIMIT_ANGLE);
 
     pivotMotor.getConfigurator().apply(pivotMotorConfigs);
+
+    setToStowAngle();
   }
 
   public static ShooterPivot getInstance() {

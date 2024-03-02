@@ -101,7 +101,6 @@ public class Shooter extends SubsystemBase {
     rightShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.RIGHT_SHOOTER_ID);
     firstMotorConfiguration = new TalonFXConfiguration();
     currentLimitConfigs = new CurrentLimitsConfigs();
-    firstFeedbackConfigs = new FeedbackConfigs();
     firstOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
     velocityVoltage = new MotionMagicVelocityTorqueCurrentFOC(0.0);
@@ -195,7 +194,7 @@ public class Shooter extends SubsystemBase {
    */
   @Log(name="shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
   public double getVelocity() {
-    return leftShooterMotor.getVelocity().getValue();
+    return (leftShooterMotor.getVelocity().getValue())/GEAR_RATIO;
   }
 
   @Override
