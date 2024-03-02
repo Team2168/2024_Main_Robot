@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase {
  public static final double CONTINUES_CURRENT_LIMIT = 20;
  public static final double TRIGGER_THRESHOLD_LIMIT = 30;
  public static final double TRIGGER_THRESHOLD_TIME = 0.02;
- public static final InvertedValue indexerInvert = InvertedValue.Clockwise_Positive;
+ public static final InvertedValue indexerInvert = InvertedValue.CounterClockwise_Positive;
  private static NeutralModeValue coast = NeutralModeValue.Coast;
  private final DutyCycleOut outputRequest = new DutyCycleOut(0.0);
 
