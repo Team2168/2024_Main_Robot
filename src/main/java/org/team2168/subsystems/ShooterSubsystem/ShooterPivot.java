@@ -184,7 +184,7 @@ public class ShooterPivot extends SubsystemBase {
    */
   @Log(name = "shooter hood angle (degrees)", rowIndex = 0, columnIndex = 1)
   public double getAngle() {
-    return Units.rotationsToDegrees(pivotMotor.getPosition().getValue());
+    return (Units.rotationsToDegrees(pivotMotor.getPosition().getValue()))/GEAR_RATIO;
   }
 
   @Override
