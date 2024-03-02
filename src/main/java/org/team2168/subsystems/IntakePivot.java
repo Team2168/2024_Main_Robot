@@ -48,10 +48,10 @@ public class IntakePivot extends SubsystemBase {
   private double neutralDeadband = 0.05;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
-  final double MIN_ANGLE = 0;
-  final double MAX_ANGLE = 120;
-  private double motionMagicAcceleration = 5.0;
-  private double motionMagicCruiseVelocity = 10.0;
+  final double MIN_ANGLE = -90;
+  final double MAX_ANGLE = 0;
+  private double motionMagicAcceleration = 0.1;
+  private double motionMagicCruiseVelocity = 0.1;
   private double kV = 0.12;
   private double kA = 0.1;
   private double sensorOffset = degreesToRot(-120);
@@ -60,10 +60,10 @@ public class IntakePivot extends SubsystemBase {
   private final double TICKS_PER_REV = 2048;
   private final static double GEAR_RATIO = 46.9;
 
-  private double kP = 0;
+  private double kP = 0.1;
   private double kI = 0;
   private double kD = 0;
-  private double kG = 14;
+  private double kG = 0;
   private GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
 
