@@ -79,8 +79,8 @@ public class Shooter extends SubsystemBase {
   private double first_kVolts = 0.12; // placeholder
 
   private final double GEAR_RATIO = 2.345;
-  private final double ACCELERATION = 25 / 60; // placeholder
-  private MotionMagicVelocityTorqueCurrentFOC velocityVoltage;
+  private final double ACCELERATION = 5 / 60; // placeholder
+  private VelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
   private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
 
@@ -103,7 +103,7 @@ public class Shooter extends SubsystemBase {
     currentLimitConfigs = new CurrentLimitsConfigs();
     firstOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
-    velocityVoltage = new MotionMagicVelocityTorqueCurrentFOC(0.0);
+    velocityVoltage = new VelocityVoltage(0.0);
     percentOutput = new DutyCycleOut(0.0);
 
     leftShooterMotor.clearStickyFaults();

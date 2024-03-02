@@ -44,7 +44,7 @@ public class ShooterPivot extends SubsystemBase {
 
   private static ShooterPivot shooterPivot = null;
   private TalonFX pivotMotor;
-  private MotionMagicTorqueCurrentFOC motionMagic;
+  private MotionMagicVoltage motionMagic;
   private MotionMagicConfigs motionMagicConfigs;
   private TalonFXConfiguration pivotMotorConfigs;
   private Slot0Configs pivotMotorGains;
@@ -84,7 +84,7 @@ public class ShooterPivot extends SubsystemBase {
   public ShooterPivot() {
     pivotMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SHOOTER_PIVOT_ID);
     pivotMotorConfigs = new TalonFXConfiguration();
-    motionMagic = new MotionMagicTorqueCurrentFOC(0.0);
+    motionMagic = new MotionMagicVoltage(0.0);
     motionMagic.withSlot(0);
     motionMagicConfigs = pivotMotorConfigs.MotionMagic;
     pivotMotorGains = pivotMotorConfigs.Slot0;
