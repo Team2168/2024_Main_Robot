@@ -70,14 +70,17 @@ public class RobotContainer {
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
     oi.testJoystick.ButtonA().whileTrue(new SetIntakeSpeed(intakeRoller, .35)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
-    oi.testJoystick.ButtonB().whileTrue(new SetIntakeSpeed(intakeRoller, 0.45));
-    oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
-    oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
+    oi.testJoystick.ButtonB().whileTrue(new SetIntakeSpeed(intakeRoller, 0.45)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
+    oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
+    oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
 
     oi.testJoystick.ButtonRightDPad().onTrue(new SetIntakePivotPosition(intakePivot, -20));
     oi.testJoystick.ButtonLeftDPad().onTrue(new SetIntakePivotPosition(intakePivot, -50));
-    oi.testJoystick.ButtonDownDPad().onTrue(new SetIntakePivotPosition(intakePivot, 10));
+    oi.testJoystick.ButtonDownDPad().onTrue(new SetIntakePivotPosition(intakePivot, -90));
     oi.testJoystick.ButtonUpDPad().onTrue(new SetIntakePivotPosition(intakePivot, 0));
+    oi.testJoystick.ButtonLeftTrigger().onTrue(new SetIntakePivotPosition(intakePivot, -40));
+    oi.testJoystick.ButtonRightTrigger().onTrue(new SetIntakePivotPosition(intakePivot, -10));
+
   }
 
   /**
