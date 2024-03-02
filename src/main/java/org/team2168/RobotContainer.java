@@ -9,6 +9,7 @@ import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.Drivetrain.ZeroSwerve;
+import org.team2168.commands.auto.DoNothing;
 import org.team2168.commands.auto.TestAuto;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -85,6 +86,12 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    var auto = autoChooser.getSelected();
+    if (auto == null) {
+      return new DoNothing();
+    }
+    else {
+      return autoChooser.getSelected();
+    }
   }
 }
