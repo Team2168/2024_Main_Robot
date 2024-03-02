@@ -14,6 +14,7 @@ package org.team2168;
  */
 public final class Constants {
   public static class OperatorConstants {
+    final int INDEXER_SENSOR = 3; //placeholder for the time being
     public static final int kDriverControllerPort = 0;
   }
 
@@ -43,6 +44,11 @@ public final class Constants {
       public static final int[] CANCODER_ID = {CANCODER_0_CAN_ID, CANCODER_1_CAN_ID, CANCODER_2_CAN_ID, CANCODER_3_CAN_ID}; 
   
       public static final int PIGEON_CAN_ID = 17;
+
+      public static final int intakePivotL = 20;
+      public static final int intakePivotR = 21;
+      public static final int intakeRoller = 22;
+      public static final int INDEXER_MOTOR = 24;
     }
 
   public static class Controllers {
@@ -58,4 +64,11 @@ public final class Constants {
     public static double kvVoltSecondsPerMeter;
     public static double kaVoltSecondsSquaredPerMeter;
   }
+  public static final class Joysticks {
+    public static final int DRIVER_JOYSTICK = 0; //TODO: change value
+    public static final int OPERATOR_JOYSTICK = 1;
+    public static final int PID_TEST_JOYSTICK = 2;
+  }
+
 }
+
