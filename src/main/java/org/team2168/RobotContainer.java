@@ -10,12 +10,19 @@ import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.LEDs.SetBlueLED;
 import org.team2168.commands.LEDs.SetGreenLED;
 import org.team2168.commands.LEDs.SetRedLED;
+import org.team2168.commands.intakePivot.SetIntakePivotPosition;
+import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.LEDs;
+
+//import org.team2168.subsystems.Indexer;
+import org.team2168.subsystems.IntakeRoller;
+import org.team2168.subsystems.IntakePivot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -26,9 +33,19 @@ import io.github.oblarg.oblog.Logger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  static RobotContainer instance = null;
+
+  private final IntakeRoller intakeRoller = IntakeRoller.getInstance();
+  private final IntakePivot intakePivot = IntakePivot.getInstance();
+
+
+
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final OI oi = OI.getInstance();
   private final LEDs leds = new LEDs();
+
+  //private final Indexer indexer = Indexer.getInstance();
+
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -39,8 +56,10 @@ public class RobotContainer {
     Logger.configureLoggingAndConfig(this, false);
     // Configure the trigger bindings
     configureBindings();
+    Logger.configureLoggingAndConfig(this, false);
   }
 
+ 
   
 
   /**
@@ -63,6 +82,16 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+    oi.testJoystick.ButtonA().whileTrue(new SetIntakeSpeed(intakeRoller, .35)).onFalse(new SetIntakeSpeed(intakeRoller, 0));
+    oi.testJoystick.ButtonB().whileTrue(new SetIntakeSpeed(intakeRoller, 0.45));
+    oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
+    oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
+
+    oi.testJoystick.ButtonRightDPad().onTrue(new SetIntakePivotPosition(intakePivot, -20));
+    oi.testJoystick.ButtonLeftDPad().onTrue(new SetIntakePivotPosition(intakePivot, -50));
+    oi.testJoystick.ButtonDownDPad().onTrue(new SetIntakePivotPosition(intakePivot, 10));
+    oi.testJoystick.ButtonUpDPad().onTrue(new SetIntakePivotPosition(intakePivot, 0));
   }
 
   /**
@@ -74,4 +103,8 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return Autos.exampleAuto(m_exampleSubsystem);
   }
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
 }

@@ -23,14 +23,23 @@ public final class Constants {
     public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
   }
   public static class OperatorConstants {
+    final int INDEXER_SENSOR = 3; //placeholder for the time being
     public static final int kDriverControllerPort = 0;
   }
+
   public static final class Joysticks {
-    public static final int DRIVER_JOYSTICK = 0;
+    public static final int DRIVER_JOYSTICK = 0; //TODO: change value
     public static final int OPERATOR_JOYSTICK = 1;
-    public static final int BUTTON_BOX_1 = 2;
-    public static final int BUTTON_BOX_2 = 3;
-    public static final int DRIVER_OPERATOR_E_BACKUP = 4;
-    public static final int PID_TEST_JOYSTICK = 5;
+    public static final int PID_TEST_JOYSTICK = 2;
   }
+
+  public static final class CANDevices {
+    public static final int intakePivotL = 20;
+    public static final int intakePivotR = 21;
+    public static final int intakeRoller = 22;
+    public static final int INDEXER_MOTOR = 24;
+
+  }
+
 }
+
