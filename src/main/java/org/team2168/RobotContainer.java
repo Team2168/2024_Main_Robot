@@ -14,6 +14,7 @@ import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.utils.F310;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.indexer.DriveIndexer;
+import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
@@ -61,8 +62,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     Logger.configureLoggingAndConfig(this, false);
     configureBindings();
-    Logger.configureLoggingAndConfig(this, false);
-  }
+    }
 
  
   /**
@@ -90,6 +90,8 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new QueueNote(intakeRoller, indexer));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
+    oi.operatorJoystick.ButtonX().whileTrue(new DriveIndexeruntilNote(indexer, () -> 1.0));
+    oi.operatorJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, 0.6));
 
   }
 
