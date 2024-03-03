@@ -239,6 +239,11 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   public void setRightMaxVel(double maxvel){
     m_rightpidController.setSmartMotionMaxVelocity(maxvel, 0);
   }
+  
+  public void setBothPosition(double in){
+    m_leftpidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    m_rightpidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+  }
 
   @Log(name = "Current Set Speed", rowIndex = 0, columnIndex = 0)
   public double getLeftCurrentSetSpeed(){

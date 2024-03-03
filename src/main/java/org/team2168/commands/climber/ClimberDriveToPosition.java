@@ -30,8 +30,7 @@ public class ClimberDriveToPosition extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberLeft.setLeftPosition(inches);
-    climberRight.setRightPosition(inches);
+    climberLeft.setBothPosition(inches);
   }
 
   // Called once the command ends or is interrupted.
