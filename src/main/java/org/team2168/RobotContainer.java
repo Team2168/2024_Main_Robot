@@ -4,8 +4,11 @@
 
 package org.team2168;
 
+import javax.sql.ConnectionPoolDataSource;
+
 import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
+import org.team2168.commands.ContinuousNoteQueue;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.indexer.DriveIndexer;
@@ -76,7 +79,7 @@ public class RobotContainer {
 
     // oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
     // oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
-    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new QueueNote(intakeRoller, indexer));
+    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 
