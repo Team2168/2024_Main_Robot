@@ -7,6 +7,8 @@ package org.team2168;
 import org.team2168.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import org.team2168.subsystems.IntakePivot;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +23,8 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+
+  private IntakePivot intakePivot = IntakePivot.getInstance();
 
   private RobotContainer m_robotContainer;
   private Drivetrain drivetrain = Drivetrain.getInstance();
@@ -69,6 +73,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    intakePivot.setIntakePivotPosition(-120.0);
   }
 
   /** This function is called periodically during autonomous. */
@@ -89,6 +94,7 @@ public class Robot extends TimedRobot {
     if (DriverStation.getAlliance().get() == Alliance.Red) {
       drivetrain.setHeading(drivetrain.getHeading() + 180.0);
     }
+    intakePivot.setIntakePivotPosition(-120.0);
   }
 
   /** This function is called periodically during operator control. */
