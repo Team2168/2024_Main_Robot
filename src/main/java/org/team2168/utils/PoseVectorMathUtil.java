@@ -26,6 +26,7 @@ public class PoseVectorMathUtil {
     private static double xPoseDiffMeters;
     private static double yPoseDiffMeters;
     private static double closestZeroToHeading;
+    private static double rawAngleResult;
 
     private static final double ASSUMED_NOTE_SPEED = 3.0; // m/s
     private static double finalNoteSpeed = 0.0; // m/s
@@ -77,7 +78,14 @@ public class PoseVectorMathUtil {
 
         closestZeroToHeading = drive.getHeading() - (drive.getHeading() % 360.0); // in degrees
 
-        return (closestZeroToHeading - radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters))); // reverse sign of angle addition for ccw to cw
+        if (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) < 0.0) {
+            rawAngleResult = (closestZeroToHeading + (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) - 90.0)) % 360.0; // calculation based on robot zero facing away from speaker
+        }
+        else {
+            rawAngleResult = (closestZeroToHeading + (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) + 90.0)) % 360.0;
+        }
+
+        return (closestZeroToHeading + rawAngleResult); // reverse sign of angle addition for ccw to cw, then subtract angle due to inverted zero
     }
 
     /** 
@@ -107,7 +115,13 @@ public class PoseVectorMathUtil {
 
         closestZeroToHeading = drive.getHeading() - (drive.getHeading() % 360.0); // in degrees
 
-        return (closestZeroToHeading - radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))));
+        if (radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) < 0.0) {
+            rawAngleResult = (closestZeroToHeading + radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) - 90.0) % 360.0;
+        }
+        else {
+            rawAngleResult = (closestZeroToHeading + radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) + 90.0) % 360.0;
+        }
+        return (closestZeroToHeading + rawAngleResult);
     }
 
     public static double calcHeadingShootingWhileMoving(Drivetrain drive) {
