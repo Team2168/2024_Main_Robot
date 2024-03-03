@@ -22,6 +22,7 @@ import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.oblarg.oblog.Logger;
@@ -79,7 +80,8 @@ public class RobotContainer {
 
     // oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
     // oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
-    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
+    // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
+    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 
