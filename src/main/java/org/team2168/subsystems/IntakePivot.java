@@ -168,8 +168,8 @@ public class IntakePivot extends SubsystemBase {
    * @param degrees amount of degrees of position
    */
   public void setIntakePivotPosition(double degrees) {
-    //var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
-    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(degrees))));
+    var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
+    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), false));
   }
 
