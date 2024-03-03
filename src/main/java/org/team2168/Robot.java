@@ -4,7 +4,11 @@
 
 package org.team2168;
 
+import org.team2168.subsystems.Drivetrain;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
@@ -19,6 +23,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private Drivetrain drivetrain = Drivetrain.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -78,6 +83,11 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
+    }
+
+    // invert field-relative driver controls based on alliance color
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      drivetrain.setHeading(drivetrain.getHeading() + 180.0);
     }
   }
 
