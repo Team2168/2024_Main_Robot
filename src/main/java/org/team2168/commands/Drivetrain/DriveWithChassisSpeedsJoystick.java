@@ -8,6 +8,8 @@ import org.team2168.OI;
 import org.team2168.subsystems.Drivetrain;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DriveWithChassisSpeedsJoystick extends Command {
@@ -15,6 +17,7 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   Drivetrain drive;
   OI oi;
   double chassisRot;
+  private double kDriveInvert;
 
   public DriveWithChassisSpeedsJoystick(Drivetrain drive) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -45,7 +48,12 @@ public class DriveWithChassisSpeedsJoystick extends Command {
     else {
       chassisRot = oi.getDriverJoystickZValue();
     }
-    drive.driveWithKinematics(oi.getDriverJoystickXValue(), oi.getDriverJoystickYValue(), chassisRot);
+
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      kDriveInvert = -1;
+    }
+
+    drive.driveWithKinematics(oi.getDriverJoystickXValue() * kDriveInvert, oi.getDriverJoystickYValue() * kDriveInvert, chassisRot);
   }
 
   // Called once the command ends or is interrupted.
