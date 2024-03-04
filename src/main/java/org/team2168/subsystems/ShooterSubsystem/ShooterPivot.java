@@ -116,8 +116,6 @@ public class ShooterPivot extends SubsystemBase {
     pivotMotorGains.withKG(kG);
     pivotMotorGains.withGravityType(GravityTypeValue.Arm_Cosine);
 
-    feedbackConfig.withSensorToMechanismRatio(12.8);
-
     rotationLimits.withForwardSoftLimitEnable(true);
     rotationLimits.withReverseSoftLimitEnable(true);
     rotationLimits.withForwardSoftLimitThreshold(MAXIMUM_LIMIT_ANGLE);
