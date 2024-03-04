@@ -63,9 +63,9 @@ public class ShooterPivot extends SubsystemBase {
   private double supplyCurrentThreshold = 20.05;
   private double supplyTimeThreshold = 0.02;
   private double kP = 1.00; // placeholder
-  private double kI = 0.04; // placeholder
-  private double kD = 0.0025; // placeholder
-  private double kG = 0.0025; // placeholder.
+  private double kI = 0.0; // placeholder
+  private double kD = 0.0; // placeholder
+  private double kG = -0.03; // placeholder, negative because we need down force to counteract tension.
   private SoftwareLimitSwitchConfigs rotationLimits;
   private DutyCycleOut percentOutput;
 

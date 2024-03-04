@@ -73,10 +73,10 @@ public class Shooter extends SubsystemBase {
   private final double PEAK_REVERSE_DUTY_CYCLE = -1.0; // placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
 
-  private double first_kP = 0.1; // placeholder
-  private double first_kI = 0.45; // placeholder
-  private double first_kD = 0.001; // placeholder
-  private double first_kVolts = 0.12; // placeholder
+  private double first_kP = 1.00; // placeholder
+  private double first_kI = 00; // placeholder
+  private double first_kD = 0.0; // placeholder
+  private double first_kVolts = 0.05; // placeholder
 
   private final double GEAR_RATIO = 2.345/4.69;
   private final double ACCELERATION = 5 / 60; // placeholder
