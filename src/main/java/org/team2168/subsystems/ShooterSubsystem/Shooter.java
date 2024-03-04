@@ -194,7 +194,7 @@ public class Shooter extends SubsystemBase {
    */
   @Log(name="shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
   public double getVelocity() {
-    return (leftShooterMotor.getVelocity().getValue())/GEAR_RATIO;
+    return leftShooterMotor.getVelocity().getValue();
   }
 
   @Override
