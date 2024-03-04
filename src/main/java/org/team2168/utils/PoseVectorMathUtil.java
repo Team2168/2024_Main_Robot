@@ -78,11 +78,11 @@ public class PoseVectorMathUtil {
 
         closestZeroToHeading = drive.getHeading() - (drive.getHeading() % 360.0); // in degrees
 
-        if (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) < 0.0) {
-            rawAngleResult = (closestZeroToHeading + (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) - 90.0)) % 360.0; // calculation based on robot zero facing away from speaker
+        if (xPoseDiffMeters < 0.0) {
+            rawAngleResult = (closestZeroToHeading + (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) + 90.0)) % 360.0; // calculation based on robot zero facing away from speaker
         }
         else {
-            rawAngleResult = (closestZeroToHeading + (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)) + 90.0)) % 360.0;
+            rawAngleResult = -(closestZeroToHeading + (radToDeg(Math.atan(yPoseDiffMeters/xPoseDiffMeters)))) % 360.0;
         }
 
         return (closestZeroToHeading + rawAngleResult); // reverse sign of angle addition for ccw to cw, then subtract angle due to inverted zero
@@ -115,11 +115,11 @@ public class PoseVectorMathUtil {
 
         closestZeroToHeading = drive.getHeading() - (drive.getHeading() % 360.0); // in degrees
 
-        if (radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) < 0.0) {
-            rawAngleResult = (closestZeroToHeading + radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) - 90.0) % 360.0;
+        if (xPoseDiffMeters < 0.0) {
+            rawAngleResult = (closestZeroToHeading + radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) + 90.0) % 360.0;
         }
         else {
-            rawAngleResult = (closestZeroToHeading + radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed))) + 90.0) % 360.0;
+            rawAngleResult = -(closestZeroToHeading + radToDeg(Math.atan((yNoteComponent - yChassisSpeed)/(xNoteComponent - xChassisSpeed)))) % 360.0;
         }
         return (closestZeroToHeading + rawAngleResult);
     }
