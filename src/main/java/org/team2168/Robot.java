@@ -89,11 +89,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    // invert field-relative driver controls based on alliance color
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
-      drivetrain.setHeading(drivetrain.getHeading() + 180.0);
-    }
     intakePivot.setIntakePivotPosition(-120.0);
   }
 
