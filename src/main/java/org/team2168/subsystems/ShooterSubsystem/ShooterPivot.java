@@ -54,7 +54,7 @@ public class ShooterPivot extends SubsystemBase {
   private final double GEAR_RATIO = 45.024/4.69; // placeholder
   private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(0);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = Units.degreesToRotations(90); // placeholder for softlimit
-  private final double STOW_ANGLE = Units.degreesToRotations(80);
+  private final double STOW_ANGLE = Units.degreesToRotations(5); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
   private final double PEAK_REVERSE_OUTPUT = -1.0;
   private final InvertedValue pivotInvert = InvertedValue.Clockwise_Positive;
@@ -182,7 +182,7 @@ public class ShooterPivot extends SubsystemBase {
    */
   @Log(name = "shooter hood angle (degrees)", rowIndex = 0, columnIndex = 1)
   public double getAngle() {
-    return Units.rotationsToDegrees(pivotMotor.getPosition().getValue());
+    return (Units.rotationsToDegrees(pivotMotor.getPosition().getValue()))/GEAR_RATIO;
   }
 
   @Override
