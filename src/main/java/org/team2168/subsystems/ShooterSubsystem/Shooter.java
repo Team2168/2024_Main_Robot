@@ -78,7 +78,7 @@ public class Shooter extends SubsystemBase {
   private double first_kD = 0.001; // placeholder
   private double first_kVolts = 0.12; // placeholder
 
-  private final double GEAR_RATIO = 2.345;
+  private final double GEAR_RATIO = 2.345/4.69;
   private final double ACCELERATION = 5 / 60; // placeholder
   private VelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
@@ -115,7 +115,6 @@ public class Shooter extends SubsystemBase {
     currentLimitConfigs.withSupplyTimeThreshold(0.025);
 
     firstFeedbackConfigs = firstMotorConfiguration.Feedback;
-    firstFeedbackConfigs.withSensorToMechanismRatio(12.8);
 
     firstOutputConfigs.withDutyCycleNeutralDeadband(0.002);
     firstOutputConfigs.withInverted(leftInvert);

@@ -51,7 +51,7 @@ public class ShooterPivot extends SubsystemBase {
   private FeedbackConfigs feedbackConfig;
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
-  private final double GEAR_RATIO = 45.024; // placeholder
+  private final double GEAR_RATIO = 45.024/4.69; // placeholder
   private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(0);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = Units.degreesToRotations(90); // placeholder for softlimit
   private final double STOW_ANGLE = Units.degreesToRotations(80);
