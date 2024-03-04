@@ -1,5 +1,7 @@
 package org.team2168.commands.Drivetrain;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -11,6 +13,7 @@ public class DriveWithJoystick extends Command {
     private OI oi;
     private Drivetrain drivetrain;
     private double chassisRot = 0.0;
+    private double kDriveInvert = 1.0;
 
 
     public DriveWithJoystick(Drivetrain drivetrain) {
@@ -44,8 +47,12 @@ public class DriveWithJoystick extends Command {
           chassisRot = oi.getDriverJoystickZValue();
         }
 
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+          kDriveInvert = -1.0;
+        }
+
         if (SmartDashboard.getString("Control Mode", "Joystick").equals("Joystick")) {
-          drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), chassisRot);
+          drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, chassisRot);
         }
         else {
           drivetrain.stop();
