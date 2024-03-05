@@ -14,6 +14,7 @@ public class BumpShooterAngle extends Command {
   public BumpShooterAngle(ShooterPivot shooterPivot) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterPivot = shooterPivot;
+    addRequirements(shooterPivot);
   }
 
   // Called when the command is initially scheduled.

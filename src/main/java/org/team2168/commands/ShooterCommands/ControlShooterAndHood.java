@@ -19,6 +19,7 @@ public class ControlShooterAndHood extends Command {
     this.shooterPivot = shooterPivot;
     this.velocity = velocity;
     this.angle = angle;
+    addRequirements(shooter, shooterPivot);
   }
 
   // Called when the command is initially scheduled.

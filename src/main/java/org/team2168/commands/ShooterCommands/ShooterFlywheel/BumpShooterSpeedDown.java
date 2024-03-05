@@ -12,6 +12,7 @@ public class BumpShooterSpeedDown extends Command {
   private Shooter shooter;
   public BumpShooterSpeedDown(Shooter shooter) {
     this.shooter = shooter;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.

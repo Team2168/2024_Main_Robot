@@ -17,6 +17,7 @@ public class ShootAndControlHoodFromDistance extends Command {
     this.shooter = shooter;
     this.shooterPivot = shooterPivot;
     this.distanceMeters = distanceMeters;
+    addRequirements(shooter, shooterPivot);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
