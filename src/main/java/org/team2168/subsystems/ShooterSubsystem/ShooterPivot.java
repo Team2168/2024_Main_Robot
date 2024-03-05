@@ -29,10 +29,10 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class ShooterPivot extends SubsystemBase {
   public enum SHOOTING_ANGLE {
-    UP_AGAINST_SPEAKER(87.5), // placeholder
+    UP_AGAINST_SPEAKER(60.5), // placeholder
     WHITE_LINE(25.0),
     RED_LINE(35.0),
-    UP_AGAINST_AMP(89.0); //no provided f310 bindings for this on the button bindings paper.
+    UP_AGAINST_AMP(60.0); //no provided f310 bindings for this on the button bindings paper.
 
     public double shooterAngle;
 
@@ -52,12 +52,12 @@ public class ShooterPivot extends SubsystemBase {
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
   private final double GEAR_RATIO = 45.024/4.69; // placeholder
-  private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(35);// placeholder for softlimit
-  private final double MAXIMUM_LIMIT_ANGLE = Units.degreesToRotations(90); // placeholder for softlimit
-  private final double STOW_ANGLE = Units.degreesToRotations(80); //actual value is suppost to be 80 degrees.
+  private final double MINIMUM_LIMIT_ANGLE = degreesToRotation(35);// placeholder for softlimit
+  private final double MAXIMUM_LIMIT_ANGLE = degreesToRotation(90); // placeholder for softlimit
+  private final double STOW_ANGLE = degreesToRotation(55.0); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
   private final double PEAK_REVERSE_OUTPUT = -1.0;
-  private final InvertedValue pivotInvert = InvertedValue.Clockwise_Positive;
+  private final InvertedValue pivotInvert = InvertedValue.CounterClockwise_Positive;
   private double supplyCurrentLimit = 20; // placeholder
   private boolean supplyCurrentLimitEnable = true; // placeholder
   private double supplyCurrentThreshold = 20.05;
@@ -82,7 +82,7 @@ public class ShooterPivot extends SubsystemBase {
   };
 
   public ShooterPivot() {
-    pivotMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SHOOTER_PIVOT_ID);
+    pivotMotor = new TalonFX(Constants.CANDevices.SHOOTER_PIVOT_ID);
     pivotMotorConfigs = new TalonFXConfiguration();
     motionMagic = new MotionMagicVoltage(0.0);
     motionMagic.withSlot(0);
@@ -122,6 +122,7 @@ public class ShooterPivot extends SubsystemBase {
     rotationLimits.withReverseSoftLimitThreshold(MINIMUM_LIMIT_ANGLE);
 
     pivotMotor.getConfigurator().apply(pivotMotorConfigs);
+    pivotMotor.setPosition(STOW_ANGLE);
 
     setToStowAngle();
   }
