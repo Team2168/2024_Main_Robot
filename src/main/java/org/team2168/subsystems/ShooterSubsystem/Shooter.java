@@ -151,7 +151,7 @@ public class Shooter extends SubsystemBase {
     secondMotorConfig.withMotorOutput(secondMotorOutputConfigs);
 
     leftShooterMotor.getConfigurator().apply(firstMotorConfiguration);
-    rightShooterMotor.getConfigurator().apply(firstMotorConfiguration);
+    rightShooterMotor.getConfigurator().apply(secondMotorConfig);
 
     velocityVoltage.withAcceleration(ACCELERATION);
     velocityVoltage.withSlot(0);
