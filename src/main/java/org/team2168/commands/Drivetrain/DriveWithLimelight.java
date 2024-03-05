@@ -28,12 +28,12 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
 
     // TUNE THESE GAINS AND WHAT NOT
 
-    private static final double P_NEAR = 0;
-    private static final double P_FAR = 0;
+    private static final double P_NEAR = 0.05;
+    private static final double P_FAR = 0.05;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
-    private static final double MINIMUM_COMMAND = 0;
-    private static final double MAX_INTEGRAL = 0;
+    private static final double MINIMUM_COMMAND = 0.2;
+    private static final double MAX_INTEGRAL = 1.0;
 
     private double P;
     private double I;
@@ -112,6 +112,17 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         else if(manualControl) {
             drivetrain.drive(joystickInput.getAsDouble(), joystickInput.getAsDouble(), joystickInput.getAsDouble());
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (manualControl) {
+            limelight.pauseLimelight();
+        }
+    }
+
+    public boolean isFinished() {
+        return (withinThresholdLoops >= acceptableLoops && !manualControl);
     }
 
     
