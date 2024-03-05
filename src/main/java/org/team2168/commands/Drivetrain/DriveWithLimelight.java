@@ -114,6 +114,17 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         }
     }
 
+    @Override
+    public void end(boolean interrupted) {
+        if (manualControl) {
+            limelight.pauseLimelight();
+        }
+    }
+
+    public boolean isFinished() {
+        return (withinThresholdLoops >= acceptableLoops && !manualControl);
+    }
+
     
 
 
