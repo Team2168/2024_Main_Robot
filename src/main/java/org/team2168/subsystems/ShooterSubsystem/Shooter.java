@@ -96,8 +96,8 @@ public class Shooter extends SubsystemBase {
   };
 
   public Shooter() {
-    leftShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.LEFT_SHOOTER_ID);
-    rightShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.RIGHT_SHOOTER_ID);
+    leftShooterMotor = new TalonFX(Constants.CANDevices.LEFT_SHOOTER_ID);
+    rightShooterMotor = new TalonFX(Constants.CANDevices.RIGHT_SHOOTER_ID);
     firstMotorConfiguration = new TalonFXConfiguration();
     currentLimitConfigs = new CurrentLimitsConfigs();
     firstOutputConfigs = new MotorOutputConfigs();

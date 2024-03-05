@@ -16,13 +16,8 @@ import com.ctre.phoenix6.hardware.DeviceIdentifier;
  */
 public final class Constants {
   public static class OperatorConstants {
+    final int INDEXER_SENSOR = 3; //placeholder for the time being
     public static final int kDriverControllerPort = 0;
-  }
-
-  public static final class SHOOTER_MOTOR_CONSTANTS {
-    public static final int LEFT_SHOOTER_ID = 26; //placeholder
-    public static final int RIGHT_SHOOTER_ID = 27; //placeholder
-    public static final int SHOOTER_PIVOT_ID = 25; //placeholder  
   }
 
   public static class Controllers {
@@ -32,4 +27,16 @@ public final class Constants {
     public static final int TEST_JOYSTICK = 5;
   
   }
+
+  public static final class CANDevices {
+    public static final int intakePivotL = 20;
+    public static final int intakePivotR = 21;
+    public static final int intakeRoller = 22;
+    public static final int INDEXER_MOTOR = 24;
+    public static final int LEFT_SHOOTER_ID = 26; //placeholder
+    public static final int RIGHT_SHOOTER_ID = 27; //placeholder
+    public static final int SHOOTER_PIVOT_ID = 25; //placeholder  
+  }
+
 }
+

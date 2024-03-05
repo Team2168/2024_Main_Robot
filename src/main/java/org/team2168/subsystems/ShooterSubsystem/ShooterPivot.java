@@ -54,7 +54,7 @@ public class ShooterPivot extends SubsystemBase {
   private final double GEAR_RATIO = 45.024/4.69; // placeholder
   private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(0);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = Units.degreesToRotations(90); // placeholder for softlimit
-  private final double STOW_ANGLE = Units.degreesToRotations(5); //actual value is suppost to be 80 degrees.
+  private final double STOW_ANGLE = Units.degreesToRotations(55.0); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
   private final double PEAK_REVERSE_OUTPUT = -1.0;
   private final InvertedValue pivotInvert = InvertedValue.CounterClockwise_Positive;
@@ -82,7 +82,7 @@ public class ShooterPivot extends SubsystemBase {
   };
 
   public ShooterPivot() {
-    pivotMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.SHOOTER_PIVOT_ID);
+    pivotMotor = new TalonFX(Constants.CANDevices.SHOOTER_PIVOT_ID);
     pivotMotorConfigs = new TalonFXConfiguration();
     motionMagic = new MotionMagicVoltage(0.0);
     motionMagic.withSlot(0);
@@ -122,6 +122,7 @@ public class ShooterPivot extends SubsystemBase {
     rotationLimits.withReverseSoftLimitThreshold(MINIMUM_LIMIT_ANGLE);
 
     pivotMotor.getConfigurator().apply(pivotMotorConfigs);
+    pivotMotor.setPosition(STOW_ANGLE);
 
     setToStowAngle();
   }
