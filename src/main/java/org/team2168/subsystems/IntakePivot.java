@@ -64,7 +64,7 @@ public class IntakePivot extends SubsystemBase {
   private double kP = 10.0;
   private double kI = 0;
   private double kD = 0.3;
-  private double kG = -0.75;
+  private double kG = -1.3;
   private GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
 
