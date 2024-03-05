@@ -1,101 +1,107 @@
 package org.team2168;
 
-import org.team2168.Constants.Joysticks;
 import org.team2168.utils.F310;
 import org.team2168.utils.LinearInterpolator;
+import org.team2168.Constants;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
 
 public class OI {
-    public final F310 driverJoystick = new F310(Joysticks.DRIVER_JOYSTICK);
-    public final F310 operatorJoystick = new F310(Joysticks.OPERATOR_JOYSTICK);
-    public final F310 testJoystick = new F310(Joysticks.PID_TEST_JOYSTICK);
 
-    private LinearInterpolator driverJoystickInterpolator;
-    private LinearInterpolator operatorJoystickInterpolator;
-    private LinearInterpolator gunStyleXInterpolator;
-    private LinearInterpolator gunStyleYInterpolator;
-    private LinearInterpolator testJoystickXInterpolator;
     private static OI instance = null;
     
-    
-    private double[][] driverJoystickInterpolation = {
-        {-1.00, -1.00},
-        {-0.05,  0.00},  //set neutral deadband to 5%
-        {+0.05,  0.00},
-        {+1.00, +1.00}  
-    };
+    public F310 driverJoystick = new F310(Constants.Controllers.DRIVER_JOYSTICK);
+    public F310 operatorJoystick = new F310(Constants.Controllers.OPERATOR_JOYSTICK);
+    public F310 testJoystick = new F310(Constants.Controllers.TEST_JOYSTICK);
 
-    private double[][] gunStyleXInterpolation = {
-        {-1.00, -0.70},  //scale down turning to max 70%
-        {-0.05,  0.00},  //set neutral deadband to 5%
-        {+0.05,  0.00},
-        {+1.00, +0.70}  
-    };
+    public static final SendableChooser<String> joystickChooser = new SendableChooser<>();
 
-    private double[][] gunStyleYInterpolation = {
-		{-1.00, -1.00}, //can limit speed by changing second number
-		{-0.15,  0.00},
-		{+0.15,  0.00},
-		{+1.00, +1.00}
+    private LinearInterpolator driverJoystickYInterpolator;
+	private LinearInterpolator driverJoystickXInterpolator;
+	private LinearInterpolator driverJoystickZInterpolator;
+	private LinearInterpolator driverFlightStickZInterpolator;
+	private double[][] driverJoystickYArray = {
+		{-1.0, -0.7}, //don't scale turning max
+		{-0.6, -0.5},
+		{-0.15, 0.00}, //set neutral deadband to 15%
+		{+0.15, 0.00}, // reduced driving motor speed
+		{+0.6, 0.5},
+		{+1.00,+0.7}
+	};
+	private double[][] driverJoystickXArray = {
+		{-1.0, -0.7},  //don't scale turning max
+		{-0.6, -0.5},
+		{-0.15, 0.00}, //set neutral deadband to 15%
+		{+0.15, 0.00}, // reduced driving motor speed
+		{+0.6, 0.5},
+		{+1.00,+0.7}
+	};
+	private double[][] driverJoystickZArray = {
+		{-1.0, -0.50},  //scale down turning to max 50%
+		{-0.09, 0.00},  //set neutral deadband to 21%
+		{+0.09, 0.00},
+		{+1.00,+0.50}
+	};
+	private double[][] driverFlightStickZArray = {
+		{-1.0, 0.00},  // use 0.0 for different turning process //scale down turning to max 50%
+		{-0.40, 0.00},  //set neutral deadband to 5%
+		{+0.15, 0.00},  // FIX THIS WHEN NON DRIFTING FLIGHT STICK!!!
+		{+1.00, 0.00}
 	};
 
-    private double[][] operatorJoystickInterpolation = {
-        {-1.00, -1.00},
-        {-0.05,  0.00},  //set neutral deadband to 5%
-        {+0.05,  0.00},
-        {+1.00, +1.00}  
-    };
-
-    private double[][] testJoystickInterpolation = {
-        {-1.00, -0.50},
-        {-0.01, 0.00},
-        {+0.01, 0.00},
-        {+1.00, +0.50}
-    };
-
     private OI() {
-        driverJoystickInterpolator = new LinearInterpolator(driverJoystickInterpolation);
-        gunStyleXInterpolator = new LinearInterpolator(gunStyleXInterpolation);
-        gunStyleYInterpolator = new LinearInterpolator(gunStyleYInterpolation);
-        operatorJoystickInterpolator = new LinearInterpolator(operatorJoystickInterpolation);
-        testJoystickXInterpolator = new LinearInterpolator(testJoystickInterpolation);
+
+
+		driverJoystickYInterpolator = new LinearInterpolator(driverJoystickYArray);
+		driverJoystickXInterpolator = new LinearInterpolator(driverJoystickXArray);
+		driverJoystickZInterpolator = new LinearInterpolator(driverJoystickZArray);
+		driverFlightStickZInterpolator = new LinearInterpolator(driverFlightStickZArray);
+
+		SmartDashboard.putData("Driver Joystick Chooser", joystickChooser);
+		joystickChooser.setDefaultOption("Flight Joystick", "flight");
+		joystickChooser.addOption("F310 Joystick", "F310");
+  
     }
+
+    /*************************************************************************
+	 * Drivetrain *
+	 *************************************************************************/
+
+	/**
+	 * Get the value of the left stick's x-axis after being put through the interpolator
+	 * @return a value from -0.1 to 0.1
+	 */
+	public double getDriverJoystickXValue() {
+		return driverJoystickXInterpolator.interpolate(driverJoystick.getLeftStickRaw_X());
+	}
+
+	/**
+	 * Get the value of the left stick's y-axis after being put through the interpolator
+	 * @return a value from -0.1 to 0.1
+	 */
+	public double getDriverJoystickYValue() {
+		return driverJoystickYInterpolator.interpolate(driverJoystick.getLeftStickRaw_Y());
+	}
+
+	/**
+	 * Get the value of the right stick's x-axis after being put through the interpolator
+	 * @return a value from -0.5 to 0.5
+	 */
+	public double getDriverJoystickZValue() {
+		if (joystickChooser.getSelected().equals("flight"))
+			return driverFlightStickZInterpolator.interpolate(driverJoystick.getRawAxis(2));
+		else
+			return driverJoystickZInterpolator.interpolate(driverJoystick.getRightStickRaw_X());
+	}
+
 
     public static OI getInstance() {
-        if (instance == null)
-            instance = new OI();
-        return instance;
-    }
+		if (instance == null)
+			instance = new OI();
 
-    public double getDriverJoystickX() {
-        return driverJoystickInterpolator.interpolate(driverJoystick.getRightStickRaw_X());
-    }
-
-    public double getDriverJoystickY() {
-        return driverJoystickInterpolator.interpolate(driverJoystick.getRightStickRaw_Y());
-    }
-
-    public double getLeftDriverJoystickX() {
-        return driverJoystickInterpolator.interpolate(driverJoystick.getLeftStickRaw_X());
-    }
-
-    public double getLeftDriverJoystickY() {
-        return driverJoystickInterpolator.interpolate(driverJoystick.getLeftStickRaw_Y());
-    }
-
-    public double getGunStyleWheel() {
-        return gunStyleXInterpolator.interpolate(driverJoystick.getLeftStickRaw_X());
-    }
-
-    public double getGunStyleTrigger() {
-        return gunStyleYInterpolator.interpolate(driverJoystick.getLeftStickRaw_Y());
-    }
-
-    public double getOperatorJoystickY() {
-        return operatorJoystickInterpolator.interpolate(operatorJoystick.getLeftStickRaw_Y());
-    }
-
-    public double getTestJoystickX() {
-        return testJoystickXInterpolator.interpolate(testJoystick.getLeftStickRaw_X());
-    }
-    
+		return instance;
+	}
 }
