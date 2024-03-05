@@ -57,7 +57,7 @@ public class ShooterPivot extends SubsystemBase {
   private final double STOW_ANGLE = Units.degreesToRotations(5); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
   private final double PEAK_REVERSE_OUTPUT = -1.0;
-  private final InvertedValue pivotInvert = InvertedValue.Clockwise_Positive;
+  private final InvertedValue pivotInvert = InvertedValue.CounterClockwise_Positive;
   private double supplyCurrentLimit = 20; // placeholder
   private boolean supplyCurrentLimitEnable = true; // placeholder
   private double supplyCurrentThreshold = 20.05;
