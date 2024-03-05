@@ -13,7 +13,9 @@ public class DriveToHeading extends Command {
   /** Creates a new DriveToHeading. */
   Drivetrain drivetrain;
   double angle;
+  int numLoops;
   final double ERROR_TOLERANCE = 0.5; // in degrees
+  final int ACCEPTED_LOOPS = 10;
 
   double kP = 0.3;
   double kI = 0.0;
@@ -42,6 +44,13 @@ public class DriveToHeading extends Command {
     else {
       drivetrain.drive(0.0, 0.0, drivePID.calculate((drivetrain.getHeading() % 360.0 - angle)));
     }
+
+    if (Math.abs(drivetrain.getHeading()) < ERROR_TOLERANCE) {
+      numLoops++;
+    }
+    else {
+      numLoops = 0;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -53,6 +62,6 @@ public class DriveToHeading extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(drivetrain.getHeading()) < ERROR_TOLERANCE);
+    return (numLoops >= ACCEPTED_LOOPS);
   }
 }
