@@ -40,15 +40,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Loggable {
 
   public enum SHOOTING_RPM {
-    UP_AGAINST_SPEAKER(1000), // placeholder
-    WHITE_LINE(5000),
-    RED_LINE(4000),
-    UP_AGAINST_AMP(200); // no provided f310 bindings for this on the button bindings paper.
+    UP_AGAINST_SPEAKER(0.4), // placeholder
+    WHITE_LINE(1.2),
+    RED_LINE(2.0),
+    UP_AGAINST_AMP(0.8); // no provided f310 bindings for this on the button bindings paper.
 
     public double shooterRPS;
 
@@ -76,10 +77,10 @@ public class Shooter extends SubsystemBase {
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
   private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
 
-  private double first_kP = 1.00; // placeholder
-  private double first_kI = 00; // placeholder
+  private double first_kP = 1.0; // placeholder
+  private double first_kI = 0.0; // placeholder
   private double first_kD = 0.0; // placeholder
-  private double first_kVolts = 0.05; // placeholder
+  private double first_kVolts = 0.0; // placeholder
 
   private final double GEAR_RATIO = 2.345 / 4.69;
   private final double ACCELERATION = 5 / 60; // placeholder
@@ -125,7 +126,7 @@ public class Shooter extends SubsystemBase {
 
     firstOutputConfigs.withDutyCycleNeutralDeadband(0.002);
     firstOutputConfigs.withInverted(leftInvert);
-    firstOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
+    firstOutputConfigs.withNeutralMode(NeutralModeValue.Coast);
     firstOutputConfigs.withPeakForwardDutyCycle(PEAK_FORWARD_DUTY_CYCLE);
     firstOutputConfigs.withPeakReverseDutyCycle(PEAK_REVERSE_DUTY_CYCLE);
 
@@ -141,7 +142,7 @@ public class Shooter extends SubsystemBase {
 
     secondMotorOutputConfigs.withDutyCycleNeutralDeadband(0.002);
     secondMotorOutputConfigs.withInverted(rightInvert);
-    secondMotorOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
+    secondMotorOutputConfigs.withNeutralMode(NeutralModeValue.Coast);
     secondMotorOutputConfigs.withPeakForwardDutyCycle(PEAK_FORWARD_DUTY_CYCLE);
     secondMotorOutputConfigs.withPeakReverseDutyCycle(PEAK_REVERSE_DUTY_CYCLE);
 
@@ -153,7 +154,7 @@ public class Shooter extends SubsystemBase {
     leftShooterMotor.getConfigurator().apply(firstMotorConfiguration);
     rightShooterMotor.getConfigurator().apply(secondMotorConfig);
 
-    velocityVoltage.withAcceleration(ACCELERATION);
+    velocityVoltage.withAcceleration(0.0);
     velocityVoltage.withSlot(0);
   }
 
@@ -193,8 +194,8 @@ public class Shooter extends SubsystemBase {
    * @param velocity as rotations per second
    */
   public void setVelocity(double velocity) {
-    leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity * GEAR_RATIO));
-    rightShooterMotor.setControl(velocityVoltage.withVelocity((velocity * GEAR_RATIO)-5));
+    leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity / GEAR_RATIO));
+    rightShooterMotor.setControl(velocityVoltage.withVelocity((velocity / GEAR_RATIO) - 0.5));
   }
 
   /**
