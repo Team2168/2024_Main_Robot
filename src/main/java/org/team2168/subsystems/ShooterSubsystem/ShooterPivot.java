@@ -52,9 +52,9 @@ public class ShooterPivot extends SubsystemBase {
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
   private final double GEAR_RATIO = 45.024/4.69; // placeholder
-  private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(0);// placeholder for softlimit
+  private final double MINIMUM_LIMIT_ANGLE = Units.degreesToRotations(35);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = Units.degreesToRotations(90); // placeholder for softlimit
-  private final double STOW_ANGLE = Units.degreesToRotations(5); //actual value is suppost to be 80 degrees.
+  private final double STOW_ANGLE = Units.degreesToRotations(80); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
   private final double PEAK_REVERSE_OUTPUT = -1.0;
   private final InvertedValue pivotInvert = InvertedValue.Clockwise_Positive;
