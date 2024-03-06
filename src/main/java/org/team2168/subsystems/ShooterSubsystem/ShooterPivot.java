@@ -104,6 +104,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     // //placeholder
 
     motorOutputConfig.withInverted(pivotInvert);
+    motorOutputConfig.withDutyCycleNeutralDeadband(0.036);
     motorOutputConfig.withNeutralMode(NeutralModeValue.Brake);
     motorOutputConfig.withPeakForwardDutyCycle(PEAK_FORWARD_OUTPUT);
     motorOutputConfig.withPeakReverseDutyCycle(PEAK_REVERSE_OUTPUT);
