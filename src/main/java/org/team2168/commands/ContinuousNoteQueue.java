@@ -28,7 +28,7 @@ public class ContinuousNoteQueue extends Command {
   @Override
   public void execute() {
     if (!indexer.isNotePresent()) {
-      indexer.setDriveIndexer(1.0);
+      indexer.setDriveIndexer(0.5);
       intakeRoller.setRollerSpeed(0.6);
     }
     else {

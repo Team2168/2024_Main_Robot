@@ -53,7 +53,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
   private FeedbackConfigs feedbackConfig;
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
-  private final double GEAR_RATIO = 45.024/4.69; // placeholder
+  private final double GEAR_RATIO = (45.024/4.69) * 2.0; // placeholder
   private final double MINIMUM_LIMIT_ANGLE = degreesToRotation(35.0);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = degreesToRotation(75.5); // placeholder for softlimit
   private final double STOW_ANGLE = degreesToRotation(75.0); //actual value is suppost to be 80 degrees.

@@ -118,7 +118,7 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
     // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.5));
 
   }
 
