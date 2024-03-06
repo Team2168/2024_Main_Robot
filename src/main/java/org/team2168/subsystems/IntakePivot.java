@@ -64,7 +64,7 @@ public class IntakePivot extends SubsystemBase {
   private double kP = 10.0;
   private double kI = 0;
   private double kD = 0.3;
-  private double kG = -0.75;
+  private double kG = -1.3;
   private GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
 
@@ -109,10 +109,10 @@ public class IntakePivot extends SubsystemBase {
       .withMotionMagicExpo_kV(kV);
 
     softLimitsConfigs
-      .withForwardSoftLimitThreshold(degreesToRot(30))
-      .withForwardSoftLimitEnable(false)
-      .withReverseSoftLimitThreshold(degreesToRot(-80))
-      .withReverseSoftLimitEnable(false);
+      .withForwardSoftLimitThreshold(degreesToRot(5.0)) // extra five degrees for error tolerance
+      .withForwardSoftLimitEnable(true)
+      .withReverseSoftLimitThreshold(degreesToRot(-125.0)) // extra five degrees for error tolerance
+      .withReverseSoftLimitEnable(true);
 
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
     var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
@@ -168,8 +168,8 @@ public class IntakePivot extends SubsystemBase {
    * @param degrees amount of degrees of position
    */
   public void setIntakePivotPosition(double degrees) {
-    //var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
-    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(degrees))));
+    var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
+    intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), false));
   }
 

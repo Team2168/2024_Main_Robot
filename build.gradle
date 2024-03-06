@@ -40,6 +40,10 @@ deploy {
     }
 }
 
+repositories {
+    maven { url 'https://jitpack.io'}
+}
+
 def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 
 // Set to true to use debug for JNI.

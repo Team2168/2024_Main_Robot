@@ -4,6 +4,8 @@
 
 package org.team2168;
 
+import com.ctre.phoenix6.hardware.DeviceIdentifier;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -49,6 +51,9 @@ public final class Constants {
       public static final int intakePivotR = 21;
       public static final int intakeRoller = 22;
       public static final int INDEXER_MOTOR = 24;
+      public static final int LEFT_SHOOTER_ID = 26; //placeholder
+      public static final int RIGHT_SHOOTER_ID = 27; //placeholder
+      public static final int SHOOTER_PIVOT_ID = 25; //placeholder  
     }
 
   public static class Controllers {
@@ -67,7 +72,8 @@ public final class Constants {
   public static final class Joysticks {
     public static final int DRIVER_JOYSTICK = 0; //TODO: change value
     public static final int OPERATOR_JOYSTICK = 1;
-    public static final int PID_TEST_JOYSTICK = 2;
+    public static final int TEST_JOYSTICK = 5;
+  
   }
 
 }
