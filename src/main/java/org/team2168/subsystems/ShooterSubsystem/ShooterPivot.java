@@ -21,18 +21,20 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
-public class ShooterPivot extends SubsystemBase {
+public class ShooterPivot extends SubsystemBase implements Loggable {
   public enum SHOOTING_ANGLE {
-    UP_AGAINST_SPEAKER(60.5), // placeholder
-    WHITE_LINE(25.0),
-    RED_LINE(35.0),
-    UP_AGAINST_AMP(60.0); //no provided f310 bindings for this on the button bindings paper.
+    UP_AGAINST_SPEAKER(75.0), // placeholder
+    WHITE_LINE(75.0),
+    RED_LINE(75.0),
+    UP_AGAINST_AMP(75.0); //no provided f310 bindings for this on the button bindings paper.
 
     public double shooterAngle;
 
@@ -52,9 +54,9 @@ public class ShooterPivot extends SubsystemBase {
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
   private final double GEAR_RATIO = 45.024/4.69; // placeholder
-  private final double MINIMUM_LIMIT_ANGLE = degreesToRotation(35);// placeholder for softlimit
-  private final double MAXIMUM_LIMIT_ANGLE = degreesToRotation(90); // placeholder for softlimit
-  private final double STOW_ANGLE = degreesToRotation(55.0); //actual value is suppost to be 80 degrees.
+  private final double MINIMUM_LIMIT_ANGLE = degreesToRotation(35.0);// placeholder for softlimit
+  private final double MAXIMUM_LIMIT_ANGLE = degreesToRotation(75.5); // placeholder for softlimit
+  private final double STOW_ANGLE = degreesToRotation(75.0); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
   private final double PEAK_REVERSE_OUTPUT = -1.0;
   private final InvertedValue pivotInvert = InvertedValue.CounterClockwise_Positive;
@@ -62,10 +64,11 @@ public class ShooterPivot extends SubsystemBase {
   private boolean supplyCurrentLimitEnable = true; // placeholder
   private double supplyCurrentThreshold = 20.05;
   private double supplyTimeThreshold = 0.02;
-  private double kP = 1.00; // placeholder
-  private double kI = 0.0; // placeholder
+  private double kP = 90.0; // placeholder
+  private double kI = 0.2; // placeholder
   private double kD = 0.0; // placeholder
-  private double kG = -0.03; // placeholder, negative because we need down force to counteract tension.
+  private double kG = 1.5; // placeholder, negative because we need down force to counteract tension.
+  private double kS = 1.5;
   private SoftwareLimitSwitchConfigs rotationLimits;
   private DutyCycleOut percentOutput;
 
@@ -94,8 +97,8 @@ public class ShooterPivot extends SubsystemBase {
     rotationLimits = pivotMotorConfigs.SoftwareLimitSwitch;
     percentOutput = new DutyCycleOut(0.0);
 
-    motionMagicConfigs.withMotionMagicAcceleration(degreesToRotation(10)); // placeholder, original 36
-    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(5)); // placeholder, original 18, 36/2
+    motionMagicConfigs.withMotionMagicAcceleration(degreesToRotation(240.0)); // placeholder, original 36
+    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(70.0)); // placeholder, original 18, 36/2
     motionMagicConfigs.withMotionMagicJerk(degreesToRotation(0.0025)); //modifying jerk appears to be a necessary config for motion magic according to MotionMagicVoltage.
     // motionMagicConfigs.withMotionMagicJerk(degreesPerSecondToRotationsPerSecond(0.03));
     // //placeholder
@@ -114,6 +117,8 @@ public class ShooterPivot extends SubsystemBase {
     pivotMotorGains.withKI(kI);
     pivotMotorGains.withKD(kD);
     pivotMotorGains.withKG(kG);
+    pivotMotorGains.withKS(kS);
+    pivotMotorGains.withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
     pivotMotorGains.withGravityType(GravityTypeValue.Arm_Cosine);
 
     rotationLimits.withForwardSoftLimitEnable(true);
@@ -124,7 +129,7 @@ public class ShooterPivot extends SubsystemBase {
     pivotMotor.getConfigurator().apply(pivotMotorConfigs);
     pivotMotor.setPosition(STOW_ANGLE);
 
-    setToStowAngle();
+    // setToStowAngle();
   }
 
   public static ShooterPivot getInstance() {

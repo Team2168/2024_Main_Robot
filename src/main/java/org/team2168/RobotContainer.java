@@ -15,6 +15,7 @@ import org.team2168.commands.ShooterCommands.ShootAndControlHoodFromDistance;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.BumpShooterSpeed;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.BumpShooterSpeedDown;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.SetShooterVelocity;
+import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngle;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -104,14 +105,14 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    oi.testJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPM.WHITE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.WHITE_LINE.shooterAngle));
-    oi.testJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPM.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
+    oi.testJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.WHITE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.WHITE_LINE.shooterAngle));
+    oi.testJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
     oi.testJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelightDistanceMeters));
-    oi.testJoystick.ButtonX().onTrue(new SetShooterVelocity(shooter, 0.0));
+    oi.testJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
     oi.testJoystick.ButtonRightBumper().onTrue(new BumpShooterSpeed(shooter));
-    oi.testJoystick.ButtonLeftBumper().whileTrue(new BumpShooterSpeedDown(shooter));
-    oi.testJoystick.ButtonStart().whileTrue(new BumpShooterAngle(shooterPivot));
-    oi.testJoystick.ButtonBack().whileTrue(new BumpShooterAngleDown(shooterPivot));
+    oi.testJoystick.ButtonLeftBumper().onTrue(new BumpShooterSpeedDown(shooter));
+    oi.testJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
+    oi.testJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     // oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
     // oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));

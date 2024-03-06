@@ -45,15 +45,15 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class Shooter extends SubsystemBase implements Loggable {
 
-  public enum SHOOTING_RPM {
-    UP_AGAINST_SPEAKER(0.4), // placeholder
-    WHITE_LINE(1.2),
-    RED_LINE(2.0),
-    UP_AGAINST_AMP(0.8); // no provided f310 bindings for this on the button bindings paper.
+  public enum SHOOTING_RPS { 
+    UP_AGAINST_SPEAKER(30.0), // placeholder
+    WHITE_LINE(30.0),
+    RED_LINE(30.0),
+    UP_AGAINST_AMP(30.0); // no provided f310 bindings for this on the button bindings paper.
 
     public double shooterRPS;
 
-    SHOOTING_RPM(double shooterRPS) {
+    SHOOTING_RPS(double shooterRPS) {
       this.shooterRPS = shooterRPS;
     }
 
@@ -77,7 +77,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
   private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
 
-  private double first_kP = 1.0; // placeholder
+  private double first_kP = 0.7; // placeholder
   private double first_kI = 0.0; // placeholder
   private double first_kD = 0.0; // placeholder
   private double first_kVolts = 0.0; // placeholder
@@ -195,7 +195,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public void setVelocity(double velocity) {
     leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity / GEAR_RATIO));
-    rightShooterMotor.setControl(velocityVoltage.withVelocity((velocity / GEAR_RATIO) - 0.5));
+    rightShooterMotor.setControl(velocityVoltage.withVelocity(((0.75 * velocity) / GEAR_RATIO)));
   }
 
   /**
@@ -206,7 +206,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   public void setPercentOutput(double input) {
     leftShooterMotor.setControl(percentOutput.withOutput(input));
-    rightShooterMotor.setControl(percentOutput.withOutput(input-0.03));
+    rightShooterMotor.setControl(percentOutput.withOutput(input));
   }
 
   /**
