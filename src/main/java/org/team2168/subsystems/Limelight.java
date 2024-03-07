@@ -207,6 +207,7 @@ public class Limelight extends SubsystemBase implements Loggable {
       return new Pose2d(getBotPoseX(), getBotPoseY(), getRotation2d());
     }
 
+    @Log(name = "distance calc (limelight)")
     public double calculateDistance(Limelight limelight) {
       double currentPipeline = limelight.getPipeline();
 

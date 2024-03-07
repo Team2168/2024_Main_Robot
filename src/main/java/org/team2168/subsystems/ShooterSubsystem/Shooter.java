@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     UP_AGAINST_SPEAKER(32.5), // placeholder
     WHITE_LINE(30.0),
     RED_LINE(40.0),
-    UP_AGAINST_AMP(8.5), // no provided f310 bindings for this on the button bindings paper.
+    UP_AGAINST_AMP(5.5), // no provided f310 bindings for this on the button bindings paper.
     STARTING_ZONE_LINE(37.5),
     STAGE_LINE(41.0);
 
