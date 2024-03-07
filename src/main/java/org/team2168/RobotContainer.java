@@ -11,6 +11,7 @@ import org.team2168.commands.Autos;
 import org.team2168.commands.ContinuousNoteQueue;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
+import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.commands.Drivetrain.ZeroSwerve;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -63,7 +64,7 @@ public class RobotContainer {
   private final Indexer indexer = Indexer.getInstance();
 
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final Limelight limelight = new Limelight();
+  private final Limelight limelight = Limelight.getInstance();
   private final Drivetrain drivetrain = Drivetrain.getInstance();
 
   private final OI oi = OI.getInstance();
@@ -111,6 +112,7 @@ public class RobotContainer {
         .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
+    // oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, () -> 0.0, true));
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());

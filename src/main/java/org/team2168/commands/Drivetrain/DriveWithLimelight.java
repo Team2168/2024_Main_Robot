@@ -28,8 +28,8 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
 
     // TUNE THESE GAINS AND WHAT NOT
 
-    private static final double P_NEAR = 0.05;
-    private static final double P_FAR = 0.05;
+    private static final double P_NEAR = 0.25;
+    private static final double P_FAR = 0.15;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
     private static final double MINIMUM_COMMAND = 0.2;
@@ -58,9 +58,9 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private double driveLimeTurnSpeed;
 
     public DriveWithLimelight(Drivetrain drivetrain, Limelight limelight, double acceptableAngle, DoubleSupplier joystickInput, boolean near) {
-        drivetrain = this.drivetrain;
-        limelight = this.limelight;
-        acceptableAngle = this.errorToleranceAngle;
+        this.drivetrain = drivetrain;
+        this.limelight = limelight;
+        errorToleranceAngle = acceptableAngle;
         if(near) {
             P = P_NEAR;
             I = I_NEAR;
@@ -70,7 +70,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
             I = I_FAR;
         }
 
-        manualControl = true;
+        manualControl = false; // temp adjustment
 
         addRequirements(drivetrain);
     }
@@ -78,6 +78,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     public void initialize() {
         pid = new PIDController(P, I, D);
         limelight.enableBaseCameraSettings();
+        limelight.setPipeline(1);
 
         pid.setTolerance(errorToleranceAngle);
         pid.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
@@ -106,11 +107,11 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         }
 
         if (withinThresholdLoops < -errorToleranceAngle) {
-            drivetrain.drive(joystickInput.getAsDouble(), joystickInput.getAsDouble(), driveLimeTurnSpeed);
+            drivetrain.drive(0.0, 0.0, driveLimeTurnSpeed); // temporary removal of drivejoystick control
         }
 
         else if(manualControl) {
-            drivetrain.drive(joystickInput.getAsDouble(), joystickInput.getAsDouble(), joystickInput.getAsDouble());
+            drivetrain.drive(0.0, 0.0, 0.0);
         }
     }
 
