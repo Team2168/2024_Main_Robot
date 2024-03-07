@@ -25,6 +25,7 @@ import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
+import org.team2168.subsystems.Limelight;
 import org.team2168.utils.F310;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.indexer.DriveIndexer;
@@ -62,6 +63,7 @@ public class RobotContainer {
   private final Indexer indexer = Indexer.getInstance();
 
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Limelight limelight = new Limelight();
   private final Drivetrain drivetrain = Drivetrain.getInstance();
 
   private final OI oi = OI.getInstance();

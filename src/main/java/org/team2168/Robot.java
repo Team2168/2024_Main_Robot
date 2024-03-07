@@ -5,6 +5,7 @@
 package org.team2168;
 
 import org.team2168.subsystems.IntakePivot;
+import org.team2168.subsystems.Limelight;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,9 @@ public class Robot extends TimedRobot {
   private IntakePivot intakePivot = IntakePivot.getInstance();
 
   private RobotContainer m_robotContainer;
+  public Limelight limelight;
+
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -33,6 +37,9 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    limelight = new Limelight();
+
+    limelight.enableVision(true);
   }
 
   /**
@@ -85,6 +92,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     intakePivot.setIntakePivotPosition(-120.0);
+
+    limelight.enableBaseCameraSettings();
   }
 
   /** This function is called periodically during operator control. */
