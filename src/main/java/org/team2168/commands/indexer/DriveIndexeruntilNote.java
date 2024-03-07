@@ -7,19 +7,26 @@ package org.team2168.commands.indexer;
 import java.util.function.DoubleSupplier;
 
 import org.team2168.subsystems.Indexer;
+import org.team2168.subsystems.LEDs;
+
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DriveIndexeruntilNote extends Command {
   private Indexer indexer;
   private DoubleSupplier speed;
+   private LEDs leds;
+
+
+  double limeErrorTolerance = 1.0; //in degrees
  /** it drives the indexer until there is a note
    * @param indexer indexer subsystem to be used for method
    * @param speed to set the indexer at
    */
-  public DriveIndexeruntilNote(Indexer indexer, DoubleSupplier speed) {
+  public DriveIndexeruntilNote(Indexer indexer, DoubleSupplier speed, LEDs leds) {
     this.indexer = indexer;
     this.speed = speed;
+
     addRequirements(indexer);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -32,6 +39,15 @@ public class DriveIndexeruntilNote extends Command {
   @Override
   public void execute() {
     indexer.setDriveIndexer(speed.getAsDouble());
+
+    if (indexer.isNotePresent()) {
+    
+      leds.bluelight(true);
+      
+    } 
+    else {
+      leds.bluelight(false);
+    }
   }
 
   // Called once the command ends or is interrupted.

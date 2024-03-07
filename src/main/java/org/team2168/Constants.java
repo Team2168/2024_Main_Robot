@@ -43,11 +43,6 @@ public final class Constants {
   
   }
 
-  public static final class Joysticks {
-    public static final int DRIVER_JOYSTICK = 0; //TODO: change value
-    public static final int OPERATOR_JOYSTICK = 1;
-    public static final int PID_TEST_JOYSTICK = 2;
-  }
 
   public static final class CANDevices {
     public static final int intakePivotL = 20;

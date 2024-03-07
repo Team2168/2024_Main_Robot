@@ -4,6 +4,7 @@
 
 package org.team2168.commands.ShooterCommands.ShooterFlywheel;
 
+import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,10 +12,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class SetShooterVelocity extends Command {
   private Shooter shooter;
   private double velocity;
+  double shooterErrorTolerance = 0.25;
+  private LEDs leds;
   
-  public SetShooterVelocity(Shooter shooter, double velocity) {
+  public SetShooterVelocity(Shooter shooter, double velocity, LEDs leds) {
     this.shooter = shooter;
     this.velocity = velocity;
+    this.leds = leds;
     addRequirements(shooter);
   }
 
@@ -26,7 +30,18 @@ public class SetShooterVelocity extends Command {
   @Override
   public void execute() {
     shooter.setVelocity(velocity);
+
+    if(Math.abs(velocity - shooter.getVelocity()) < shooterErrorTolerance) {
+      leds.greenlight(true);
+    } 
+  else {
+      leds.greenlight(false);
+    }
   }
+  
+      
+
+
 
   // Called once the command ends or is interrupted.
   @Override
@@ -38,4 +53,5 @@ public class SetShooterVelocity extends Command {
   public boolean isFinished() {
     return false;
   }
+  
 }
