@@ -2,6 +2,7 @@ package org.team2168.commands.Drivetrain;
 
 import java.util.function.DoubleSupplier;
 
+import org.team2168.OI;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
 
@@ -16,11 +17,12 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private Drivetrain drivetrain;
     private Limelight limelight;
     private PIDController pid;
-    private DoubleSupplier joystickInput;
+    private OI oi;
 
     private static double DEFAULT_MAXANGLE = 0.0;
     private double errorToleranceAngle;
     private double limeAngle;
+    private double chassisRot;
     private int withinThresholdLoops = 0;
     private int acceptableLoops = 10;
 
@@ -28,8 +30,8 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
 
     // TUNE THESE GAINS AND WHAT NOT
 
-    private static final double P_NEAR = 0.25;
-    private static final double P_FAR = 0.15;
+    private static final double P_NEAR = 0.05;
+    private static final double P_FAR = 0.05;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
     private static final double MINIMUM_COMMAND = 0.2;
@@ -57,7 +59,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     @Log(name = "Turn Speed")
     private double driveLimeTurnSpeed;
 
-    public DriveWithLimelight(Drivetrain drivetrain, Limelight limelight, double acceptableAngle, DoubleSupplier joystickInput, boolean near) {
+    public DriveWithLimelight(Drivetrain drivetrain, Limelight limelight, double acceptableAngle, boolean near) {
         this.drivetrain = drivetrain;
         this.limelight = limelight;
         errorToleranceAngle = acceptableAngle;
@@ -70,7 +72,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
             I = I_FAR;
         }
 
-        manualControl = false; // temp adjustment
+        manualControl = false;
 
         addRequirements(drivetrain);
     }
@@ -85,6 +87,13 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     }
 
     public void execute() {
+        if (limelight.hasTarget()) {
+            manualControl = false;
+        }
+        else {
+            manualControl = true;
+        }
+
         limeAngle = limelight.getOffsetX();
 
         if (Math.abs(limeAngle) < errorToleranceAngle) {
@@ -106,12 +115,21 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
             driveLimeTurnSpeed = 0.0;
         }
 
-        if (withinThresholdLoops < -errorToleranceAngle) {
-            drivetrain.drive(0.0, 0.0, driveLimeTurnSpeed); // temporary removal of drivejoystick control
+        if (withinThresholdLoops < acceptableLoops) {
+            drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), driveLimeTurnSpeed);
         }
 
         else if(manualControl) {
-            drivetrain.drive(0.0, 0.0, 0.0);
+            if (oi.driverJoystick.isPressedButtonA()) {
+                chassisRot = 0.35;
+            }
+            else if (oi.driverJoystick.isPressedButtonB()) {
+                chassisRot = -0.35;
+            }
+            else {
+                chassisRot = 0.0;
+            }
+            drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), chassisRot);
         }
     }
 

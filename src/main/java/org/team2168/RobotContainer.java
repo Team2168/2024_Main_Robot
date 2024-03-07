@@ -112,7 +112,9 @@ public class RobotContainer {
         .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
-    // oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, () -> 0.0, true));
+    oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
+    oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
+    
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
