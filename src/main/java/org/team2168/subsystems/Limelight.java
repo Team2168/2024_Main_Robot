@@ -86,10 +86,10 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     public enum Pipeline {
         APRIL_TAGS(0),
-        SPEAKER_BLUE(1),
-        HPS_RED(2),
-        HPS_BLUE(3),
-        SPEAKER_RED(4);
+        SPEAKER(1),
+        HUMAN_PLAYER_STATION(2),
+        PIPELINE_THREE(3),
+        PIPELINE_FOUR(4);
 
         public final int pipelineValue;
 
@@ -215,10 +215,10 @@ public class Limelight extends SubsystemBase implements Loggable {
     public double calculateDistance(Limelight limelight) {
       double currentPipeline = limelight.getPipeline();
 
-      if (currentPipeline == 1 || currentPipeline == 4) {
+      if (currentPipeline == 1) {
           heightOffset = 0.616;
       }
-      else if (currentPipeline == 2 || currentPipeline == 3) {
+      else if (currentPipeline == 2) {
           heightOffset = 0.0;
       }
       
