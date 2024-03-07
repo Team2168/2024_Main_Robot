@@ -46,7 +46,7 @@ public class IntakePivot extends SubsystemBase {
   private final double TRIGGER_THRESHOLD_LIMIT = 25;
   private final double TRIGGER_THRESHOLD_TIME = 0.2;
  // private final double minuteInHundredMs = 600.0;
-  private double neutralDeadband = 0.05;
+  private double neutralDeadband = 0.015;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
   final double MIN_ANGLE = -120;
@@ -61,7 +61,7 @@ public class IntakePivot extends SubsystemBase {
   private final double TICKS_PER_REV = 2048;
   private final static double GEAR_RATIO = 10.0;
 
-  private double kP = 10.0;
+  private double kP = 13.0;
   private double kI = 0;
   private double kD = 0.3;
   private double kG = -1.3;

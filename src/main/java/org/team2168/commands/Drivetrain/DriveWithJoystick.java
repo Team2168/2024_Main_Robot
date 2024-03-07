@@ -34,10 +34,10 @@ public class DriveWithJoystick extends Command {
       // chooses button or joystick option for rotating chassis
         if (OI.joystickChooser.getSelected().equals("flight")) {
           if (oi.driverJoystick.isPressedButtonA()) {
-            chassisRot = 0.35;
+            chassisRot = 0.25;
           }
           else if (oi.driverJoystick.isPressedButtonB()) {
-            chassisRot = -0.35;
+            chassisRot = -0.25;
           }
           else {
             chassisRot = 0.0;

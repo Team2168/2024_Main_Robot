@@ -114,22 +114,20 @@ public class RobotContainer {
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     // oi.driverJoystick.ButtonX().onTrue(new ZeroSwerve(drivetrain));
 
-    oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.WHITE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.WHITE_LINE.shooterAngle));
-    // oi.testJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
-    // oi.testJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelightDistanceMeters));
+    oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
+    oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
+    oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
     oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
     oi.testJoystick.ButtonRightBumper().onTrue(new BumpShooterSpeed(shooter));
     oi.testJoystick.ButtonLeftBumper().onTrue(new BumpShooterSpeedDown(shooter));
-    oi.testJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
-    oi.testJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
+    oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
+    oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     // oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
     // oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
     // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
-    // oi.operatorJoystick.ButtonX().whileTrue(new DriveIndexeruntilNote(indexer, () -> 1.0));
-    // oi.operatorJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, 0.6));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75));
 
   }
 

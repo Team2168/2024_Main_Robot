@@ -25,8 +25,8 @@ public class Indexer extends SubsystemBase {
 
  public static SupplyCurrentLimitConfiguration indexerCurrentLimit;
  public static final boolean ENABLE_CURRENT_LIMIT = true;
- public static final double CONTINUES_CURRENT_LIMIT = 20;
- public static final double TRIGGER_THRESHOLD_LIMIT = 30;
+ public static final double CONTINUES_CURRENT_LIMIT = 15;
+ public static final double TRIGGER_THRESHOLD_LIMIT = 25;
  public static final double TRIGGER_THRESHOLD_TIME = 0.02;
  public static final InvertedValue indexerInvert = InvertedValue.CounterClockwise_Positive;
  private static NeutralModeValue coast = NeutralModeValue.Coast;

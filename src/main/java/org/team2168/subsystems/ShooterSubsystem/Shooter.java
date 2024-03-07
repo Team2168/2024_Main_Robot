@@ -46,10 +46,12 @@ import io.github.oblarg.oblog.annotations.Log;
 public class Shooter extends SubsystemBase implements Loggable {
 
   public enum SHOOTING_RPS { 
-    UP_AGAINST_SPEAKER(30.0), // placeholder
+    UP_AGAINST_SPEAKER(32.5), // placeholder
     WHITE_LINE(30.0),
-    RED_LINE(30.0),
-    UP_AGAINST_AMP(30.0); // no provided f310 bindings for this on the button bindings paper.
+    RED_LINE(40.0),
+    UP_AGAINST_AMP(8.5), // no provided f310 bindings for this on the button bindings paper.
+    STARTING_ZONE_LINE(37.5),
+    STAGE_LINE(41.0);
 
     public double shooterRPS;
 
@@ -195,7 +197,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public void setVelocity(double velocity) {
     leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity / GEAR_RATIO));
-    rightShooterMotor.setControl(velocityVoltage.withVelocity(((0.75 * velocity) / GEAR_RATIO)));
+    rightShooterMotor.setControl(velocityVoltage.withVelocity(((0.5 * velocity) / GEAR_RATIO)));
   }
 
   /**
