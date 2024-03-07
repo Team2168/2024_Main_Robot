@@ -81,10 +81,10 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     public enum Pipeline {
         APRIL_TAGS(0),
-        PIPELINE_ONE(1),
-        PIPELINE_TWO(2),
-        PIPELINE_THREE(3),
-        PIPELINE_FOUR(4);
+        SPEAKER_BLUE(1),
+        HPS_RED(2),
+        HPS_BLUE(3),
+        SPEAKER_RED(4);
 
         private final int pipelineValue;
 
