@@ -254,6 +254,21 @@ public class Drivetrain extends SubsystemBase implements Loggable {    private W
         _sd.stop();
     }
 
+    public void setMotorsBrake(boolean braked) {
+        if (braked) {
+            for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+                _wheels[i].getAzimuthTalon().setNeutralMode(NeutralModeValue.Brake);
+                _wheels[i].getDriveTalon().setNeutralMode(NeutralModeValue.Brake);
+            }
+        }
+        else {
+            for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+                _wheels[i].getAzimuthTalon().setNeutralMode(NeutralModeValue.Coast);
+                _wheels[i].getDriveTalon().setNeutralMode(NeutralModeValue.Coast);
+            }
+        }
+    }
+
 
     public void setDriveMode(SwerveDrive.DriveMode mode) {
         _sd.setDriveMode(mode);

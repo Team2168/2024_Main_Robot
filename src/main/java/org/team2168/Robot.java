@@ -4,6 +4,7 @@
 
 package org.team2168;
 
+import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
 
@@ -25,6 +26,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
   public Limelight limelight;
+  private Drivetrain drivetrain;
 
 
 
@@ -37,7 +39,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    limelight = new Limelight();
+    limelight = Limelight.getInstance();
+    drivetrain = Drivetrain.getInstance();
 
     limelight.enableVision(true);
   }
@@ -64,7 +67,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -76,6 +81,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
     intakePivot.setIntakePivotPosition(-120.0);
+    drivetrain.setMotorsBrake(true);
   }
 
   /** This function is called periodically during autonomous. */
@@ -94,6 +100,7 @@ public class Robot extends TimedRobot {
     intakePivot.setIntakePivotPosition(-120.0);
 
     limelight.enableBaseCameraSettings();
+    drivetrain.setMotorsBrake(true);
   }
 
   /** This function is called periodically during operator control. */
