@@ -66,6 +66,11 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     public AprilTagFieldLayout aprilTagFieldLayout;
 
+    
+    double heightOffset;
+    
+    double limelightAngleDegrees = 10;
+
    
 
     public Pose3d aprilTagInView;
@@ -86,10 +91,14 @@ public class Limelight extends SubsystemBase implements Loggable {
         HPS_BLUE(3),
         SPEAKER_RED(4);
 
-        private final int pipelineValue;
+        public final int pipelineValue;
 
         private Pipeline(int pipelineValue) {
             this.pipelineValue = pipelineValue;
+        }
+
+        public int getPipeline() {
+          return pipelineValue;
         }
     }
 
@@ -158,6 +167,8 @@ public class Limelight extends SubsystemBase implements Loggable {
   public double getBotRotationYaw() {
     return getBotPoseArray()[5];
   }
+
+  
  
     public double getTargetArea() {
         return ta.getDouble(0.0);
@@ -183,6 +194,10 @@ public class Limelight extends SubsystemBase implements Loggable {
         pipeline.setNumber(pipelineValue);
     }
 
+    public int getPipeline() {
+      return getPipeline.getNumber(0.0).intValue();
+    }
+
     public void pauseLimelight() {
         setCamMode(0);
         setPipeline(0);
@@ -196,6 +211,21 @@ public class Limelight extends SubsystemBase implements Loggable {
     public Pose2d getPose2d() {
       return new Pose2d(getBotPoseX(), getBotPoseY(), getRotation2d());
     }
+
+    public double calculateDistance(Limelight limelight) {
+      double currentPipeline = limelight.getPipeline();
+
+      if (currentPipeline == 1 || currentPipeline == 4) {
+          heightOffset = 0.616;
+      }
+      else if (currentPipeline == 2 || currentPipeline == 3) {
+          heightOffset = 0.0;
+      }
+      
+      double distanceFromTarget = (heightOffset - 0.5969)/Math.tan(Units.degreesToRadians(limelightAngleDegrees + limelight.getOffsetY()));
+
+      return distanceFromTarget;
+  }   
     
 
     
