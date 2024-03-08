@@ -68,8 +68,11 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     
     double heightOffset;
+    double heightToLimelight = 0.648; // m
+    double heightToSpeakerTag = 1.448; // m
+    double distanceFromTarget = 0.0;
     
-    double limelightAngleDegrees = 10;
+    double limelightAngleDegrees = 10.0;
 
    
 
@@ -207,18 +210,18 @@ public class Limelight extends SubsystemBase implements Loggable {
       return new Pose2d(getBotPoseX(), getBotPoseY(), getRotation2d());
     }
 
-    @Log(name = "distance calc (limelight)")
-    public double calculateDistance(Limelight limelight) {
-      double currentPipeline = limelight.getPipeline();
+    @Log(name = "distance calc (limelight)", rowIndex = 0, columnIndex = 0)
+    public double calculateDistance() {
+      double currentPipeline = getPipeline();
 
       if (currentPipeline == 1) {
-          heightOffset = 0.616;
+          heightOffset = heightToSpeakerTag - heightToLimelight;
       }
       else if (currentPipeline == 2) {
           heightOffset = 0.0;
       }
       
-      double distanceFromTarget = (heightOffset - 0.5969)/Math.tan(Units.degreesToRadians(limelightAngleDegrees + limelight.getOffsetY()));
+      distanceFromTarget = (heightOffset)/Math.tan(Units.degreesToRadians(limelightAngleDegrees + getOffsetY()));
 
       return distanceFromTarget;
   }   
@@ -247,6 +250,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     public void periodic() {
         // This method will be called once per scheduler run\
         Timer.getFPGATimestamp();
+        // System.out.println(calculateDistance());
     
     }
     

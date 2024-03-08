@@ -7,6 +7,8 @@ import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
@@ -25,21 +27,22 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private double chassisRot;
     private int withinThresholdLoops = 0;
     private int acceptableLoops = 10;
+    private double kDriveInvert = 1.0;
 
     private boolean manualControl;
 
     // TUNE THESE GAINS AND WHAT NOT
 
-    private static final double P_NEAR = 0.05;
-    private static final double P_FAR = 0.05;
+    private static final double P_NEAR = 0.01;
+    private static final double P_FAR = 0.01;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
-    private static final double MINIMUM_COMMAND = 0.2;
+    private static final double MINIMUM_COMMAND = 0.015;
     private static final double MAX_INTEGRAL = 1.0;
 
     private double P;
     private double I;
-    private double D = 0.0;
+    private double D = 0.003;
 
     @Config
     void setLimeP(double P) {
@@ -74,7 +77,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
 
         manualControl = false;
 
-        addRequirements(drivetrain);
+        addRequirements(drivetrain, limelight);
     }
 
     public void initialize() {
@@ -84,15 +87,21 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
 
         pid.setTolerance(errorToleranceAngle);
         pid.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
+        oi = OI.getInstance();
+
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+          kDriveInvert = -1.0;
+        }
     }
 
     public void execute() {
-        if (limelight.hasTarget()) {
-            manualControl = false;
-        }
-        else {
-            manualControl = true;
-        }
+        // if (limelight.hasTarget()) {
+        //     manualControl = false;
+        // }
+        // else {
+        //     manualControl = true;
+        // }
+        manualControl = false;
 
         limeAngle = limelight.getOffsetX();
 
@@ -104,22 +113,23 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         }
 
         if (limeAngle > errorToleranceAngle) {
-            driveLimeTurnSpeed = -(pid.calculate(limeAngle) + MINIMUM_COMMAND);
+            driveLimeTurnSpeed = -(pid.calculate(limeAngle) - MINIMUM_COMMAND);
         }
 
-         else if (limeAngle < errorToleranceAngle) {
-            driveLimeTurnSpeed = (pid.calculate(limeAngle) - MINIMUM_COMMAND);
+         else if (limeAngle < -errorToleranceAngle) {
+            driveLimeTurnSpeed = -(pid.calculate(limeAngle) + MINIMUM_COMMAND);
         }
 
         else {
             driveLimeTurnSpeed = 0.0;
         }
 
-        if (withinThresholdLoops < acceptableLoops) {
-            drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), driveLimeTurnSpeed);
-        }
+        // if (withinThresholdLoops < acceptableLoops) {
+            drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, driveLimeTurnSpeed);
+        //}
 
-        else if(manualControl) {
+        // else if (manualControl) {
+        if(manualControl) {
             if (oi.driverJoystick.isPressedButtonA()) {
                 chassisRot = 0.35;
             }
@@ -129,7 +139,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
             else {
                 chassisRot = 0.0;
             }
-            drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), chassisRot);
+            drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, chassisRot);
         }
     }
 
@@ -141,7 +151,8 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     }
 
     public boolean isFinished() {
-        return (withinThresholdLoops >= acceptableLoops && !manualControl);
+        return false;
+        //return (withinThresholdLoops >= acceptableLoops && !manualControl);
     }
 
     

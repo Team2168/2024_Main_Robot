@@ -36,7 +36,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     RED_LINE(36.0),
     UP_AGAINST_AMP(60.0), //no provided f310 bindings for this on the button bindings paper.
     STARTING_ZONE_LINE(46.0),
-    STAGE_LINE(41.25);
+    STAGE_LINE(40.25);
 
     public double shooterAngle;
 
@@ -76,13 +76,13 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
 
   private InterpolatingDoubleTreeMap shooterAngleLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed                                                                                            // from  // distance using a // interpolating lookup table.
     {
-      put(1.0, 80.0); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
-      put(2.0, 70.0);
-      put(3.0, 60.0);
-      put(4.0, 50.0);
+      put(1.57, 62.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
+      put(1.93, 46.0);
+      put(3.205, 40.25);
       put(5.0, 40.0);
-      put(6.0, 30.0);
-      put(7.0, 20.0);
+      put(100.0, 60.0);
+      // put(6.0, 30.0);
+      // put(7.0, 20.0);
     }
   };
 
