@@ -32,19 +32,16 @@ import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.subsystems.Limelight;
 import org.team2168.utils.F310;
 import org.team2168.commands.QueueNote;
+import org.team2168.commands.Drivetrain.AlignWithAmp;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
-import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
-import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.Indexer;
-//import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
-import org.team2168.utils.F310;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -85,9 +82,6 @@ public class RobotContainer {
 
   @Log(name = "auto chooser", width = 2)
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
-
-  //private final Indexer indexer = Indexer.getInstance();
-
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -138,14 +132,16 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
     oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
     oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
-    oi.testJoystick.ButtonRightBumper().onTrue(new BumpShooterSpeed(shooter));
-    oi.testJoystick.ButtonLeftBumper().onTrue(new BumpShooterSpeedDown(shooter));
+    // oi.testJoystick.ButtonRightBumper().onTrue(new BumpShooterSpeed(shooter));
+    // oi.testJoystick.ButtonLeftBumper().onTrue(new BumpShooterSpeedDown(shooter));
     oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     // oi.testJoystick.ButtonX().whileTrue(new SetIntakeSpeed(intakeRoller, .5));
     // oi.testJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, .4));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
     // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
+
+    oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75));
 

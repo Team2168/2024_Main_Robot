@@ -78,5 +78,13 @@ public final class Constants {
   
   }
 
+  public static class RobotMeasurements {
+    public static final double LIMELIGHT_TO_CENTER_IN = 0.5;
+    public static final double LIMELIGHT_TO_CENTER_M = 0.0127;
+
+    public static final double TOP_TO_LIMELIGHT_IN = 20.5;
+    public static final double TOP_TO_LIMELIGHT_M = 0.5207;
+  }
+
 }
 
