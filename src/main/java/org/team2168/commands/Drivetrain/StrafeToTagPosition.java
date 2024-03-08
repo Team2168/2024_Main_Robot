@@ -7,8 +7,6 @@ package org.team2168.commands.Drivetrain;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -55,6 +53,7 @@ public class StrafeToTagPosition extends Command {
   public void initialize() {
     pidController = new PIDController(kP,kI, kD);
     pidController.setSetpoint(0.0); //robot's target position is being aligned/perpendicular with the AprilTag
+    pidController.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
 
     limelight.enableBaseCameraSettings();
 
