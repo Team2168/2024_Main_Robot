@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /** Add your docs here. */
 public class SwervePathUtil {
-    private static final double PATH_MAX_VEL = 4.0; // m/s
+    private static final double PATH_MAX_VEL = 3.0; // m/s // TESTING VALUE
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
     private static ReplanningConfig replanningConfig = new ReplanningConfig();
     private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(

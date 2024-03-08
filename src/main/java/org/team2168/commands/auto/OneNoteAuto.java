@@ -5,6 +5,7 @@
 package org.team2168.commands.auto;
 
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
+import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Indexer;
@@ -15,6 +16,7 @@ import org.team2168.utils.SwervePathUtil;
 import org.team2168.utils.SwervePathUtil.InitialPathState;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -35,6 +37,8 @@ public class OneNoteAuto extends SequentialCommandGroup {
     addCommands(
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new WaitCommand(0.5),
+      new StopFlywheel(shooter),
       SwervePathUtil.getPathCommand("Move_Back_Speaker", drivetrain, InitialPathState.DISCARDHEADING)
     );
   }
