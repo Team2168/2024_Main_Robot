@@ -29,16 +29,19 @@ import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.subsystems.Limelight;
 import org.team2168.utils.F310;
 import org.team2168.commands.QueueNote;
+import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.indexer.DriveIndexer;
-import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
+import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.Indexer;
 //import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
+import org.team2168.subsystems.Limelight;
+import org.team2168.utils.F310;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -80,8 +83,6 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  
-  private final F310 driverJoystick = oi.driverJoystick;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -89,9 +90,9 @@ public class RobotContainer {
   public RobotContainer() {
 
     // Configure the trigger bindings
-    Logger.configureLoggingAndConfig(this, false);
     configureBindings();
-    }
+    Logger.configureLoggingAndConfig(this, false);
+  }
 
  
   /**
@@ -120,7 +121,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-    // oi.driverJoystick.ButtonX().onTrue(new ZeroSwerve(drivetrain));
+    // drivetrain.setDefaultCommand(new DriveWithChassisSpeedsJoystick(drivetrain));
 
     oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
     // oi.operatorJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight));

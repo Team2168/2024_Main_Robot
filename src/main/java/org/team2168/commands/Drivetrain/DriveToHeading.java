@@ -40,9 +40,11 @@ public class DriveToHeading extends Command {
   public void execute() {
     if (Math.abs(drivetrain.getHeading() - angle) % 360.0 < 180.0) {
     drivetrain.drive(0.0, 0.0, drivePID.calculate((angle - drivetrain.getHeading() % 360.0)));
+    // drivetrain.driveWithKinematics(0.0, 0.0, drivePID.calculate(angle - drivetrain.getHeading() % 360.0));
     }
     else {
       drivetrain.drive(0.0, 0.0, drivePID.calculate((drivetrain.getHeading() % 360.0 - angle)));
+      // drivetrain.driveWithKinematics(0.0, 0.0, drivePID.calculate(drivetrain.getHeading() % 360.0 - angle));
     }
 
     if (Math.abs(drivetrain.getHeading()) < ERROR_TOLERANCE) {

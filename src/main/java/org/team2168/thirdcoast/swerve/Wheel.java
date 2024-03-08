@@ -12,6 +12,9 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
 
 /**
@@ -44,6 +47,7 @@ public class Wheel {
                                                                                  // output; placeholder
   private static final double DRIVE_GEAR_RATIO = 7.13 / 1; // (60.0/15.0) * (20.0/24.0) * (38.0/18.0);
   private static final double DRIVE_CIRCUMFERENCE_FT = ((Math.PI * 4.0) / 12.0);
+  private static final double DRIVE_CIRCUMFERENCE_M = 0.3048 * DRIVE_CIRCUMFERENCE_FT;
   private static final int INTERNAL_ENCODER_TICKS = 2048;
   private static final int EXTERNAL_ENCODER_TICKS = 4096;
   private static final double AZIMUTH_ERROR_TOLERANCE_DEG = 2.0;
@@ -56,9 +60,9 @@ public class Wheel {
   private static final double DRIVE_SETPOINT_MAX = FREE_SPEED_RPS / 10.0; // rotations/100 ms, new phoenix 6 libs
   private final TalonFX driveTalon;
   private final TalonFX azimuthTalon;
-  private final DutyCycleOut percentOutDutyCycle;
-  private final VelocityVoltage velocityVoltage;
-  private final MotionMagicVoltage motionMagicVoltage;
+  private DutyCycleOut percentOutDutyCycle;
+  private VelocityVoltage velocityVoltage;
+  private MotionMagicVoltage motionMagicVoltage;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
   private static final int PRIMARY_PID = 0;
@@ -118,6 +122,13 @@ public class Wheel {
 
     azimuthTalon.setControl(motionMagicVoltage.withPosition((azimuthPosition + azimuthError)));
     driver.accept(drive);
+  }
+
+  public void setWithModuleState(SwerveModuleState modState) {
+    SwerveModuleState optimModState = SwerveModuleState.optimize(modState, new Rotation2d(getAzimuthPosition() * 2 * Math.PI)); // optimal module state
+    // driveTalon.set(((optimModState.speedMetersPerSecond / DRIVE_CIRCUMFERENCE_M) / DRIVE_SETPOINT_MAX)); // returns m/s drive speed to percentage
+    driveTalon.setControl(new VelocityVoltage(optimModState.speedMetersPerSecond));
+    azimuthTalon.setControl(new MotionMagicVoltage(optimModState.angle.getRotations()));
   }
 
   /**
@@ -250,6 +261,17 @@ public class Wheel {
   public double degToRotations(double deg) {
     return (deg/360.0);
   }
+
+  /**
+   * Converts rotations into radians for Rotation2d
+   * 
+   * @param rot the number of rotations to be converted
+   * @return conversion of phoenix sensor values to rotation2d units
+   */
+  public static double rotToRadians(double rot) {
+    return rot * 2.0 * Math.PI;
+  }
+
   /**
    * Converts degrees of rotation into external encoder ticks
    * 
@@ -353,6 +375,33 @@ public class Wheel {
   }
 
   /**
+   * Returns the native encoder position of the drive motor
+   * 
+   * @return position in relative drive encoder rotations
+   */
+  public double getDrivePosition() {
+    return driveTalon.getPosition().getValue();
+  }
+
+  /**
+   * sets the relative encoder position of the drive motor
+   * 
+   * @param pos position for encoder to be set to
+   */
+  public void setDrivePosition(double pos) {
+    driveTalon.setPosition(pos);
+  }
+
+  /**
+   * Returns the circumference of the module wheel in meters
+   * 
+   * @return circumference in meters
+   */
+  public static double getDriveCircumferenceMeters() {
+    return DRIVE_CIRCUMFERENCE_M;
+  }
+
+  /**
    * @return speed of drive wheel in rotations per 100 ms
    */
   public double getDWSpeed() {
@@ -379,6 +428,10 @@ public class Wheel {
 
   public static double getDriveSetpointMax() {
     return DRIVE_SETPOINT_MAX;
+  }
+
+  public static double getMaxVelocityMetersPerSec() {
+    return (DRIVE_SETPOINT_MAX * DRIVE_CIRCUMFERENCE_M);
   }
 
   public static double getAzimuthGearRatio() {
