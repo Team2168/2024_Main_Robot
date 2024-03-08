@@ -23,6 +23,9 @@ import org.team2168.commands.ShooterCommands.ShooterFlywheel.SetShooterVelocity;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngle;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
+import org.team2168.commands.auto.DoNothing;
+import org.team2168.commands.auto.OneNoteAuto;
+import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
@@ -43,12 +46,15 @@ import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
 import org.team2168.utils.F310;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -77,6 +83,9 @@ public class RobotContainer {
   private double limelightDistanceMeters = 0.0; //unknown
   private boolean brakesEnabled = false;
 
+  @Log(name = "auto chooser", width = 2)
+  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
   //private final Indexer indexer = Indexer.getInstance();
 
 
@@ -91,6 +100,7 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     configureBindings();
+    configureAutonomousRoutines();
     Logger.configureLoggingAndConfig(this, false);
   }
 
@@ -141,6 +151,14 @@ public class RobotContainer {
 
   }
 
+  public void configureAutonomousRoutines() {
+    autoChooser.setDefaultOption("Do Nothing", new DoNothing());
+    autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, indexer, shooter, shooterPivot, limelight));
+    autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight));
+
+    SmartDashboard.putData(autoChooser);
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -148,7 +166,14 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    // return Autos.exampleAuto(m_exampleSubsystem);
+    var auto = autoChooser.getSelected();
+    if (auto == null) {
+      return new DoNothing();
+    }
+    else {
+      return autoChooser.getSelected();
+    }
   }
 
   public boolean getBrakesEnabled() {
