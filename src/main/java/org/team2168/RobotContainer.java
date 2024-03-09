@@ -15,6 +15,12 @@ import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.commands.Drivetrain.ZeroSwerve;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
+import org.team2168.commands.LEDs.LEDstatus;
+import org.team2168.commands.LEDs.SetBlueLED;
+import org.team2168.commands.LEDs.SetGreenLED;
+import org.team2168.commands.LEDs.SetRedLED;
+import org.team2168.commands.intakePivot.SetIntakePivotPosition;
+import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
 import org.team2168.commands.ShooterCommands.ShootAndControlHoodFromDistance;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.BumpShooterSpeed;
@@ -27,6 +33,14 @@ import org.team2168.commands.auto.DoNothing;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.ExampleSubsystem;
+import org.team2168.subsystems.LEDs;
+
+//import org.team2168.subsystems.Indexer;
+import org.team2168.subsystems.IntakeRoller;
+import org.team2168.subsystems.IntakePivot;
+
+import org.team2168.subsystems.Limelight;
+
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.subsystems.Limelight;
@@ -53,6 +67,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
+import io.github.oblarg.oblog.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -84,6 +99,10 @@ public class RobotContainer {
   @Log(name = "auto chooser", width = 2)
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
+  private final LEDs leds = LEDs.getInstance();
+
+  //private final Indexer indexer = Indexer.getInstance();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -92,6 +111,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    Logger.configureLoggingAndConfig(this, false);
 
     // Configure the trigger bindings
     configureBindings();
@@ -100,14 +120,16 @@ public class RobotContainer {
   }
 
  
+  
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
    * an arbitrary
-   * predicate, or via the named factories in {@link
+   * predicate, or via the named factories in {@Link
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
+   * {@Link
    * CommandXboxController
    * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or
@@ -115,13 +137,19 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
+    oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
+    oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // new Trigger(m_exampleSubsystem::exampleCondition)
+    //     .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
+    leds.setDefaultCommand(new LEDstatus(leds));
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
+    // new Trigger(m_exampleSubsystem::exampleCondition)
+    //     .OnTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -142,14 +170,14 @@ public class RobotContainer {
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds));
 
   }
 
   public void configureAutonomousRoutines() {
     autoChooser.setDefaultOption("Do Nothing", new DoNothing());
-    autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, indexer, shooter, shooterPivot, limelight));
-    autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight));
+    autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }

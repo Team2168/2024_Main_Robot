@@ -4,6 +4,8 @@
 
 package org.team2168;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
 
 /**
@@ -15,6 +17,13 @@ import com.ctre.phoenix6.hardware.DeviceIdentifier;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class PneumaticsDevices {
+  public static final int RED_LIGHT = 6;
+  public static final int GREEN_LIGHT = 7;
+  public static final int BLUE_LIGHT = 8;
+
+    public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
+  }
   public static class OperatorConstants {
     final int INDEXER_SENSOR = 3; //placeholder for the time being
     public static final int kDriverControllerPort = 0;

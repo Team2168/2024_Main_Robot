@@ -8,6 +8,7 @@ import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakeRoller;
+import org.team2168.subsystems.LEDs;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
@@ -16,11 +17,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class QueueNote extends SequentialCommandGroup {
   /** Creates a new QueueNote. */
-  public QueueNote(IntakeRoller iRoller, Indexer indexer) {
+  public QueueNote(IntakeRoller iRoller, Indexer indexer, LEDs leds) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetIntakeSpeed(iRoller, 0.6).raceWith(new DriveIndexeruntilNote(indexer, () -> 0.75)
+      new SetIntakeSpeed(iRoller, 0.6).raceWith(new DriveIndexeruntilNote(indexer, () -> 0.75, leds)
       )
     );
   }

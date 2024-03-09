@@ -13,6 +13,7 @@ import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.IntakeRoller;
+import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
@@ -33,7 +34,8 @@ public class TwoNoteAuto extends SequentialCommandGroup {
   Shooter shooter;
   ShooterPivot shooterPivot;
   Limelight limelight;
-  public TwoNoteAuto(Drivetrain drivetrain, IntakeRoller intakeRoller, IntakePivot intakePivot, Indexer indexer, Shooter shooter, ShooterPivot shooterPivot, Limelight limelight) {
+  LEDs leds;
+  public TwoNoteAuto(Drivetrain drivetrain, IntakeRoller intakeRoller, IntakePivot intakePivot, Indexer indexer, Shooter shooter, ShooterPivot shooterPivot, Limelight limelight, LEDs leds) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     this.drivetrain = drivetrain;
@@ -42,9 +44,10 @@ public class TwoNoteAuto extends SequentialCommandGroup {
     this.shooter = shooter;
     this.shooterPivot = shooterPivot;
     this.limelight = limelight;
+    this.leds = leds;
     addCommands( // shoots first note
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds),
       new WaitCommand(0.75),
       new StopFlywheel(shooter),
       // moves back to pick up second note
@@ -59,7 +62,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       ),
       // shoots second note
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds),
       new WaitCommand(0.75),
       new StopFlywheel(shooter)
     );

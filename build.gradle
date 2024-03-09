@@ -4,8 +4,8 @@ plugins {
 }
 
 repositories {
-  maven { url 'https://jitpack.io' }
-} 
+    maven { url 'https://jitpack.io' }
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

@@ -9,6 +9,7 @@ import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Indexer;
+import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
@@ -27,16 +28,18 @@ public class OneNoteAuto extends SequentialCommandGroup {
   Shooter shooter;
   ShooterPivot shooterPivot;
   Limelight limelight;
-  public OneNoteAuto(Drivetrain drivetrain, Indexer indexer, Shooter shooter, ShooterPivot shooterPivot, Limelight limelight) {
+  LEDs leds;
+  public OneNoteAuto(Drivetrain drivetrain, Indexer indexer, Shooter shooter, ShooterPivot shooterPivot, Limelight limelight, LEDs leds) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     this.drivetrain = drivetrain;
     this.shooter = shooter;
     this.shooterPivot = shooterPivot;
     this.limelight = limelight;
+    this.leds = leds;
     addCommands(
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
       SwervePathUtil.getPathCommand("Move_Back_Speaker", drivetrain, InitialPathState.DISCARDHEADING)

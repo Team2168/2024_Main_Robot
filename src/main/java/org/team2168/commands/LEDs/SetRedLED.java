@@ -2,24 +2,24 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package org.team2168.commands.ShooterCommands.ShooterFlywheel;
+package org.team2168.commands.LEDs;
 
 import org.team2168.subsystems.LEDs;
-import org.team2168.subsystems.ShooterSubsystem.Shooter;
-
+ 
 import edu.wpi.first.wpilibj2.command.Command;
-
-public class SetShooterVelocity extends Command {
-  private Shooter shooter;
-  private double velocity;
-  double shooterErrorTolerance = 0.25;
+/**SEts the red LED on or off
+ * @param 
+ */
+public class SetRedLED extends Command {
+  /** Creates a new SetRedLED. */
   private LEDs leds;
-  
-  public SetShooterVelocity(Shooter shooter, double velocity, LEDs leds) {
-    this.shooter = shooter;
-    this.velocity = velocity;
+  private boolean Ison;
+  public SetRedLED(LEDs leds, boolean Ison) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.leds = leds;
-    addRequirements(shooter);
+    this.Ison = Ison;
+
+    addRequirements(leds);
   }
 
   // Called when the command is initially scheduled.
@@ -29,23 +29,16 @@ public class SetShooterVelocity extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setVelocity(velocity);
-
-    if(Math.abs(velocity - shooter.getVelocity()) < shooterErrorTolerance) {
-      leds.greenlight(true);
-    } 
-  else {
-      leds.greenlight(false);
-    }
+        
+    leds.redlight(true);
+    leds.bluelight(false);
+    leds.greenlight(false);
   }
-  
-      
-
-
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    leds.redlight(false);
   }
 
   // Returns true when the command should end.
@@ -53,5 +46,4 @@ public class SetShooterVelocity extends Command {
   public boolean isFinished() {
     return false;
   }
-  
 }
