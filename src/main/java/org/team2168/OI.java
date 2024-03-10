@@ -15,7 +15,7 @@ public class OI {
     
     public F310 driverJoystick = new F310(Constants.Controllers.DRIVER_JOYSTICK);
     public F310 operatorJoystick = new F310(Constants.Controllers.OPERATOR_JOYSTICK);
-    // public F310 testJoystick = new F310(Constants.Controllers.TEST_JOYSTICK); // test joystick removed for packet loss improvement
+    public F310 testJoystick = new F310(Constants.Controllers.TEST_JOYSTICK); // test joystick removed for packet loss improvement
 
     public static final SendableChooser<String> joystickChooser = new SendableChooser<>();
 

@@ -172,6 +172,16 @@ public class RobotContainer {
 
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75));
 
+    //Testing LEDs
+    oi.testJoystick.ButtonB().whileTrue(new SetRedLED(leds, true))
+                             .onFalse(new SetRedLED(leds, false));
+
+    oi.testJoystick.ButtonA().whileTrue(new SetGreenLED(leds, true))
+                             .onFalse(new SetGreenLED(leds, false));
+
+    oi.testJoystick.ButtonX().whileTrue(new SetBlueLED(leds, true))
+                             .onFalse(new SetBlueLED(leds, false));
+
   }
 
   public void configureAutonomousRoutines() {
