@@ -18,8 +18,7 @@ public class LeaveStartingZone extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new Drive(drivetrain, -0.25, 0, 0), //TODO: verify that this is quick
-      new DoNothing().withTimeout(5.0), //TODO; verify this is enough time to back out
+      new Drive(drivetrain, -0.25, 0, 0).withTimeout(5), //TODO: verify that this is quick and enough time to back out
       new Drive(drivetrain, 0, 0, 0)
     );
   }
