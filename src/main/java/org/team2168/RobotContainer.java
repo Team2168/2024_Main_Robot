@@ -30,6 +30,7 @@ import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngle;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
 import org.team2168.commands.auto.DoNothing;
+import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -188,6 +189,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Do Nothing", new DoNothing());
     autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("Drive Back", new LeaveStartingZone(drivetrain));
 
     SmartDashboard.putData(autoChooser);
   }
