@@ -220,6 +220,14 @@ public class Shooter extends SubsystemBase implements Loggable {
     return (leftShooterMotor.getVelocity().getValue()) / GEAR_RATIO;
   }
 
+  public double getError() {
+    return leftShooterMotor.getClosedLoopError().getValue();
+  }
+
+  public boolean isAtSpeed(double errorTolerance) {
+    return (Math.abs(getError()) < errorTolerance);
+  }
+
   @Override
   public void periodic() {
 

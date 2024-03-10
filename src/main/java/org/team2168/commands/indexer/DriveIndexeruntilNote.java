@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class DriveIndexeruntilNote extends Command {
   private Indexer indexer;
   private DoubleSupplier speed;
-   private LEDs leds;
 
 
   double limeErrorTolerance = 1.0; //in degrees
@@ -23,7 +22,7 @@ public class DriveIndexeruntilNote extends Command {
    * @param indexer indexer subsystem to be used for method
    * @param speed to set the indexer at
    */
-  public DriveIndexeruntilNote(Indexer indexer, DoubleSupplier speed, LEDs leds) {
+  public DriveIndexeruntilNote(Indexer indexer, DoubleSupplier speed) {
     this.indexer = indexer;
     this.speed = speed;
 
@@ -39,15 +38,6 @@ public class DriveIndexeruntilNote extends Command {
   @Override
   public void execute() {
     indexer.setDriveIndexer(speed.getAsDouble());
-
-    if (indexer.isNotePresent()) {
-    
-      leds.bluelight(true);
-      
-    } 
-    else {
-      leds.bluelight(false);
-    }
   }
 
   // Called once the command ends or is interrupted.

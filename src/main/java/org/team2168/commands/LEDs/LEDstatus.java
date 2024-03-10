@@ -19,7 +19,7 @@ public class LEDstatus extends Command {
   private Limelight limelight;
   private Shooter shooter;
   double limeErrorTolerance = 1.0; //in degrees
-  public LEDstatus(LEDs leds) {
+  public LEDstatus(LEDs leds, Indexer indexer, Limelight limelight, Shooter shooter) {
     this.leds = leds;  
     this.indexer = indexer; 
     this.limelight = limelight;
@@ -48,8 +48,16 @@ public class LEDstatus extends Command {
       leds.redlight(true);
     }
       else {
-        leds.redlight(false);}
-      } 
+        leds.redlight(false);
+      }
+    
+    if (shooter.isAtSpeed(0.25)) {
+      leds.greenlight(true);
+    }
+    else {
+      leds.greenlight(false);
+    }
+    }
       
   
 

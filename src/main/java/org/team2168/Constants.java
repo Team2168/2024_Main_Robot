@@ -18,9 +18,9 @@ import com.ctre.phoenix6.hardware.DeviceIdentifier;
  */
 public final class Constants {
   public static final class PneumaticsDevices {
-  public static final int RED_LIGHT = 6;
+  public static final int RED_LIGHT = 5;
   public static final int GREEN_LIGHT = 7;
-  public static final int BLUE_LIGHT = 8;
+  public static final int BLUE_LIGHT = 12;
 
     public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
   }

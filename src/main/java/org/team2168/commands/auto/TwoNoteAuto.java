@@ -47,7 +47,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
     this.leds = leds;
     addCommands( // shoots first note
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
       new WaitCommand(0.75),
       new StopFlywheel(shooter),
       // moves back to pick up second note
@@ -62,7 +62,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       ),
       // shoots second note
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
       new WaitCommand(0.75),
       new StopFlywheel(shooter)
     );

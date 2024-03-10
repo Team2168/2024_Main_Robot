@@ -48,6 +48,7 @@ import org.team2168.utils.F310;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
+import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
@@ -111,8 +112,6 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    Logger.configureLoggingAndConfig(this, false);
-
     // Configure the trigger bindings
     configureBindings();
     configureAutonomousRoutines();
@@ -137,15 +136,15 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
-    oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
-    oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
+    // oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
+    // oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
+    // oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //     .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
-    leds.setDefaultCommand(new LEDstatus(leds));
+    leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
     // new Trigger(m_exampleSubsystem::exampleCondition)
@@ -158,19 +157,20 @@ public class RobotContainer {
 
     oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
     oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
-    oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
+    // oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
     oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
+    oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
     oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-                                          .whileTrue(new SetIntakePivotPosition(intakePivot, 0.0))
-                                          .onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
+                                          .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+                                          .onFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // temporarily tying up intake for matches
     // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75));
 
   }
 

@@ -25,8 +25,7 @@ import io.github.oblarg.oblog.Logger;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private IntakePivot intakePivot = IntakePivot.getInstance();
-
+  private IntakePivot intakePivot;
   private RobotContainer m_robotContainer;
   public Limelight limelight;
   private Drivetrain drivetrain;
@@ -44,6 +43,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     limelight = Limelight.getInstance();
     drivetrain = Drivetrain.getInstance();
+    intakePivot = IntakePivot.getInstance();
 
     limelight.enableVision(true);
   }
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    intakePivot.setIntakePivotPosition(-120.0);
+    // intakePivot.setIntakePivotPosition(-120.0);
     drivetrain.setMotorsBrake(true);
   }
 
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    intakePivot.setIntakePivotPosition(-120.0);
+    // intakePivot.setIntakePivotPosition(-120.0);
 
     limelight.enableBaseCameraSettings();
     drivetrain.setMotorsBrake(true);

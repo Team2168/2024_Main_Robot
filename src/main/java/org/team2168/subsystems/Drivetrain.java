@@ -43,7 +43,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final boolean[] DRIVE_INVERTED = {false, true, false, true};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.83374, 0.255859, 0.4609375, 0.2307129}; // the magnet offsets should be set to the opposite sign of these encoder values
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.8364258, 0.260254, 0.4604492, 0.23388672}; // the magnet offsets should be set to the opposite sign of these encoder values
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
@@ -126,12 +126,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         azimuthMotionMagicConfig.withMotionMagicAcceleration(150);
         azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
-        driveSlot0Config.withKP(10.0);
-        driveSlot0Config.withKI(1);
+        driveSlot0Config.withKP(0.5);
+        driveSlot0Config.withKI(0.0);
         driveSlot0Config.withKD(0.0);
         driveSlot0Config.withKV(0.001);  // TODO: tune these
         driveSlot0Config.withKA(0.001);
-        driveSlot0Config.withKS(0.08);
+        driveSlot0Config.withKS(0.05);
         // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
         driveMotionMagicConfig.withMotionMagicAcceleration(30); // 500;
         driveMotionMagicConfig.withMotionMagicCruiseVelocity(15); // 100;

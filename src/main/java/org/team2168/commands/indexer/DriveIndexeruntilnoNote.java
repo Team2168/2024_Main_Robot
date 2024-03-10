@@ -15,12 +15,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class DriveIndexeruntilnoNote extends Command {
   private Indexer indexer;
   private DoubleSupplier speed;
-  private LEDs leds;
   /** and it drives the indexer until there is no note
    * @param indexer indexer subsystem to be used for method
    * @param speed to set the indexer at
    */
-  public DriveIndexeruntilnoNote(Indexer indexer, DoubleSupplier speed, LEDs leds) {
+  public DriveIndexeruntilnoNote(Indexer indexer, DoubleSupplier speed) {
     this.indexer = indexer;
     this.speed = speed;
     addRequirements(indexer);
@@ -35,15 +34,6 @@ public class DriveIndexeruntilnoNote extends Command {
   @Override
   public void execute() {
     indexer.setDriveIndexer(speed.getAsDouble());
-
-    if (indexer.isNotePresent()) {
-    
-      leds.bluelight(true);
-      
-    } 
-    else {
-      leds.bluelight(false);
-    }
   }
 
   // Called once the command ends or is interrupted.

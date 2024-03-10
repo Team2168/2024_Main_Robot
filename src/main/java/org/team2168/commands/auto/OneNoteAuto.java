@@ -39,7 +39,7 @@ public class OneNoteAuto extends SequentialCommandGroup {
     this.leds = leds;
     addCommands(
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75, leds),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
       SwervePathUtil.getPathCommand("Move_Back_Speaker", drivetrain, InitialPathState.DISCARDHEADING)

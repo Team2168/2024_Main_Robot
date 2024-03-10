@@ -47,12 +47,12 @@ public class DriveWithJoystick extends Command {
           chassisRot = oi.getDriverJoystickZValue();
         }
 
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
+        if (DriverStation.getAlliance().get() == Alliance.Blue) {
           kDriveInvert = -1.0;
         }
 
         if (SmartDashboard.getString("Control Mode", "Joystick").equals("Joystick")) {
-          drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, chassisRot);
+          drivetrain.drive(-oi.getDriverJoystickYValue(), -oi.getDriverJoystickXValue() , -chassisRot);
         }
         else {
           drivetrain.stop();
