@@ -145,6 +145,7 @@ public class RobotContainer {
     //     .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
+    intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0));
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
@@ -160,18 +161,18 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
     // oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
     oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
-    oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
+    oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.6));
     oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
                                           .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
-                                          .onFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // temporarily tying up intake for matches
+                                          .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: test
     // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.75));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.6));
 
     //Testing LEDs
     oi.testJoystick.ButtonB().whileTrue(new SetRedLED(leds, true))
@@ -187,9 +188,9 @@ public class RobotContainer {
 
   public void configureAutonomousRoutines() {
     autoChooser.setDefaultOption("Do Nothing", new DoNothing());
-    autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
-    autoChooser.addOption("Drive Back", new LeaveStartingZone(drivetrain));
+    autoChooser.addOption("Drive Back", new LeaveStartingZone(drivetrain, intakePivot));
 
     SmartDashboard.putData(autoChooser);
   }

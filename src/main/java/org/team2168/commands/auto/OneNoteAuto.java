@@ -7,8 +7,10 @@ package org.team2168.commands.auto;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
+import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Indexer;
+import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
@@ -29,7 +31,7 @@ public class OneNoteAuto extends SequentialCommandGroup {
   ShooterPivot shooterPivot;
   Limelight limelight;
   LEDs leds;
-  public OneNoteAuto(Drivetrain drivetrain, Indexer indexer, Shooter shooter, ShooterPivot shooterPivot, Limelight limelight, LEDs leds) {
+  public OneNoteAuto(Drivetrain drivetrain, IntakePivot intakePivot, Indexer indexer, Shooter shooter, ShooterPivot shooterPivot, Limelight limelight, LEDs leds) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     this.drivetrain = drivetrain;
@@ -38,6 +40,7 @@ public class OneNoteAuto extends SequentialCommandGroup {
     this.limelight = limelight;
     this.leds = leds;
     addCommands(
+      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.5),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 0.75),
       new WaitCommand(0.5),

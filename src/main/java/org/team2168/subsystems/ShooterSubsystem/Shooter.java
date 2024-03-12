@@ -225,7 +225,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   public boolean isAtSpeed(double errorTolerance) {
-    return (Math.abs(getError()) < errorTolerance);
+    return (Math.abs(getError()) < errorTolerance + 80.0); // TODO: Change for Competition
   }
 
   @Override
