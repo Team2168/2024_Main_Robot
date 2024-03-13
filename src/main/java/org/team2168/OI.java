@@ -4,6 +4,7 @@ import org.team2168.utils.F310;
 import org.team2168.utils.LinearInterpolator;
 import org.team2168.Constants;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,6 +24,11 @@ public class OI {
 	private LinearInterpolator driverJoystickXInterpolator;
 	private LinearInterpolator driverJoystickZInterpolator;
 	private LinearInterpolator driverFlightStickZInterpolator;
+
+	private SlewRateLimiter driverJoystickYRateLimiter = new SlewRateLimiter(0.8);
+	private SlewRateLimiter driverJoystickXRateLimiter = new SlewRateLimiter(0.8);
+	private SlewRateLimiter driverJoystickZRateLimiter = new SlewRateLimiter(0.5);
+
 	private double[][] driverJoystickYArray = {
 		{-1.0, -1.0}, //don't scale turning max
 		{-0.6, -0.5},
@@ -95,6 +101,30 @@ public class OI {
 			return driverFlightStickZInterpolator.interpolate(driverJoystick.getRawAxis(2));
 		else
 			return driverJoystickZInterpolator.interpolate(driverJoystick.getRightStickRaw_X());
+	}
+
+	/**
+	 * Gets value of driver joystick x-imput after filtering through a SlewRateLimiter object
+	 * @return rate-limited driverJoystick X value
+	 */
+	public double getLimitedDriverJoystickXValue() {
+		return driverJoystickXRateLimiter.calculate(getDriverJoystickXValue());
+	}
+
+	/**
+	 * Gets value of driverJoystick y-imput after filtering through a SlewRateLimiter object
+	 * @return rate-limited driverJoystick Y value
+	 */
+	public double getLimitedDriverJoystickYValue() {
+		return driverJoystickYRateLimiter.calculate(getDriverJoystickYValue());
+	}
+
+	/**
+	 * Gets value of driverJoystick Z-input after filtering through a SlewRateLimiter object
+	 * @return rate-limited driverJoystick Z value
+	 */
+	public double getLimitedDriverJoystickZValue() {
+		return driverJoystickZRateLimiter.calculate(getDriverJoystickZValue());
 	}
 
 

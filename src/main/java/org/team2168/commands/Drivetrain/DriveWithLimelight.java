@@ -7,6 +7,7 @@ import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -20,6 +21,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private Limelight limelight;
     private PIDController pid;
     private OI oi;
+    private SlewRateLimiter rotationRateLimiter;
 
     private static double DEFAULT_MAXANGLE = 0.0;
     private double errorToleranceAngle;
@@ -88,6 +90,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         pid.setTolerance(errorToleranceAngle);
         pid.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
         oi = OI.getInstance();
+        rotationRateLimiter = new SlewRateLimiter(0.5);
 
         if (DriverStation.getAlliance().get() == Alliance.Red) {
           kDriveInvert = -1.0;
@@ -125,7 +128,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         }
 
         // if (withinThresholdLoops < acceptableLoops) {
-            drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, driveLimeTurnSpeed);
+            drivetrain.drive(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, driveLimeTurnSpeed);
         //}
 
         // else if (manualControl) {
@@ -139,7 +142,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
             else {
                 chassisRot = 0.0;
             }
-            drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, chassisRot);
+            drivetrain.drive(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, rotationRateLimiter.calculate(chassisRot));
         }
     }
 

@@ -242,7 +242,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     /**
      *
-     * @return the robot's heading (yaw) in degrees. Yaw positively increases in the CW direction TODO: verify this is accurate
+     * @return the robot's heading (yaw) in degrees. Yaw positively increases with CCW rotation around Z-axis (verified from docs)
      */
     @Log (name="Gyro Heading")
     public double getHeading() {

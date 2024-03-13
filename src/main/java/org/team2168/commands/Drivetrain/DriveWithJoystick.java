@@ -1,5 +1,6 @@
 package org.team2168.commands.Drivetrain;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,6 +12,7 @@ import org.team2168.subsystems.Drivetrain;
 public class DriveWithJoystick extends Command {
 
     private OI oi;
+    private SlewRateLimiter rotationRateLimiter;
     private Drivetrain drivetrain;
     private double chassisRot = 0.0;
     private double kDriveInvert = 1.0;
@@ -28,16 +30,17 @@ public class DriveWithJoystick extends Command {
       @Override
       public void initialize() {
         oi = OI.getInstance();
+        rotationRateLimiter = new SlewRateLimiter(0.35);
       }
 
       public void execute() {
       // chooses button or joystick option for rotating chassis
         if (OI.joystickChooser.getSelected().equals("flight")) {
           if (oi.driverJoystick.isPressedButtonA()) {
-            chassisRot = 0.25;
+            chassisRot = 0.5;
           }
           else if (oi.driverJoystick.isPressedButtonB()) {
-            chassisRot = -0.25;
+            chassisRot = -0.5;
           }
           else {
             chassisRot = 0.0;
@@ -52,7 +55,7 @@ public class DriveWithJoystick extends Command {
         }
 
         if (SmartDashboard.getString("Control Mode", "Joystick").equals("Joystick")) {
-          drivetrain.drive(-oi.getDriverJoystickYValue(), -oi.getDriverJoystickXValue() , -chassisRot);
+          drivetrain.drive(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, rotationRateLimiter.calculate(chassisRot));
         }
         else {
           drivetrain.stop();

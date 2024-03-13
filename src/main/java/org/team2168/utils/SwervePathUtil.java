@@ -25,6 +25,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /** Add your docs here. */
@@ -50,20 +52,25 @@ public class SwervePathUtil {
     public static Command getPathCommand(String pathName, Drivetrain drive, InitialPathState pathState) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
         Pose2d initialPose = path.getPreviewStartingHolonomicPose();
+        SequentialCommandGroup sequence = new SequentialCommandGroup();
         
         switch(pathState) {
             case PRESERVEODOMETRY:
                 break;
             case PRESERVEHEADING:
-                drive.resetOdometry(initialPose, true);
+                sequence.addCommands(new InstantCommand(() -> drive.resetOdometry(initialPose, true)));
+                break;
             case DISCARDHEADING:
                 // drive.resetOdometry(initialPose, false);
-                drive.setHeading(-initialPose.getRotation().getDegrees()); // negative to convert ccw to cw
+                sequence.addCommands(new InstantCommand(() -> drive.setHeading(initialPose.getRotation().getDegrees()))); // negative to convert ccw to cw
                                                                             // setting heading to initial auto position will allow for
                                                                             // field relative swerve driving after autos finish
+                sequence.addCommands(new InstantCommand(() -> drive.resetOdometry(initialPose, true)));
+                break;
         }
 
-        return followPathPlannerCommand(pathName, drive);
+        sequence.addCommands(followPathPlannerCommand(pathName, drive));
+        return sequence;
     }
 
     public static Command followPathPlannerCommand(String pathName, Drivetrain drive) {
