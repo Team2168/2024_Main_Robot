@@ -3,17 +3,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.ComputerVisionUtil;
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -51,6 +45,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     private static NetworkTableEntry cl;
     private static NetworkTableEntry botpose;
     private static NetworkTableEntry botpose_wpiblue;
+    private static NetworkTableEntry targetpose;
     
 
     public double aprilTagSize = 0.1651;
@@ -68,8 +63,11 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     
     double heightOffset;
+    double heightToLimelight = 0.648; // m
+    double heightToSpeakerTag = 1.448; // m
+    double distanceFromTarget = 0.0;
     
-    double limelightAngleDegrees = 10;
+    double limelightAngleDegrees = 10.0;
 
    
 
@@ -103,12 +101,9 @@ public class Limelight extends SubsystemBase implements Loggable {
     }
 
     public Limelight() {
-
         networkTable = NetworkTableInstance.getDefault().getTable("limelight");
         init();
-        isLimelightEnabled = false;  
-        
-        
+        isLimelightEnabled = false;
     }
 
     
@@ -148,6 +143,10 @@ public class Limelight extends SubsystemBase implements Loggable {
     return botpose.getDoubleArray(new double[6]);
   }
 
+  public double[] getTargetPoseArray() {
+    return targetpose.getDoubleArray(new double[6]);
+  }
+
   @Log(name = "X pose", rowIndex = 1, columnIndex = 1)
   public double getBotPoseX() {
     return getBotPoseArray()[0];
@@ -163,13 +162,27 @@ public class Limelight extends SubsystemBase implements Loggable {
     return getBotPoseArray()[2];
   }
 
+   @Log(name = "target X pose", rowIndex = 2, columnIndex = 1)
+  public double getTargetPoseX() {
+    return getTargetPoseArray()[0];
+  }
+
+  @Log(name = "target Y pose", rowIndex = 2, columnIndex = 2)
+  public double getTargetPoseY() {
+    return getTargetPoseArray()[1];
+  }
+
+  @Log(name = "target Z pose", rowIndex = 2, columnIndex = 3)
+  public double getTargetPoseZ() {
+    return getTargetPoseArray()[2];
+  }
+
+
   @Log(name = "Yaw Roation", rowIndex = 1, columnIndex = 4)
   public double getBotRotationYaw() {
     return getBotPoseArray()[5];
   }
 
-  
- 
     public double getTargetArea() {
         return ta.getDouble(0.0);
     }
@@ -212,34 +225,25 @@ public class Limelight extends SubsystemBase implements Loggable {
       return new Pose2d(getBotPoseX(), getBotPoseY(), getRotation2d());
     }
 
-    public double calculateDistance(Limelight limelight) {
-      double currentPipeline = limelight.getPipeline();
+    @Log(name = "distance calc (limelight)", rowIndex = 0, columnIndex = 0)
+    public double calculateDistance() {
+      double currentPipeline = getPipeline();
 
       if (currentPipeline == 1) {
-          heightOffset = 0.616;
+          heightOffset = heightToSpeakerTag - heightToLimelight;
       }
       else if (currentPipeline == 2) {
           heightOffset = 0.0;
       }
       
-      double distanceFromTarget = (heightOffset - 0.5969)/Math.tan(Units.degreesToRadians(limelightAngleDegrees + limelight.getOffsetY()));
+      distanceFromTarget = (heightOffset)/Math.tan(Units.degreesToRadians(limelightAngleDegrees + getOffsetY()));
 
       return distanceFromTarget;
   }   
     
-
-    
-
-
     public boolean isLimelightEnabled() {
         return isLimelightEnabled;
     }
-
-
-    
-
-    
-
 
     public void init() {
         tv = networkTable.getEntry("tv");
@@ -252,6 +256,7 @@ public class Limelight extends SubsystemBase implements Loggable {
         camMode = networkTable.getEntry("camMode");
         pipeline = networkTable.getEntry("pipeline");
         botpose = networkTable.getEntry("botpose");
+        targetpose = networkTable.getEntry("targetpose");
         botpose_wpiblue = networkTable.getEntry("botpose_wpiblue");
         
     }
@@ -261,6 +266,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     public void periodic() {
         // This method will be called once per scheduler run\
         Timer.getFPGATimestamp();
+        // System.out.println(calculateDistance());
     
     }
     
