@@ -40,19 +40,22 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Loggable {
 
-  public enum SHOOTING_RPM {
-    UP_AGAINST_SPEAKER(1000), // placeholder
-    WHITE_LINE(5000),
-    RED_LINE(4000),
-    UP_AGAINST_AMP(200);  //no provided f310 bindings for this on the button bindings paper.
+  public enum SHOOTING_RPS { 
+    UP_AGAINST_SPEAKER(32.5), // placeholder
+    WHITE_LINE(30.0),
+    RED_LINE(40.0),
+    UP_AGAINST_AMP(5.5), // no provided f310 bindings for this on the button bindings paper.
+    STARTING_ZONE_LINE(37.5),
+    STAGE_LINE(41.0);
 
     public double shooterRPS;
 
-    SHOOTING_RPM(double shooterRPS) {
+    SHOOTING_RPS(double shooterRPS) {
       this.shooterRPS = shooterRPS;
     }
 
@@ -62,8 +65,10 @@ public class Shooter extends SubsystemBase {
   private TalonFX leftShooterMotor;
   private TalonFX rightShooterMotor;
   private TalonFXConfiguration firstMotorConfiguration;
+  private TalonFXConfiguration secondMotorConfig;
   private Slot0Configs firstMotorGains;
   private CurrentLimitsConfigs currentLimitConfigs;
+  private MotorOutputConfigs secondMotorOutputConfigs;
 
   private FeedbackConfigs firstFeedbackConfigs;
 
@@ -72,39 +77,44 @@ public class Shooter extends SubsystemBase {
   private final double PEAK_FORWARD_DUTY_CYCLE = 1.0; // placeholder
   private final double PEAK_REVERSE_DUTY_CYCLE = -1.0; // placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
+  private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
 
-  private double first_kP = 0.1; // placeholder
-  private double first_kI = 0.45; // placeholder
-  private double first_kD = 0.001; // placeholder
-  private double first_kVolts = 0.12; // placeholder
+  private double first_kP = 0.7; // placeholder
+  private double first_kI = 0.0; // placeholder
+  private double first_kD = 0.0; // placeholder
+  private double first_kVolts = 0.0; // placeholder
 
-  private final double GEAR_RATIO = 2.345;
+  private final double GEAR_RATIO = 2.345 / 4.69;
   private final double ACCELERATION = 5 / 60; // placeholder
   private VelocityVoltage velocityVoltage;
   private DutyCycleOut percentOutput;
-  private FlywheelSim flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), GEAR_RATIO, 1.161E-7);
 
-  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed from                                                                                      // distance using a                                                                                     // interpolating lookup table.
+  private InterpolatingDoubleTreeMap velocityLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed from //
+                                                                                         // distance using a //
+                                                                                         // interpolating lookup table.
     {
-      put(1.0, 1000.0); // these motorspeeds to meters values are all placeholders, need to actually // calculate appropriate motorspeed from corresponding distance;
-      put(2.0, 2000.0);
-      put(3.0, 3000.0);
-      put(4.0, 4000.0);
-      put(5.0, 5000.0);
-      put(6.0, 6000.0);
-      put(7.0, 7000.0);
+      put(1.0, 32.5); // these motorspeeds to meters values are all placeholders, need to actually //
+                        // calculate appropriate motorspeed from corresponding distance;
+      put(1.93, 37.5);
+      put(3.205, 41.0);
+      // put(4.0, 40.0);
+      put(5.0, 45.0);
+      put(100.0, 0.0); // makes sure that interpolator has a limit
+      // put(7.0, 7000.0);
     }
   };
 
   public Shooter() {
-    leftShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.LEFT_SHOOTER_ID);
-    rightShooterMotor = new TalonFX(Constants.SHOOTER_MOTOR_CONSTANTS.RIGHT_SHOOTER_ID);
+    leftShooterMotor = new TalonFX(Constants.CANDevices.LEFT_SHOOTER_ID);
+    rightShooterMotor = new TalonFX(Constants.CANDevices.RIGHT_SHOOTER_ID);
     firstMotorConfiguration = new TalonFXConfiguration();
+    secondMotorConfig = new TalonFXConfiguration();
     currentLimitConfigs = new CurrentLimitsConfigs();
     firstOutputConfigs = new MotorOutputConfigs();
     firstMotorGains = new Slot0Configs();
     velocityVoltage = new VelocityVoltage(0.0);
     percentOutput = new DutyCycleOut(0.0);
+    secondMotorOutputConfigs = new MotorOutputConfigs();
 
     leftShooterMotor.clearStickyFaults();
     rightShooterMotor.clearStickyFaults();
@@ -115,11 +125,10 @@ public class Shooter extends SubsystemBase {
     currentLimitConfigs.withSupplyTimeThreshold(0.025);
 
     firstFeedbackConfigs = firstMotorConfiguration.Feedback;
-    firstFeedbackConfigs.withSensorToMechanismRatio(12.8);
 
     firstOutputConfigs.withDutyCycleNeutralDeadband(0.002);
     firstOutputConfigs.withInverted(leftInvert);
-    firstOutputConfigs.withNeutralMode(NeutralModeValue.Brake);
+    firstOutputConfigs.withNeutralMode(NeutralModeValue.Coast);
     firstOutputConfigs.withPeakForwardDutyCycle(PEAK_FORWARD_DUTY_CYCLE);
     firstOutputConfigs.withPeakReverseDutyCycle(PEAK_REVERSE_DUTY_CYCLE);
 
@@ -133,10 +142,21 @@ public class Shooter extends SubsystemBase {
     firstMotorConfiguration.withFeedback(firstFeedbackConfigs);
     firstMotorConfiguration.withMotorOutput(firstOutputConfigs);
 
-    leftShooterMotor.getConfigurator().apply(firstMotorConfiguration);
+    secondMotorOutputConfigs.withDutyCycleNeutralDeadband(0.002);
+    secondMotorOutputConfigs.withInverted(rightInvert);
+    secondMotorOutputConfigs.withNeutralMode(NeutralModeValue.Coast);
+    secondMotorOutputConfigs.withPeakForwardDutyCycle(PEAK_FORWARD_DUTY_CYCLE);
+    secondMotorOutputConfigs.withPeakReverseDutyCycle(PEAK_REVERSE_DUTY_CYCLE);
 
-    rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
-    velocityVoltage.withAcceleration(ACCELERATION);
+    secondMotorConfig.withSlot0(firstMotorGains);
+    secondMotorConfig.withCurrentLimits(currentLimitConfigs);
+    secondMotorConfig.withFeedback(firstFeedbackConfigs);
+    secondMotorConfig.withMotorOutput(secondMotorOutputConfigs);
+
+    leftShooterMotor.getConfigurator().apply(firstMotorConfiguration);
+    rightShooterMotor.getConfigurator().apply(secondMotorConfig);
+
+    velocityVoltage.withAcceleration(0.0);
     velocityVoltage.withSlot(0);
   }
 
@@ -144,7 +164,8 @@ public class Shooter extends SubsystemBase {
    * automaticallly set shooter speed using distance from an object with an
    * interpolation table.
    * 
-   * @param distanceFromObject calculated distance from object in meters, preferably using a
+   * @param distanceFromObject calculated distance from object in meters,
+   *                           preferably using a
    *                           camera such as limelight aiming at a apriltag
    */
   public void setMotorSpeedFromDistance(double distanceFromObject) {
@@ -175,7 +196,8 @@ public class Shooter extends SubsystemBase {
    * @param velocity as rotations per second
    */
   public void setVelocity(double velocity) {
-    leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity*GEAR_RATIO));
+    leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity / GEAR_RATIO));
+    rightShooterMotor.setControl(velocityVoltage.withVelocity(((0.5 * velocity) / GEAR_RATIO)));
   }
 
   /**
@@ -183,18 +205,27 @@ public class Shooter extends SubsystemBase {
    * 
    * @param input power input between -1.0 and 1.0.
    */
-  
+
   public void setPercentOutput(double input) {
     leftShooterMotor.setControl(percentOutput.withOutput(input));
+    rightShooterMotor.setControl(percentOutput.withOutput(input));
   }
 
   /**
    * 
    * @return velocity of shooter in rotations per second.
    */
-  @Log(name="shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
+  @Log(name = "shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
   public double getVelocity() {
-    return leftShooterMotor.getVelocity().getValue();
+    return (leftShooterMotor.getVelocity().getValue()) / GEAR_RATIO;
+  }
+
+  public double getError() {
+    return leftShooterMotor.getClosedLoopError().getValue();
+  }
+
+  public boolean isAtSpeed(double errorTolerance) {
+    return (Math.abs(getError()) < errorTolerance + 80.0); // TODO: Change for Competition
   }
 
   @Override
@@ -204,6 +235,5 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    flywheelSim.setInputVoltage(1);
   }
 }

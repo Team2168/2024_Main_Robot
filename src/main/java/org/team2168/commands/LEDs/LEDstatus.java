@@ -49,6 +49,12 @@ public class LEDstatus extends Command {
     }
       else {
         leds.redlight(false);}
+        if (shooter.isAtSpeed(0.25)) {
+          leds.greenlight(true);
+        }
+        else {
+          leds.greenlight(false);
+        }
       } 
       
   

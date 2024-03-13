@@ -36,14 +36,7 @@ public class DriveIndexeruntilnoNote extends Command {
   public void execute() {
     indexer.setDriveIndexer(speed.getAsDouble());
 
-    if (indexer.isNotePresent()) {
-    
-      leds.bluelight(true);
-      
-    } 
-    else {
-      leds.bluelight(false);
-    }
+  
   }
 
   // Called once the command ends or is interrupted.
