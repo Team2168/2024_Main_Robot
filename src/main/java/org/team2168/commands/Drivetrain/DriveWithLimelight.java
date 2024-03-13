@@ -95,13 +95,12 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     }
 
     public void execute() {
-        // if (limelight.hasTarget()) {
-        //     manualControl = false;
-        // }
-        // else {
-        //     manualControl = true;
-        // }
-        manualControl = false;
+        if (limelight.hasTarget()) {
+            manualControl = false;
+        }
+        else {
+            manualControl = true;
+        }
 
         limeAngle = limelight.getOffsetX();
 
@@ -124,12 +123,11 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
             driveLimeTurnSpeed = 0.0;
         }
 
-        // if (withinThresholdLoops < acceptableLoops) {
-            drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, driveLimeTurnSpeed);
-        //}
+        if (withinThresholdLoops < acceptableLoops) {
+            drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), driveLimeTurnSpeed);
+        }
 
-        // else if (manualControl) {
-        if(manualControl) {
+        else if(manualControl) {
             if (oi.driverJoystick.isPressedButtonA()) {
                 chassisRot = 0.35;
             }
@@ -140,6 +138,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
                 chassisRot = 0.0;
             }
             drivetrain.drive(oi.getDriverJoystickYValue() * kDriveInvert, oi.getDriverJoystickXValue() * kDriveInvert, chassisRot);
+            
         }
     }
 
