@@ -21,10 +21,12 @@ public class DriveWithPoseEst extends CommandBase implements Loggable {
     private Drivetrain drivetrain;
     private Limelight limelight;
     private OI oi;
-    private PIDController pid;
+    private PIDController pidx;
+    private PIDController pidy;
+    private PIDController pidAngle;
 
     public double targetDistanceX;
-    public double targetDistanceZ;
+    public double targetDistanceY;
     public double targetAngle;
     public double chassisRot;
 
@@ -58,7 +60,9 @@ public class DriveWithPoseEst extends CommandBase implements Loggable {
         this.D = D;
     }
 
-    private double drivePoseEst;
+    private double drivePoseEstX;
+    private double drivePoseEstY;
+    private double driveTargetAngle;
     private boolean manualControl;
 
     Optional<Alliance> ally = DriverStation.getAlliance();
@@ -86,21 +90,29 @@ public class DriveWithPoseEst extends CommandBase implements Loggable {
         
         if(ally.get() == Alliance.Red) {
             targetDistanceX = limelight.getTargetPoseX() - limelight.getBotPoseX();
-            targetDistanceZ = limelight.getTargetPoseZ() - limelight.getBotPoseZ();
+            targetDistanceY = limelight.getTargetPoseY() - limelight.getBotPoseY();
         }
         else if(ally.get() == Alliance.Blue) {
             targetDistanceX = limelight.getBotPoseX() + limelight.getTargetPoseX();
-            targetDistanceZ = limelight.getBotPoseZ() + limelight.getTargetPoseZ();
+            targetDistanceY = limelight.getBotPoseY() + limelight.getTargetPoseY();
         }
 
         targetAngle = limelight.getTargetPoseYaw();
 
-        pid = new PIDController(P, I, D);
+        pidx = new PIDController(P, I, D);
+        pidy = new PIDController(P, I, D);
+        pidAngle = new PIDController(P, I, D);
         limelight.enableBaseCameraSettings();
         limelight.setPipeline(1);
 
-        pid.setTolerance(minimumError);
-        pid.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
+        pidx.setTolerance(minimumError);
+        pidx.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
+
+        pidy.setTolerance(minimumError);
+        pidy.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
+
+        pidAngle.setTolerance(minimumError);
+        pidAngle.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
         oi = OI.getInstance();
 
         if (DriverStation.getAlliance().get() == Alliance.Red) {
@@ -124,22 +136,48 @@ public class DriveWithPoseEst extends CommandBase implements Loggable {
             withinThresholdLoops = 0;
         }
 
-        if (targetDistanceX >= minimumError && targetDistanceZ >= minimumError && targetAngle >= 5.0) {
-            drivePoseEst = (pid.calculate((targetDistanceX + targetDistanceZ + targetAngle) / 3));
+        if (targetDistanceX >= minimumError) {
+            drivePoseEstX = (pidx.calculate(targetDistanceX));
         }
 
         // halves speed once closer to target
-        else if (targetDistanceX >= (minimumError / 2) && targetDistanceZ >= (minimumError / 2) && targetAngle >= 0.0) {
-            drivePoseEst = (pid.calculate((targetDistanceX + targetDistanceZ + targetAngle) / 6));
+        else if (targetDistanceX >= (minimumError / 2)) {
+            drivePoseEstX = (pidx.calculate((targetDistanceX / 2)));
         }
 
         // loses all speed once in area needed
         else {
-            drivePoseEst = 0.0;
+            drivePoseEstX = 0.0;
+        }
+
+        if (targetDistanceY >= minimumError) {
+            drivePoseEstY = (pidy.calculate(targetDistanceY));
+        }
+
+        // halves speed once closer to target
+        else if (targetDistanceY >= (minimumError / 2)) {
+            drivePoseEstY = (pidy.calculate((targetDistanceY / 2)));
+        }
+
+        // loses all speed once in area needed
+        else {
+            drivePoseEstY = 0.0;
+        }
+
+        if (driveTargetAngle >= 5.0) {
+            driveTargetAngle = (pidAngle.calculate(driveTargetAngle));
+        }
+
+        else if (driveTargetAngle >= 0.0) {
+            driveTargetAngle = (pidAngle.calculate(driveTargetAngle));
+        }
+
+        else {
+            driveTargetAngle = 0.0;
         }
 
         if (withinThresholdLoops < acceptableLoops) {
-            drivetrain.drive(oi.getDriverJoystickYValue(), oi.getDriverJoystickXValue(), drivePoseEst);
+            drivetrain.drive(drivePoseEstX, drivePoseEstY, driveTargetAngle);
         }
 
         else if(manualControl) {

@@ -177,8 +177,13 @@ public class Limelight extends SubsystemBase implements Loggable {
     return getTargetPoseArray()[2];
   }
 
+  @Log(name = "target Yaw rotation", rowIndex = 2, columnIndex = 4)
+  public double getTargetPoseYaw() {
+    return getTargetPoseArray()[5];
+  }
 
-  @Log(name = "Yaw Roation", rowIndex = 1, columnIndex = 4)
+
+  @Log(name = "bot Yaw Roation", rowIndex = 1, columnIndex = 4)
   public double getBotRotationYaw() {
     return getBotPoseArray()[5];
   }
