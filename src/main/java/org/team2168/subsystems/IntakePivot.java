@@ -51,17 +51,17 @@ public class IntakePivot extends SubsystemBase {
   private double maxBackwardOutput = -1;
   final double MIN_ANGLE = -120;
   final double MAX_ANGLE = 0;
-  private double motionMagicAcceleration = 9.0;
-  private double motionMagicCruiseVelocity = 4.0;
+  private double motionMagicAcceleration = degreesToRot(500.0);
+  private double motionMagicCruiseVelocity = degreesToRot(250.0);
   private double kV = 0.12;
   private double kA = 0.1;
   private double sensorOffset = degreesToRot(-120);
   final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0.0); // TODO: change maybe to sensor offset
 
   private final double TICKS_PER_REV = 2048;
-  private final static double GEAR_RATIO = 10.0;
+  private final static double GEAR_RATIO = 50.0; // updated after waterbury
 
-  private double kP = 13.0;
+  private double kP = 15.0;
   private double kI = 0;
   private double kD = 0.3;
   private double kG = -1.3;
@@ -129,6 +129,7 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerTwo.apply(PIDconfigs);
 
     intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
+    intakePivotTwo.setNeutralMode(NeutralModeValue.Brake);
 
     intakePivotOne.setPosition(sensorOffset);
     

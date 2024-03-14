@@ -126,12 +126,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         azimuthMotionMagicConfig.withMotionMagicAcceleration(150);
         azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
-        driveSlot0Config.withKP(0.5);
-        driveSlot0Config.withKI(0.0);
+        driveSlot0Config.withKP(0.3);
+        driveSlot0Config.withKI(0.5);
         driveSlot0Config.withKD(0.0);
-        driveSlot0Config.withKV(0.001);  // TODO: tune these
-        driveSlot0Config.withKA(0.001);
-        driveSlot0Config.withKS(0.05);
+        driveSlot0Config.withKV(0.0);  // TODO: tune these
+        driveSlot0Config.withKA(0.0);
+        driveSlot0Config.withKS(0.02);
         // driveSlot0Config.allowableClosedloopError = 0; // omitted from phoenix 6
         driveMotionMagicConfig.withMotionMagicAcceleration(30); // 500;
         driveMotionMagicConfig.withMotionMagicCruiseVelocity(15); // 100;

@@ -46,11 +46,11 @@ import io.github.oblarg.oblog.annotations.Log;
 public class Shooter extends SubsystemBase implements Loggable {
 
   public enum SHOOTING_RPS { 
-    UP_AGAINST_SPEAKER(32.5), // placeholder
+    UP_AGAINST_SPEAKER(15.0), // placeholder (32.5)
     WHITE_LINE(30.0),
     RED_LINE(40.0),
     UP_AGAINST_AMP(5.5), // no provided f310 bindings for this on the button bindings paper.
-    STARTING_ZONE_LINE(37.5),
+    STARTING_ZONE_LINE(20.0), // (37.5)
     STAGE_LINE(41.0);
 
     public double shooterRPS;
@@ -79,10 +79,11 @@ public class Shooter extends SubsystemBase implements Loggable {
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
   private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
 
-  private double first_kP = 0.7; // placeholder
-  private double first_kI = 0.0; // placeholder
+  private double first_kP = 0.5; // placeholder
+  private double first_kI = 0.6; // placeholder
   private double first_kD = 0.0; // placeholder
   private double first_kVolts = 0.0; // placeholder
+  private double first_kS = 0.02;
 
   private final double GEAR_RATIO = 2.345 / 4.69;
   private final double ACCELERATION = 5 / 60; // placeholder
@@ -119,9 +120,9 @@ public class Shooter extends SubsystemBase implements Loggable {
     leftShooterMotor.clearStickyFaults();
     rightShooterMotor.clearStickyFaults();
 
-    currentLimitConfigs.withSupplyCurrentLimit(20.0);
+    currentLimitConfigs.withSupplyCurrentLimit(15.0);
     currentLimitConfigs.withSupplyCurrentLimitEnable(true);
-    currentLimitConfigs.withSupplyCurrentThreshold(25.0);
+    currentLimitConfigs.withSupplyCurrentThreshold(20.0);
     currentLimitConfigs.withSupplyTimeThreshold(0.025);
 
     firstFeedbackConfigs = firstMotorConfiguration.Feedback;
@@ -136,6 +137,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     firstMotorGains.withKI(first_kI);
     firstMotorGains.withKD(first_kD);
     firstMotorGains.withKV(first_kVolts);
+    firstMotorGains.withKS(first_kS);
 
     firstMotorConfiguration.withSlot0(firstMotorGains);
     firstMotorConfiguration.withCurrentLimits(currentLimitConfigs);
@@ -197,7 +199,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public void setVelocity(double velocity) {
     leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity / GEAR_RATIO));
-    rightShooterMotor.setControl(velocityVoltage.withVelocity(((0.5 * velocity) / GEAR_RATIO)));
+    rightShooterMotor.setControl(velocityVoltage.withVelocity(((velocity * 0.75) / GEAR_RATIO)));
   }
 
   /**
@@ -217,7 +219,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   @Log(name = "shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
   public double getVelocity() {
-    return (leftShooterMotor.getVelocity().getValue()) / GEAR_RATIO;
+    return (leftShooterMotor.getVelocity().getValue()) * GEAR_RATIO;
   }
 
   public double getError() {
@@ -225,7 +227,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   public boolean isAtSpeed(double errorTolerance) {
-    return (Math.abs(getError()) < errorTolerance + 80.0); // TODO: Change for Competition
+    return (Math.abs(getError()) < errorTolerance); // TODO: Change for Competition
   }
 
   @Override

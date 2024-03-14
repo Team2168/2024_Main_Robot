@@ -145,7 +145,7 @@ public class RobotContainer {
     //     .onTrue(new ExampleCommand(m_exampleSubsystem));
     
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
-    intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0));
+    //intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intakepivot works again
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
@@ -159,30 +159,32 @@ public class RobotContainer {
 
     oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
     oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
-    // oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
+    oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
     oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
-    oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.6));
+    // oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.6));
     oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
-    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-                                          .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
-                                          .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: test
+    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller));
+                                          //.whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+                                          //.whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
     // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 0.6));
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 
     //Testing LEDs
-    oi.testJoystick.ButtonB().whileTrue(new SetRedLED(leds, true))
-                             .onFalse(new SetRedLED(leds, false));
+    // oi.testJoystick.ButtonB().whileTrue(new SetRedLED(leds, true))
+    //                          .onFalse(new SetRedLED(leds, false));
 
-    oi.testJoystick.ButtonA().whileTrue(new SetGreenLED(leds, true))
-                             .onFalse(new SetGreenLED(leds, false));
+    // oi.testJoystick.ButtonA().whileTrue(new SetGreenLED(leds, true))
+    //                          .onFalse(new SetGreenLED(leds, false));
 
-    oi.testJoystick.ButtonX().whileTrue(new SetBlueLED(leds, true))
-                             .onFalse(new SetBlueLED(leds, false));
+    // oi.testJoystick.ButtonX().whileTrue(new SetBlueLED(leds, true))
+    //                          .onFalse(new SetBlueLED(leds, false));
+    oi.testJoystick.ButtonA().onTrue(new BumpShooterSpeed(shooter));
+    oi.testJoystick.ButtonB().onTrue(new BumpShooterSpeedDown(shooter));
 
   }
 
