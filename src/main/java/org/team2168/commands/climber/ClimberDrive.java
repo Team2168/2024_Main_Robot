@@ -13,17 +13,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimberDrive extends InstantCommand {
-  Climber climberLeft;
-  Climber climberRight;
+  Climber climber;
   DoubleSupplier speed;
 
-  public ClimberDrive(Climber climberLeft, Climber climberRight, DoubleSupplier s) {
+  public ClimberDrive(Climber climber, DoubleSupplier s) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.climberLeft = climberLeft;
-    this.climberRight = climberRight;
+    this.climber = climber;
     speed = s;
 
-    addRequirements(climberLeft, climberRight);
+    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
@@ -34,13 +32,11 @@ public class ClimberDrive extends InstantCommand {
   public void execute() {
     //elevator.setPercentOutput(elevatorPercentOutput);
   // if (elevator.isInRange()) {
-    climberLeft.setLeftVolt(speed.getAsDouble());
-    climberRight.setRightVolt(speed.getAsDouble());
+    climber.setVolt(speed.getAsDouble());
   }
 
   @Override
   public void end(boolean interrupted) {
-    climberLeft.setLeftVolt(0);
-    climberRight.setRightVolt(0);
+    climber.setVolt(0);
 }
 }
