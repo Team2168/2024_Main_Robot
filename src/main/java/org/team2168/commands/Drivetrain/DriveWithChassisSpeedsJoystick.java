@@ -18,7 +18,7 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   Drivetrain drive;
   OI oi;
   double chassisRot;
-  private double kDriveInvert;
+  private double kDriveInvert = 1.0;
   private SlewRateLimiter rotationRateLimiter;
 
   public DriveWithChassisSpeedsJoystick(Drivetrain drive) {
@@ -31,7 +31,7 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   @Override
   public void initialize() {
     oi = OI.getInstance();
-    rotationRateLimiter = new SlewRateLimiter(0.35);
+    rotationRateLimiter = new SlewRateLimiter(0.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,10 +39,10 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   public void execute() {
     if (OI.joystickChooser.getSelected().equals("flight")) {
       if (oi.driverJoystick.isPressedButtonA()) {
-        chassisRot = 0.5;
+        chassisRot = 0.4;
       }
       else if (oi.driverJoystick.isPressedButtonB()) {
-        chassisRot = -0.5;
+        chassisRot = -0.4;
       }
       else {
         chassisRot = 0.0;
@@ -52,8 +52,8 @@ public class DriveWithChassisSpeedsJoystick extends Command {
       chassisRot = oi.getDriverJoystickZValue();
     }
 
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
-      kDriveInvert = -1;
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      kDriveInvert = -1.0;
     }
 
     drive.driveWithKinematics(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, rotationRateLimiter.calculate(chassisRot));

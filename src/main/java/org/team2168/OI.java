@@ -25,8 +25,8 @@ public class OI {
 	private LinearInterpolator driverJoystickZInterpolator;
 	private LinearInterpolator driverFlightStickZInterpolator;
 
-	private SlewRateLimiter driverJoystickYRateLimiter = new SlewRateLimiter(0.8);
-	private SlewRateLimiter driverJoystickXRateLimiter = new SlewRateLimiter(0.8);
+	private SlewRateLimiter driverJoystickYRateLimiter = new SlewRateLimiter(1.5);
+	private SlewRateLimiter driverJoystickXRateLimiter = new SlewRateLimiter(1.5);
 	private SlewRateLimiter driverJoystickZRateLimiter = new SlewRateLimiter(0.5);
 
 	private double[][] driverJoystickYArray = {

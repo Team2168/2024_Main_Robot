@@ -40,7 +40,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
     private SwerveModulePosition[] modulePositions = new SwerveModulePosition[SwerveDrive.getWheelCount()];
     private SwerveModuleState[] moduleStates = new SwerveModuleState[SwerveDrive.getWheelCount()];
-    private final boolean[] DRIVE_INVERTED = {false, true, false, true};
+    private final boolean[] DRIVE_INVERTED = {true, false, true, false};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
     private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.8364258, 0.260254, 0.4604492, 0.23388672}; // the magnet offsets should be set to the opposite sign of these encoder values
@@ -127,7 +127,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         azimuthMotionMagicConfig.withMotionMagicCruiseVelocity(40);
         driveFeedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
         driveSlot0Config.withKP(0.3);
-        driveSlot0Config.withKI(0.5);
+        driveSlot0Config.withKI(0.7);
         driveSlot0Config.withKD(0.0);
         driveSlot0Config.withKV(0.0);  // TODO: tune these
         driveSlot0Config.withKA(0.0);
@@ -213,7 +213,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     public void driveWithKinematics(double forward, double strafe, double azimuth) {
         _sd.driveWithKinematics(forward, strafe, azimuth);
-        chassisSpeeds = _sd.getChassisDriver();
+        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(_sd.getChassisDriver(), getRotation2d());
+        chassisSpeeds.omegaRadiansPerSecond = _sd.getChassisDriver().omegaRadiansPerSecond;
 
         moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds);
 
@@ -319,7 +320,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     public void driveToChassisSpeed(ChassisSpeeds robotRelSpeeds) {
-        chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelSpeeds, _sd.getGyro().getRotation2d());
+        chassisSpeeds = robotRelSpeeds;
 
         moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds);
 
@@ -380,6 +381,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
         odometry.update(getRotation2d(), modulePositions);
         field.setRobotPose(getPose());
+        System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
+        System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
     }
 }
 

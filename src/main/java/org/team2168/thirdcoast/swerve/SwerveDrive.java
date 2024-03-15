@@ -198,14 +198,8 @@ public class SwerveDrive implements Loggable {
     double hypot = Math.sqrt(Math.pow(forward, 2) + Math.pow(strafe, 2));
     double forwardVector = (forward / hypot) * Wheel.getMaxVelocityMetersPerSec() * WHEEL_COUNT; // m/s
     double strafeVector = -(strafe / hypot) * Wheel.getMaxVelocityMetersPerSec() * WHEEL_COUNT; // m/s, invert direction to allow positive strafe values to go right
-    double azimuthRadPerSec = azimuth * (2*Math.PI); // rps to rad/s
-
-    if (isFieldOriented) {
-      chassisDriver = ChassisSpeeds.fromFieldRelativeSpeeds(forwardVector, strafeVector, azimuthRadPerSec, gyro.getRotation2d());
-    }
-    else {
-      chassisDriver = ChassisSpeeds.fromRobotRelativeSpeeds(forwardVector, strafeVector, azimuthRadPerSec, gyro.getRotation2d());
-    }
+    double azimuthRadPerSec = -azimuth * (2*Math.PI); // rps to rad/s
+    chassisDriver = new ChassisSpeeds(forwardVector, strafeVector, azimuthRadPerSec);
   }
 
   /**
