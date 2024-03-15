@@ -220,6 +220,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
             _wheels[i].setWithModuleState(moduleStates[i]);
+            System.out.println("desired module angle " + i + ": " + moduleStates[i].angle);
         }
     }
 
