@@ -214,7 +214,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public void driveWithKinematics(double forward, double strafe, double azimuth) {
         _sd.driveWithKinematics(forward, strafe, azimuth);
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(_sd.getChassisDriver(), getRotation2d());
-        chassisSpeeds.omegaRadiansPerSecond = _sd.getChassisDriver().omegaRadiansPerSecond;
+        //chassisSpeeds.omegaRadiansPerSecond = _sd.getChassisDriver().omegaRadiansPerSecond;
 
         moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds);
 

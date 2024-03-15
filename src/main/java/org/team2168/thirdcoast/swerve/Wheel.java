@@ -125,7 +125,7 @@ public class Wheel {
   }
 
   public void setWithModuleState(SwerveModuleState modState) {
-    SwerveModuleState optimModState = SwerveModuleState.optimize(modState, new Rotation2d(getAzimuthPosition() * 2 * Math.PI)); // optimal module state
+    SwerveModuleState optimModState = SwerveModuleState.optimize(modState, Rotation2d.fromRotations(getAzimuthPosition())); // optimal module state
     // driveTalon.set(((optimModState.speedMetersPerSecond / DRIVE_CIRCUMFERENCE_M) / DRIVE_SETPOINT_MAX)); // returns m/s drive speed to percentage
     driveTalon.setControl(velocityVoltage.withVelocity((optimModState.speedMetersPerSecond/DRIVE_GEAR_RATIO) / DRIVE_CIRCUMFERENCE_M)); // converts meters per second to motor rotations
     azimuthTalon.setControl(motionMagicVoltage.withPosition(optimModState.angle.getRotations()));
