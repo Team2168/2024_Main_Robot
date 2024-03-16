@@ -214,13 +214,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public void driveWithKinematics(double forward, double strafe, double azimuth) {
         _sd.driveWithKinematics(forward, strafe, azimuth);
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(_sd.getChassisDriver(), getRotation2d());
-        //chassisSpeeds.omegaRadiansPerSecond = _sd.getChassisDriver().omegaRadiansPerSecond;
+        chassisSpeeds.omegaRadiansPerSecond = _sd.getChassisDriver().omegaRadiansPerSecond;
 
-        moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds);
+        moduleStates = swerveKinematics.toSwerveModuleStates(chassisSpeeds, new Translation2d(0.0, 0.0));
 
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
             _wheels[i].setWithModuleState(moduleStates[i]);
-            System.out.println("desired module angle " + i + ": " + moduleStates[i].angle);
+            System.out.println("desired module angle " + i + ": " + moduleStates[i]);
         }
     }
 
@@ -377,13 +377,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public void periodic() {
         putEncoderPositions();
         for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
-            modulePositions[i] = new SwerveModulePosition(Wheel.getDriveCircumferenceMeters() * _wheels[i].getDrivePosition(), 
-            new Rotation2d(Wheel.rotToRadians(-_wheels[i].getAzimuthPosition()))); // negative for counterclockwise
+            modulePositions[i] = new SwerveModulePosition(_wheels[i].getDrivenMeters(), 
+            new Rotation2d(Wheel.rotToRadians(_wheels[i].getAzimuthPosition()))); // negative for counterclockwise
         }
         odometry.update(getRotation2d(), modulePositions);
         field.setRobotPose(getPose());
-        System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
-        System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
+        SmartDashboard.putData("field", field);
+        //System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
+        //System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
+        System.out.println("robot Pose: " + getPose());
     }
 }
 

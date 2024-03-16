@@ -32,6 +32,7 @@ import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
 import org.team2168.commands.auto.DoNothing;
 import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
+import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.LEDs;
@@ -145,7 +146,7 @@ public class RobotContainer {
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //     .onTrue(new ExampleCommand(m_exampleSubsystem));
     
-    drivetrain.setDefaultCommand(new DriveWithChassisSpeedsJoystick(drivetrain));
+    drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
     intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intakepivot works again
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
@@ -194,6 +195,7 @@ public class RobotContainer {
     autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Drive Back", new LeaveStartingZone(drivetrain, intakePivot));
+    autoChooser.addOption("Rotate Chassis Continuous", new RotateChassisContinuous(drivetrain));
 
     SmartDashboard.putData(autoChooser);
   }

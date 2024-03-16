@@ -74,7 +74,7 @@ public final class Constants {
   }
 
   public static class Drivetrain {
-    public static final double kpDriveVel = 2.0; // needs testing
+    public static final double kpDriveVel = 5.0; // needs testing
     public static final double kpAngularVel = 0.5; // needs to be tested
     public static double ksVolts;
     public static double kvVoltSecondsPerMeter;

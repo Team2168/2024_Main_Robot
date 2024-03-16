@@ -56,7 +56,7 @@ public class DriveWithChassisSpeedsJoystick extends Command {
       kDriveInvert = -1.0;
     }
 
-    drive.driveWithKinematics(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, rotationRateLimiter.calculate(chassisRot));
+    drive.driveWithKinematics(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, chassisRot);
   }
 
   // Called once the command ends or is interrupted.

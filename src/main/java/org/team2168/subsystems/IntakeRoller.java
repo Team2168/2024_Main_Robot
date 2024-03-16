@@ -32,7 +32,7 @@ public class IntakeRoller extends SubsystemBase {
   private final double minuteInHundredMs = 600.0;
   private final double TICKS_PER_REV = 2048;
   private final double GEAR_RATIO = 4.628;
-  private final int SMART_CURRENT_LIMIT = 20;
+  private final int SMART_CURRENT_LIMIT = 15;
   private boolean isInverted = false;
   private IdleMode coast = IdleMode.kCoast;
 

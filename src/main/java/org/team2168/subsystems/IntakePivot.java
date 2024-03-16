@@ -42,8 +42,8 @@ public class IntakePivot extends SubsystemBase {
  // private static int intakeTimeoutMs = 30;
  // private static double peakOutput = 1.0;
   private final boolean ENABLE_CURRENT_LIMIT = true;
-  private final double CONTINUOUS_CURRENT_LIMIT = 20.0;
-  private final double TRIGGER_THRESHOLD_LIMIT = 25;
+  private final double CONTINUOUS_CURRENT_LIMIT = 15.0;
+  private final double TRIGGER_THRESHOLD_LIMIT = 20;
   private final double TRIGGER_THRESHOLD_TIME = 0.2;
  // private final double minuteInHundredMs = 600.0;
   private double neutralDeadband = 0.0015;

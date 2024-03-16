@@ -50,9 +50,9 @@ public class DriveWithJoystick extends Command {
           chassisRot = oi.getDriverJoystickZValue();
         }
 
-        if (DriverStation.getAlliance().get() == Alliance.Blue) {
-          kDriveInvert = -1.0;
-        }
+        // if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        //   kDriveInvert = -1.0;
+        // }
 
         if (SmartDashboard.getString("Control Mode", "Joystick").equals("Joystick")) {
           drivetrain.drive(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, rotationRateLimiter.calculate(chassisRot));
