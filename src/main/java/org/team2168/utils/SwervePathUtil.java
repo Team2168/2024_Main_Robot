@@ -38,9 +38,15 @@ public class SwervePathUtil {
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel),
         PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
+
     public static boolean getPathInvert() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        return alliance.get() == Alliance.Red;
+        if (alliance.isPresent()) {
+            return alliance.get() == Alliance.Red;
+        }
+        else {
+            return false;
+        }
     }
 
     public static enum InitialPathState {
@@ -51,7 +57,13 @@ public class SwervePathUtil {
 
     public static Command getPathCommand(String pathName, Drivetrain drive, InitialPathState pathState) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+        if (getPathInvert()) {
+            path = path.flipPath();
+        }
+
         Pose2d initialPose = path.getPreviewStartingHolonomicPose();
+
         SequentialCommandGroup sequence = new SequentialCommandGroup();
         
         switch(pathState) {
