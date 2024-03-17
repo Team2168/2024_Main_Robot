@@ -48,6 +48,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       // shoots second note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
+      new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0),
       // drives to and picks up 3rd note
