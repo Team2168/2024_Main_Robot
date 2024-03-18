@@ -67,7 +67,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     double heightToSpeakerTag = 1.448; // m
     double distanceFromTarget = 0.0;
     
-    double limelightAngleDegrees = 10.0;
+    double limelightAngleDegrees = 29.45;
 
    
 
@@ -86,8 +86,9 @@ public class Limelight extends SubsystemBase implements Loggable {
         APRIL_TAGS(0),
         SPEAKER(1),
         HUMAN_PLAYER_STATION(2),
-        PIPELINE_THREE(3),
-        PIPELINE_FOUR(4);
+        HIGHRES_LOWFPS(3),
+        AMPS(4),
+        STAGES(5);
 
         public final int pipelineValue;
 
