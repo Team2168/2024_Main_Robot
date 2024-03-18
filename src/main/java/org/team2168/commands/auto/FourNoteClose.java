@@ -64,7 +64,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       new DriveIndexeruntilnoNote(indexer, () -> 1.0),
       // druves to and picks up 4th note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Close_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        SwervePathUtil.getPathCommand("4_Note_Close_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds)
       ),

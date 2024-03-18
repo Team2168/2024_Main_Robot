@@ -31,6 +31,7 @@ import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngle;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
 import org.team2168.commands.auto.DoNothing;
 import org.team2168.commands.auto.FourNoteClose;
+import org.team2168.commands.auto.FourNoteFar;
 import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.RotateChassisContinuous;
@@ -198,6 +199,7 @@ public class RobotContainer {
     autoChooser.addOption("Drive Back", new LeaveStartingZone(drivetrain, intakePivot));
     autoChooser.addOption("Rotate Chassis Continuous", new RotateChassisContinuous(drivetrain));
     autoChooser.addOption("Close 4 Note", new FourNoteClose(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("Far 4 Note", new FourNoteFar(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }
