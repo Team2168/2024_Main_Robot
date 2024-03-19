@@ -46,7 +46,7 @@ public class IntakePivot extends SubsystemBase {
   private final double TRIGGER_THRESHOLD_LIMIT = 20;
   private final double TRIGGER_THRESHOLD_TIME = 0.2;
  // private final double minuteInHundredMs = 600.0;
-  private double neutralDeadband = 0.0015;
+  private double neutralDeadband = 0.000015;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
   final double MIN_ANGLE = -120;
@@ -55,7 +55,7 @@ public class IntakePivot extends SubsystemBase {
   private double motionMagicCruiseVelocity = degreesToRot(250.0);
   private double kV = 0.12;
   private double kA = 0.1;
-  private double sensorOffset = degreesToRot(-120);
+  private double sensorOffset = degreesToRot(-120.0);
   final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0.0); // TODO: change maybe to sensor offset
 
   private final double TICKS_PER_REV = 2048;
@@ -84,6 +84,8 @@ public class IntakePivot extends SubsystemBase {
     leaderMotorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
     leaderMotorConfigs.withPeakForwardDutyCycle(maxForwardOutput);
     leaderMotorConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
+
+    followerMotorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
 
    // followerMotorConfigs.withInverted(intakeInvertTwo);
 
@@ -131,7 +133,8 @@ public class IntakePivot extends SubsystemBase {
     intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
     intakePivotTwo.setNeutralMode(NeutralModeValue.Brake);
 
-    intakePivotOne.setPosition(sensorOffset);
+    intakePivotOne.setPosition(sensorOffset, 0.2);
+    intakePivotTwo.setPosition(sensorOffset, 0.2);
     
     //sets the same settings to the motor intakePivotTwo from intakePivotOne
     intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
@@ -171,7 +174,7 @@ public class IntakePivot extends SubsystemBase {
   public void setIntakePivotPosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
     intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
-    //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), false));
+    //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
   public void setSpeed(double percentOutput) {

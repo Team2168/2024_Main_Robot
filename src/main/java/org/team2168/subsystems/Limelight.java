@@ -72,7 +72,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     double heightToSpeakerTag = 1.448; // m
     double distanceFromTarget = 0.0;
     
-    double limelightAngleDegrees = 10.0;
+    double limelightAngleDegrees = 29.45;
 
    
 

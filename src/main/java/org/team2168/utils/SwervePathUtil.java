@@ -33,13 +33,14 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 public class SwervePathUtil {
     private static final double PATH_MAX_VEL = 3.0; // m/s // TESTING VALUE
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
-    private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
+    private static ReplanningConfig replanningConfig = new ReplanningConfig(false, false);
     private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel),
         PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
 
     public static boolean getPathInvert() {
+        DriverStation.refreshData();
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             return alliance.get() == Alliance.Red;

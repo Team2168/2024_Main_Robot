@@ -35,7 +35,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     WHITE_LINE(60.0),
     RED_LINE(36.0),
     UP_AGAINST_AMP(60.0), //no provided f310 bindings for this on the button bindings paper.
-    STARTING_ZONE_LINE(39.5),
+    STARTING_ZONE_LINE(43.0),
     STAGE_LINE(40.25);
 
     public double shooterAngle;

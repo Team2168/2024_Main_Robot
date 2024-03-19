@@ -64,6 +64,8 @@ import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -228,6 +230,11 @@ public class RobotContainer {
   @Config(name = "kickable robot?", width = 2)
   public void setBrakesEnabled(boolean enabled) {
     brakesEnabled = enabled;
+  }
+
+  @Log(name = "is alliance blue?")
+  public boolean isAllianceBlue() {
+    return (DriverStation.getAlliance().get() == Alliance.Blue);
   }
 
   /**
