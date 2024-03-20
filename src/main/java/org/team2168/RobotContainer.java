@@ -49,6 +49,8 @@ import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.subsystems.Limelight;
 import org.team2168.utils.F310;
+import org.team2168.utils.SwervePathUtil;
+import org.team2168.utils.SwervePathUtil.InitialPathState;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
 import org.team2168.commands.Drivetrain.DriveWithChassisSpeedsJoystick;
@@ -202,6 +204,7 @@ public class RobotContainer {
     autoChooser.addOption("Rotate Chassis Continuous", new RotateChassisContinuous(drivetrain));
     autoChooser.addOption("Close 4 Note", new FourNoteClose(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Far 4 Note", new FourNoteFar(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("Rotational Accuracy Auto", SwervePathUtil.getPathCommand("Rotational_Accuracy_Test", drivetrain, InitialPathState.DISCARDHEADING));
 
     SmartDashboard.putData(autoChooser);
   }
