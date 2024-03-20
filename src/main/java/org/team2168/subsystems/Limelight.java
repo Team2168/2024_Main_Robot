@@ -83,9 +83,9 @@ public class Limelight extends SubsystemBase implements Loggable {
     AprilTagDetection detectionSoftware;
 
     public enum Pipeline {
-        APRIL_TAGS(0),
-        SPEAKER(1),
-        HUMAN_PLAYER_STATION(2),
+        ALL_APRIL_TAGS(0),
+        SPEAKERS(1),
+        HUMAN_PLAYER_STATIONS(2),
         HIGHRES_LOWFPS(3),
         AMPS(4),
         STAGES(5);
