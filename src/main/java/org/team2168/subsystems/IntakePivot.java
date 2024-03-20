@@ -169,14 +169,14 @@ public class IntakePivot extends SubsystemBase {
    * sets intake position using motion magic torque current
    * @param degrees amount of degrees of position
    */
-  public void setIntakePivotPosition(double degrees, double degreesTwo) {
+  public void setIntakePivotPosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
     intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
     intakePivotTwo.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
-  public void setSpeed(double percentOutput, double percentOutputTwo) {
+  public void setSpeed(double percentOutput) {
     intakePivotOne.set(percentOutput);
     intakePivotTwo.set(percentOutput);
   }
