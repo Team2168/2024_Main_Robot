@@ -44,17 +44,19 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class Climber extends SubsystemBase {
 
   private CANSparkMax climberMotor;
+  private RelativeEncoder climberEncoder;
 
   static Climber instance = null;
+  public static final double TICKS_PER_REV = 50.0;
   private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
-  private static final double GEAR_RATIO = 79; 
+  private static final double GEAR_RATIO = 79.0; 
   private static final double MOTOR_DIAMETER_IN = 1.73228; 
   private static final double INCHES_PER_REV = MOTOR_DIAMETER_IN * Math.PI;
 
   private SparkPIDController m_pidController;
   private RelativeEncoder m_Encoder;
   private static final double kMaxOutput = 1;// placeholder
-  private static final double kMinOutput = 0.1;// placeholder
+  private static final double kMinOutput = -1;// placeholder
   private static final double kMaxVel= inchesToRotations(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
   private static final double kMaxAcc= inchesToRotations(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
 
@@ -77,7 +79,6 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
   private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
-  private static ElevatorSim climberSim;
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
   private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
   private static final double MAX_HEIGHT_INCHES = 0.5; //placeholder
@@ -88,6 +89,9 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   /** Creates a new Climber. */
   public Climber() {
     climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushless);
+    //climberEncoder = new Encoder();
+    
+    //WE NEED TO GET AN ENCODER (Vex Shaft Encoder, ticks = 50ticks/rev)
 
     m_pidController = climberMotor.getPIDController();
     m_Encoder = climberMotor.getEncoder(); // Encoder object created to display position values
@@ -112,17 +116,6 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotor.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
     //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
-
-    climberSim = new ElevatorSim(
-    DCMotor.getFalcon500(1), 
-    GEAR_RATIO, 
-    CARRIAGE_MASS_KG, 
-    Units.inchesToMeters(MOTOR_DIAMETER_IN), 
-    Units.inchesToMeters(MIN_HEIGHT_INCHES), 
-    Units.inchesToMeters(MAX_HEIGHT_INCHES), 
-    kSensorPhase, 
-    0, VecBuilder.fill(0.1));
-
   }
 
   public static Climber getInstance() {
@@ -132,24 +125,52 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     return instance;
   }
 
+  /** Converts degrees to rotations
+   * @param degrees
+   * @return returns the converted result of the inputed degrees converted to rotations
+   */
   public static double degreesToRotations(double degrees) {
     return (degrees / 360);
   }
 
+    /** Converts rotations to degrees 
+   * @param rotations
+   * @return returns the converted result of the inputed rotations to degrees
+   */
   public static double rotationsToDegrees(double rotations) {
     return (rotations * 360);
   }
 
+    /** Converts inches to rotations
+   * @param inches
+   * @return returns the converted result of the inputed inches converted to rotations
+   */
   public static double inchesToRotations(double inches) {
     return inches / INCHES_PER_REV;
   }
 
+    /** Converts rotations to inches
+   * @param rotations
+   * @return returns the converted result of the inputed rotations converted to inches
+   */
   public static double rotationsToInches(double rotations){
     return rotations * INCHES_PER_REV;
   }
 
+  /** Converts degrees to inches
+   * @param degrees
+   * @return returns the converted result of the inputed degrees to inches
+   */
   public static double degreesToInches(double degrees){
     return INCHES_PER_REV * (degreesToRotations(degrees));
+  }
+
+  private static double inchesToTicks(double inches) {
+    return (inches / INCHES_PER_REV) * GEAR_RATIO * TICKS_PER_REV;
+  }
+
+  private static double ticksToInches(double ticks) {
+    return (ticks / TICKS_PER_REV) / GEAR_RATIO * INCHES_PER_REV;
   }
 
   public void setMotorBrake() {
@@ -160,12 +181,18 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     climberMotor.setIdleMode(IdleMode.kCoast);
   }
 
-  //@Config()
+    /** Sets the position of where the climber should be
+   * @param velocity - velocity (in inches)
+   * @return sets the reference for the motor controller that sets the velocity of the climber motor
+   */
   public void setSpeedVelocity(double velocity){
     m_pidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
   }
 
-  //@Config()
+    /** Sets the position of where the climber should be
+   * @param in - inches
+   * @return sets the reference for the motor controller that sets the position using smart motion 
+   */
   public void setPosition(double in){
     m_pidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
@@ -173,15 +200,26 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   public void setToZero(){
     m_pidController.setReference(0, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
-
+  
+  /** Inverts the climber's position (where does it go)
+   * @param invert - true of false of wheter it inverts the motor movement or not
+   * @return sets the inversion of the climber (is it inverted or not?)
+   */
   public void setInvertPosition(boolean invert){
     climberMotor.setInverted(invert);
   }
 
+   /** Functions the same as "SetVolt()" expect it isn't a set and forget method
+   * @param speed - the voltage input
+   * @return sets voltage
+   */
   public void setPercentOutput(double speed){
     m_pidController.setReference(speed, ControlType.kVoltage,0, kArbitraryFeedForward); //functions the same as "SetVolt()" expect it isn't a set and forget method
   }
-
+ /** Sets the climber's voltage
+   * @param volt - input of voltage
+   * @return sets voltage
+   */
   public void setVolt(double volt) {
     climberMotor.setVoltage(volt);
   }
@@ -219,26 +257,6 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   @Override
   public void simulationPeriodic() {
 
-    /* 
-    // This method will be called once per scheduler run during simulation
-     // Affect motor outputs by main system battery voltage dip 
-    climberMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
-
-    // Pass motor output voltage to physics sim
-    climberSim.setInput(climberMotorSim.getMotorOutputLeadVoltage());
-    climberSim.update(Constants.ClimberMotors.UPDATE_TIME);
-
-    // System.out.println("Climber pos: " + climberSim.getPositionMeters());
-
-    // Update motor sensor states based on physics model
-    double sim_velocity_ticks_per_100_ms = inchesToTicks(Units.metersToInches(climberSim.getVelocityMetersPerSecond())) * TIME_UNITS_OF_VELOCITY;
-    double sim_position = inchesToTicks(Units.metersToInches(climberSim.getPositionMeters()));
-    climberMotorSim.setIntegratedSensorRawPosition((int) sim_position);
-    climberMotorSim.setIntegratedSensorVelocity((int) sim_velocity_ticks_per_100_ms);
-
-    */
-
-    //This is some stuff we were testing out. This may not be in the final code at all.
   }
 
   

@@ -41,6 +41,6 @@ public class ClimberDriveToZero extends Command {
   @Override
   public boolean isFinished() {
     return (((0 - acceptableErrorTolerance) <= climber.getPositionInches()) && (climber.getPositionInches() <= 0)) ||
-    ((climber.getPositionInches() <= acceptableErrorTolerance) && (0 <= climber.getPositionInches())) 
+    ((climber.getPositionInches() <= acceptableErrorTolerance) && (0 <= climber.getPositionInches())); 
 }
 }
