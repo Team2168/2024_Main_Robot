@@ -50,7 +50,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     WHITE_LINE(30.0),
     RED_LINE(40.0),
     UP_AGAINST_AMP(5.5), // no provided f310 bindings for this on the button bindings paper.
-    STARTING_ZONE_LINE(20.0), // (37.5)
+    STARTING_ZONE_LINE(25.0), // (37.5)
     STAGE_LINE(41.0);
 
     public double shooterRPS;
@@ -79,10 +79,10 @@ public class Shooter extends SubsystemBase implements Loggable {
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
   private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
 
-  private double first_kP = 0.5; // placeholder
-  private double first_kI = 0.6; // placeholder
+  private double first_kP = 1.0; // placeholder
+  private double first_kI = 1.5; // placeholder
   private double first_kD = 0.0; // placeholder
-  private double first_kVolts = 0.0; // placeholder
+  private double first_kVolts = 0.001; // placeholder
   private double first_kS = 0.02;
 
   private final double GEAR_RATIO = 2.345 / 4.69;
@@ -199,7 +199,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public void setVelocity(double velocity) {
     leftShooterMotor.setControl(velocityVoltage.withVelocity(velocity / GEAR_RATIO));
-    rightShooterMotor.setControl(velocityVoltage.withVelocity(((velocity * 0.75) / GEAR_RATIO)));
+    rightShooterMotor.setControl(velocityVoltage.withVelocity(((velocity) / GEAR_RATIO)));
   }
 
   /**

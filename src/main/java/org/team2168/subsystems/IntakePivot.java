@@ -37,7 +37,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   private static InvertedValue intakeInvertOne = InvertedValue.Clockwise_Positive; //TODO: check value
-  private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
+  //private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
 
  // private static int intakeTimeoutMs = 30;
  // private static double peakOutput = 1.0;
@@ -46,7 +46,7 @@ public class IntakePivot extends SubsystemBase {
   private final double TRIGGER_THRESHOLD_LIMIT = 20;
   private final double TRIGGER_THRESHOLD_TIME = 0.2;
  // private final double minuteInHundredMs = 600.0;
-  private double neutralDeadband = 0.000015;
+  private double neutralDeadband = 0.00015;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
   final double MIN_ANGLE = -120;
@@ -80,7 +80,7 @@ public class IntakePivot extends SubsystemBase {
     var softLimitsConfigs = new SoftwareLimitSwitchConfigs();
 
     motorConfigs.withInverted(intakeInvertOne);
-    motorConfigs.withInverted(intakeInvertTwo);
+    //motorConfigs.withInverted(intakeInvertTwo);
     motorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
     motorConfigs.withPeakForwardDutyCycle(maxForwardOutput);
     motorConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
@@ -122,10 +122,10 @@ public class IntakePivot extends SubsystemBase {
     intakeRaiseAndLowerOne.apply(softLimitsConfigs);
     intakeRaiseAndLowerOne.apply(motionMagicConfigs);
 
-    intakeRaiseAndLowerTwo.apply(motorConfigs);
+    //intakeRaiseAndLowerTwo.apply(motorConfigs);
     intakeRaiseAndLowerTwo.apply(currentConfigs);
     intakeRaiseAndLowerTwo.apply(motionMagicConfigs);
-    intakeRaiseAndLowerTwo.apply(softLimitsConfigs);
+    //intakeRaiseAndLowerTwo.apply(softLimitsConfigs);
     intakeRaiseAndLowerTwo.apply(PIDconfigs);
 
     intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
@@ -135,7 +135,7 @@ public class IntakePivot extends SubsystemBase {
     intakePivotTwo.setPosition(sensorOffset, 0.2);
     
     //sets the same settings to the motor intakePivotTwo from intakePivotOne
-    //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
+    intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
   /**
@@ -172,13 +172,13 @@ public class IntakePivot extends SubsystemBase {
   public void setIntakePivotPosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
     intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
-    intakePivotTwo.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
+    // intakePivotTwo.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
   public void setSpeed(double percentOutput) {
     intakePivotOne.set(percentOutput);
-    intakePivotTwo.set(percentOutput);
+    //intakePivotTwo.set(percentOutput);
   }
 
   @Log(name = "Position (deg)", rowIndex = 0, columnIndex = 0)

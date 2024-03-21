@@ -53,20 +53,20 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.5),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle).withTimeout(1.0),
       new WaitCommand(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       // moves back to pick up second note
       SwervePathUtil.getPathCommand("Move_Back_Speaker", drivetrain, InitialPathState.DISCARDHEADING).raceWith(
         new SetIntakePivotPosition(intakePivot, -10.0),
         new QueueNote(intakeRoller, indexer, leds)
       ),
-      new QueueNote(intakeRoller, indexer, leds),
+      new QueueNote(intakeRoller, indexer, leds).withTimeout(2.0),
       // drives back upon intaking, stows intake
       SwervePathUtil.getPathCommand("Move_To_Speaker", drivetrain, InitialPathState.PRESERVEHEADING).raceWith(
         new SetIntakePivotPosition(intakePivot, -120.0),
         new SetIntakeSpeed(intakeRoller, 0.0)
       ),
       // shoots second note
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       new WaitCommand(0.75),
       new StopFlywheel(shooter)
     );

@@ -38,41 +38,41 @@ public class FourNoteClose extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.5),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
       new WaitCommand(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       // drives to and picks up second
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_1", drivetrain, InitialPathState.DISCARDHEADING),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
-        new QueueNote(intakeRoller, indexer, leds)
+        new SetIntakePivotPosition(intakePivot, -7.5).withTimeout(0.5),
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots second note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drives to and picks up 3rd note
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
-        new QueueNote(intakeRoller, indexer, leds)
+        new SetIntakePivotPosition(intakePivot, -7.5).withTimeout(0.5),
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots 3rd note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // druves to and picks up 4th note
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
-        new QueueNote(intakeRoller, indexer, leds)
+        new SetIntakePivotPosition(intakePivot, -7.5).withTimeout(0.5),
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots 4th note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0)
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0)
     );
   }
 }
