@@ -14,16 +14,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
+
+import java.beans.Encoder;
+import java.security.CodeSource;
 
 import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
@@ -35,6 +43,8 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.sensors.CANCoder;
+
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -88,8 +98,8 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
 
   /** Creates a new Climber. */
   public Climber() {
-    climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushless);
-    //climberEncoder = new Encoder();
+    climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushed);
+    //climberEncoder = CANSparkMax.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50);
     
     //WE NEED TO GET AN ENCODER (Vex Shaft Encoder, ticks = 50ticks/rev)
 
@@ -118,7 +128,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
   }
 
-  public static Climber getInstance() {
+  public static Climber getClimberInstance() {
     if (instance == null) {
       instance = new Climber();
     }
