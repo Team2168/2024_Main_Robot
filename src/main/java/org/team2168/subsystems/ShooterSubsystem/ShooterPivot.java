@@ -56,7 +56,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
   private MotorOutputConfigs motorOutputConfig;
   private CurrentLimitsConfigs motorCurrentConfig;
   private final double GEAR_RATIO = (45.024/4.69) * 2.0; // placeholder
-  private final double MINIMUM_LIMIT_ANGLE = degreesToRotation(35.0);// placeholder for softlimit
+  private final double MINIMUM_LIMIT_ANGLE = degreesToRotation(25.0);// placeholder for softlimit
   private final double MAXIMUM_LIMIT_ANGLE = degreesToRotation(62.0); // placeholder for softlimit
   private final double STOW_ANGLE = degreesToRotation(62.0); //actual value is suppost to be 80 degrees.
   private final double PEAK_FORWARD_OUTPUT = 1.0;
@@ -76,11 +76,14 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
 
   private InterpolatingDoubleTreeMap shooterAngleLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed                                                                                            // from  // distance using a // interpolating lookup table.
     {
-      put(1.57, 62.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
-      put(1.93, 46.0);
-      put(3.205, 40.25);
-      put(5.0, 40.0);
-      put(100.0, 60.0);
+      put(0.0, 60.0);
+      put(1.10, 60.0);
+      put(1.5, 53.9);
+      put(2.0, 44.4);
+      put(2.5, 41.3);
+      put(3.0, 37.9);
+      put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
+      put(100.0, 35.0);
       // put(6.0, 30.0);
       // put(7.0, 20.0);
     }

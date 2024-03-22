@@ -7,6 +7,8 @@ package org.team2168.commands.auto;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
+import org.team2168.commands.ShooterCommands.ShootAndControlHoodFromDistance;
+import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
@@ -48,9 +50,12 @@ public class FourNoteClose extends SequentialCommandGroup {
       // shoots second note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-      new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle),
+      // new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle),
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.5),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new WaitCommand(0.5),
+      new StopFlywheel(shooter),
       // drives to and picks up 3rd note
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
@@ -61,7 +66,10 @@ public class FourNoteClose extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new WaitCommand(0.5),
+      new StopFlywheel(shooter),
       // druves to and picks up 4th note
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
@@ -72,7 +80,10 @@ public class FourNoteClose extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0)
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.5),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
+      new WaitCommand(0.5),
+      new StopFlywheel(shooter)
     );
   }
 }

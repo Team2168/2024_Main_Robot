@@ -24,7 +24,7 @@ public class BumpShooterAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterPivot.setPositionDegrees(shooterPivot.getAngle() + 1.0);
+    shooterPivot.setPositionDegrees(shooterPivot.getAngle() + 1.5);
   }
 
   // Called once the command ends or is interrupted.

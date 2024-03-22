@@ -31,17 +31,17 @@ public class DriveWithJoystick extends Command {
       public void initialize() {
         DriverStation.refreshData();
         oi = OI.getInstance();
-        rotationRateLimiter = new SlewRateLimiter(0.9);
+        rotationRateLimiter = new SlewRateLimiter(2.0);
       }
 
       public void execute() {
       // chooses button or joystick option for rotating chassis
         if (OI.joystickChooser.getSelected().equals("flight")) {
           if (oi.driverJoystick.isPressedButtonA()) {
-            chassisRot = 0.4;
+            chassisRot = 0.3;
           }
           else if (oi.driverJoystick.isPressedButtonB()) {
-            chassisRot = -0.4;
+            chassisRot = -0.3;
           }
           else {
             chassisRot = 0.0;
@@ -51,7 +51,7 @@ public class DriveWithJoystick extends Command {
           chassisRot = oi.getDriverJoystickZValue();
         }
 
-        if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
           kDriveInvert = -1.0;
         }
 

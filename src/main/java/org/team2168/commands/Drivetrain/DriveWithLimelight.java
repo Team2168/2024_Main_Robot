@@ -39,12 +39,12 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private static final double P_FAR = 0.01;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
-    private static final double MINIMUM_COMMAND = 0.005;
+    private static final double MINIMUM_COMMAND = 0.0025;
     private static final double MAX_INTEGRAL = 1.0;
 
     private double P;
     private double I;
-    private double D = 0.003;
+    private double D = 0.0;
 
     @Config
     void setLimeP(double P) {
