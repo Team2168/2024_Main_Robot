@@ -134,7 +134,6 @@ public class RobotContainer {
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
-    oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
@@ -154,7 +153,8 @@ public class RobotContainer {
     // shoot
     oi.operatorJoystick1.ButtonY().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
     // source intake
-    oi.operatorJoystick1.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
+    oi.operatorJoystick1.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75))
+                                           .whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
     //floor intake
     oi.operatorJoystick1.ButtonRightBumper()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
