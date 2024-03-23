@@ -4,28 +4,19 @@
 
 package org.team2168;
 
-import javax.sql.ConnectionPoolDataSource;
-
 import org.team2168.Constants.OperatorConstants;
-import org.team2168.commands.Autos;
 import org.team2168.commands.ContinuousNoteQueue;
-import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
-import org.team2168.commands.Drivetrain.ZeroSwerve;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.commands.LEDs.LEDstatus;
-import org.team2168.commands.LEDs.SetBlueLED;
-import org.team2168.commands.LEDs.SetGreenLED;
-import org.team2168.commands.LEDs.SetRedLED;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
 import org.team2168.commands.ShooterCommands.ShootAndControlHoodFromDistance;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.BumpShooterSpeed;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.BumpShooterSpeedDown;
-import org.team2168.commands.ShooterCommands.ShooterFlywheel.SetShooterVelocity;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngle;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
@@ -36,7 +27,6 @@ import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.TwoNoteAuto;
-import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.LEDs;
 
 //import org.team2168.subsystems.Indexer;
@@ -47,25 +37,14 @@ import org.team2168.subsystems.Limelight;
 
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
-import org.team2168.subsystems.Limelight;
-import org.team2168.utils.F310;
 import org.team2168.utils.SwervePathUtil;
 import org.team2168.utils.SwervePathUtil.InitialPathState;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
-import org.team2168.commands.Drivetrain.DriveWithChassisSpeedsJoystick;
-import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
-import org.team2168.commands.intakePivot.SetIntakePivotPosition;
-import org.team2168.commands.intakerRoller.SetIntakeSpeed;
-import org.team2168.subsystems.Drivetrain;
-import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.subsystems.Indexer;
-import org.team2168.subsystems.IntakeRoller;
-import org.team2168.subsystems.IntakePivot;
-import org.team2168.subsystems.Limelight;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -78,8 +57,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
-import io.github.oblarg.oblog.Logger;
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -128,9 +105,6 @@ public class RobotContainer {
     Logger.configureLoggingAndConfig(this, false);
   }
 
- 
-  
-
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
@@ -156,20 +130,13 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
     intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intakepivot works again
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
+    
     oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
-    // new Trigger(m_exampleSubsystem::exampleCondition)
-    //     .OnTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-    // drivetrain.setDefaultCommand(new DriveWithChassisSpeedsJoystick(drivetrain));
-
-    //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
-
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
+
+    //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     // amp
     oi.operatorJoystick1.ButtonA().onTrue(
@@ -209,15 +176,6 @@ public class RobotContainer {
     oi.operatorJoystick2.ButtonLeftBumper().onTrue(new BumpShooterSpeed(shooter));
     oi.operatorJoystick2.ButtonRightBumper().onTrue(new BumpShooterSpeedDown(shooter));
 
-    //Testing LEDs
-    // oi.testJoystick.ButtonB().whileTrue(new SetRedLED(leds, true))
-    //                          .onFalse(new SetRedLED(leds, false));
-
-    // oi.testJoystick.ButtonA().whileTrue(new SetGreenLED(leds, true))
-    //                          .onFalse(new SetGreenLED(leds, false));
-
-    // oi.testJoystick.ButtonX().whileTrue(new SetBlueLED(leds, true))
-    //                          .onFalse(new SetBlueLED(leds, false));
     oi.testJoystick.ButtonA().onTrue(new BumpShooterSpeed(shooter));
     oi.testJoystick.ButtonB().onTrue(new BumpShooterSpeedDown(shooter));
 
