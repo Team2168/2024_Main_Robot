@@ -17,6 +17,7 @@ import com.ctre.phoenix6.hardware.DeviceIdentifier;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double LOOP_TIME_SEC = 0.02;
   public static final class PneumaticsDevices {
   public static final int RED_LIGHT = 5;
   public static final int GREEN_LIGHT = 7;
@@ -74,8 +75,10 @@ public final class Constants {
   }
 
   public static class Drivetrain {
-    public static final double kpDriveVel = 3.0; // needs testing
-    public static final double kpAngularVel = 5.0; // needs to be tested
+    public static final double kpDriveVel = 4.0; // needs testing
+    public static final double kpAngularVel = 1.0; // needs to be tested
+    public static final double kdAngularVel = 0.0;
+    public static final double kiAngularVel = 0.0;
     public static double ksVolts;
     public static double kvVoltSecondsPerMeter;
     public static double kaVoltSecondsSquaredPerMeter;

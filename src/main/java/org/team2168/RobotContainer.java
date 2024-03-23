@@ -240,7 +240,12 @@ public class RobotContainer {
 
   @Log(name = "is alliance blue?")
   public boolean isAllianceBlue() {
-    return (DriverStation.getAlliance().get() == Alliance.Blue);
+    if (DriverStation.getAlliance().isPresent()) {
+      return (DriverStation.getAlliance().get() == Alliance.Blue);
+    }
+    else {
+      return false;
+    }
   }
 
   /**

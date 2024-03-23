@@ -55,13 +55,13 @@ public class FourNoteFar extends SequentialCommandGroup {
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up third note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        SwervePathUtil.getPathCommand("4_Note_Far_2", drivetrain, InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 3rd note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        SwervePathUtil.getPathCommand("4_Note_Far_3", drivetrain, InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(1.0),
         new SetIntakeSpeed(intakeRoller, 0.0)
       ),

@@ -39,12 +39,12 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private static final double P_FAR = 0.01;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
-    private static final double MINIMUM_COMMAND = 0.0025;
+    private static final double MINIMUM_COMMAND = 0.0015;
     private static final double MAX_INTEGRAL = 1.0;
 
     private double P;
     private double I;
-    private double D = 0.0;
+    private double D = 0.00025;
 
     @Config
     void setLimeP(double P) {
@@ -151,6 +151,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         if (manualControl) {
             limelight.pauseLimelight();
         }
+        drivetrain.drive(0.0, 0.0, 0.0);
     }
 
     public boolean isFinished() {
