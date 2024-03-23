@@ -55,6 +55,7 @@ import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
 import org.team2168.commands.Drivetrain.DriveWithChassisSpeedsJoystick;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
+import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
@@ -165,25 +166,48 @@ public class RobotContainer {
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     // drivetrain.setDefaultCommand(new DriveWithChassisSpeedsJoystick(drivetrain));
 
-    // oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
-    // oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
-    // oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
-    oi.operatorJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight));
-    oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
-    oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
-    // oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.6));
-    oi.operatorJoystick.ButtonY().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
-    oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
-    oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
-    oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-                                          .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
-                                          .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
-    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
+    // amp
+    oi.operatorJoystick1.ButtonA().onTrue(
+      new ControlShooterAndHood(shooter, shooterPivot, 
+                                Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, 
+                                ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
+   // variable
+    oi.operatorJoystick1.ButtonB().onTrue(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight));
+    // close
+    oi.operatorJoystick1.ButtonX().onTrue(
+      new ControlShooterAndHood(shooter, shooterPivot, 
+                                Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS,
+                                ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
+    // shoot
+    oi.operatorJoystick1.ButtonY().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
+    // source intake
+    oi.operatorJoystick1.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
+    //floor intake
+    oi.operatorJoystick1.ButtonRightBumper()
+      .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
+      .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+      .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0));
+    // spit
+    oi.operatorJoystick1.ButtonBack()
+      .whileTrue(new SetIntakeSpeed(intakeRoller, -1.0))
+      .whileTrue(new DriveIndexer(indexer, ()->-1.0));
+    // stop shooter
+    oi.operatorJoystick1.ButtonStart().onTrue(new StopFlywheel(shooter));
+    //toggle climb
+    //oi.operatorJoystick2.ButtonA().toggleOnTrue(new climber thing)
+                                  //.toggleOnFalse(turn climber off);
+    //shooter angle bumping
+    oi.operatorJoystick2.ButtonX().onTrue(new BumpShooterAngle(shooterPivot));
+    oi.operatorJoystick2.ButtonY().onTrue(new BumpShooterAngleDown(shooterPivot));
+    // shooting speed bumping
+    oi.operatorJoystick2.ButtonLeftBumper().onTrue(new BumpShooterSpeed(shooter));
+    oi.operatorJoystick2.ButtonRightBumper().onTrue(new BumpShooterSpeedDown(shooter));
 
     //Testing LEDs
     // oi.testJoystick.ButtonB().whileTrue(new SetRedLED(leds, true))

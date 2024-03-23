@@ -68,7 +68,8 @@ public final class Constants {
   public static class Controllers {
 
     public static final int DRIVER_JOYSTICK = 0;
-    public static final int OPERATOR_JOYSTICK = 1;
+    public static final int OPERATOR_JOYSTICK_1 = 1;
+    public static final int OPERATOR_JOYSTICK_2 = 2;
     public static final int TEST_JOYSTICK = 5;
   
   }
