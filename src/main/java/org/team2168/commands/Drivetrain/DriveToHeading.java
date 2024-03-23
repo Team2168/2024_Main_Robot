@@ -17,9 +17,9 @@ public class DriveToHeading extends Command {
   final double ERROR_TOLERANCE = 0.5; // in degrees
   final int ACCEPTED_LOOPS = 10;
 
-  double kP = 0.05;
+  double kP = 0.01;
   double kI = 0.0;
-  double kD = 0.0;
+  double kD = 0.00025;
 
   PIDController drivePID = new PIDController(kP, kI, kD);
 
@@ -38,8 +38,8 @@ public class DriveToHeading extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Math.abs(drivetrain.getHeading() - angle) % 360.0 < 180.0) {
-    drivetrain.drive(0.0, 0.0, drivePID.calculate((angle - drivetrain.getHeading() % 360.0)));
+    if (Math.abs(-drivetrain.getHeading() % 360.0 - angle) < 180.0) {
+    drivetrain.drive(0.0, 0.0, drivePID.calculate((angle - (-drivetrain.getHeading()) % 360.0)));
     // drivetrain.driveWithKinematics(0.0, 0.0, drivePID.calculate(angle - drivetrain.getHeading() % 360.0));
     }
     else {
@@ -47,7 +47,7 @@ public class DriveToHeading extends Command {
       // drivetrain.driveWithKinematics(0.0, 0.0, drivePID.calculate(drivetrain.getHeading() % 360.0 - angle));
     }
 
-    if (Math.abs(drivetrain.getHeading()) < ERROR_TOLERANCE) {
+    if (Math.abs(-drivetrain.getHeading() % 360.0) - angle < ERROR_TOLERANCE) {
       numLoops++;
     }
     else {
