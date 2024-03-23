@@ -17,7 +17,7 @@ public class DriveToHeading extends Command {
   final double ERROR_TOLERANCE = 0.5; // in degrees
   final int ACCEPTED_LOOPS = 10;
 
-  double kP = 0.3;
+  double kP = 0.05;
   double kI = 0.0;
   double kD = 0.0;
 
