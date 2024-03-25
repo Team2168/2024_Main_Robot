@@ -3,6 +3,9 @@ package org.team2168.thirdcoast.swerve;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +43,8 @@ public class SwerveDrive implements Loggable {
   private final double[] wa = new double[WHEEL_COUNT];
   private boolean isFieldOriented;
   private double maxVelocityFtSec;
+
+  private ChassisSpeeds chassisDriver;
 
   public SwerveDrive(SwerveDriveConfig config) {
     gyro = config.gyro;
@@ -82,9 +87,11 @@ public class SwerveDrive implements Loggable {
       double rate = gyro.getYaw().getAppliedUpdateFrequency();
       double gyroPeriod = 1.0 / rate;
       // kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
+      chassisDriver = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, 0.0, gyro.getRotation2d());
     }
     else {
       // kGyroRateCorrection = 0;
+      chassisDriver = ChassisSpeeds.fromRobotRelativeSpeeds(0.0, 0.0, 0.0, gyro.getRotation2d());
     }
 
     double rotsPerSecMax = Wheel.getDriveSetpointMax() * 10.0;
@@ -187,6 +194,14 @@ public class SwerveDrive implements Loggable {
     }
   }
 
+  public void driveWithKinematics(double forward, double strafe, double azimuth) {
+    double hypot = Math.sqrt(Math.pow(forward, 2) + Math.pow(strafe, 2));
+    double forwardVector = (forward / hypot) * Wheel.getMaxVelocityMetersPerSec(); // m/s
+    double strafeVector = -(strafe / hypot) * Wheel.getMaxVelocityMetersPerSec(); // m/s, invert direction to allow positive strafe values to go right
+    double azimuthRadPerSec = -azimuth * (2*Math.PI); // rps to rad/s
+    chassisDriver = new ChassisSpeeds(forwardVector, strafeVector, azimuthRadPerSec);
+  }
+
   /**
    * Stops all wheels' azimuth and drive movement. Calling this in the robots {@code teleopInit} and
    * {@code autonomousInit} will reset wheel azimuth relative encoders to the current position and
@@ -245,6 +260,10 @@ public class SwerveDrive implements Loggable {
    */
   public Pigeon2 getGyro() {
     return gyro;
+  }
+
+  public ChassisSpeeds getChassisDriver() {
+    return chassisDriver;
   }
 
   /**

@@ -4,9 +4,19 @@
 
 package org.team2168;
 
+import org.team2168.subsystems.Drivetrain;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
 
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.PathfindHolonomic;
+import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
@@ -20,8 +30,10 @@ import io.github.oblarg.oblog.Logger;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  private IntakePivot intakePivot;
   private RobotContainer m_robotContainer;
   public Limelight limelight;
+  private Drivetrain drivetrain;
 
 
 
@@ -34,9 +46,13 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    limelight = new Limelight();
+    limelight = Limelight.getInstance();
+    drivetrain = Drivetrain.getInstance();
+    intakePivot = IntakePivot.getInstance();
 
     limelight.enableVision(true);
+    FollowPathHolonomic.warmupCommand().schedule(); // attempts to get rid of random error occuring on robot power-on
+    PathfindHolonomic.warmupCommand().schedule();
   }
 
   /**
@@ -61,17 +77,24 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    DriverStation.refreshData();
+    // drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    drivetrain.driveToChassisSpeed(new ChassisSpeeds(0.0, 0.0, 0.0));
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    limelight.enableBaseCameraSettings();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    // intakePivot.setIntakePivotPosition(-120.0);
+    drivetrain.setMotorsBrake(true);
   }
 
   /** This function is called periodically during autonomous. */
@@ -80,15 +103,20 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    drivetrain.driveToChassisSpeed(new ChassisSpeeds(0.0, 0.0, 0.0)); // cancels speed remaining from autonomous
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    limelight.enableBaseCameraSettings();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    // intakePivot.setIntakePivotPosition(-120.0);
 
     limelight.enableBaseCameraSettings();
+    drivetrain.setMotorsBrake(true);
   }
 
   /** This function is called periodically during operator control. */
