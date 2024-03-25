@@ -12,6 +12,9 @@ import org.team2168.thirdcoast.swerve.SwerveDriveConfig;
 import org.team2168.thirdcoast.swerve.Wheel;
 
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.PathfindHolonomic;
+import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -21,7 +24,9 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -95,6 +100,56 @@ public class SwervePathUtil {
         SwervePathUtil.pathFollowConfig,
         () -> getPathInvert(),
         drive);
+    }
+
+    public static Command pathFindToAmp(Drivetrain drive) {
+        double poseXtranslation;
+        if (getPathInvert()) {
+            poseXtranslation = 14.67; // red amp x position in meters
+        }
+        else {
+            poseXtranslation = 1.85; // blue amp x position in meters
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        return pathFindtoPose(drive, desiredPose);
+    }
+
+    public static Command pathFindtoPose(Drivetrain drive, Pose2d pose) {
+        return new PathfindHolonomic(pose,
+        new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
+        0.0,
+        drive::getPose,
+        drive::getChassisSpeeds,
+        drive::driveToChassisSpeed,
+        SwervePathUtil.pathFollowConfig,
+        0.0,
+        drive);
+    }
+
+    public static Command pathFindThenFollowToAmp(Drivetrain drive) {
+        double poseXtranslation;
+        if (getPathInvert()) {
+            poseXtranslation = 14.67; // red amp x position in meters
+        }
+        else {
+            poseXtranslation = 1.85; // blue amp x position in meters
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        return pathFindToFollowPath(drive, "B_To_Amp", desiredPose);
+    }
+
+    public static Command pathFindToFollowPath(Drivetrain drive, String pathName, Pose2d pose) {
+        return new PathfindThenFollowPathHolonomic(
+            PathPlannerPath.fromPathFile(pathName),
+            new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
+            drive::getPose,
+            drive::getChassisSpeeds,
+            drive::driveToChassisSpeed,
+            pathFollowConfig,
+            () -> getPathInvert(),
+            drive);
     }
     
     // public SwerveControllerCommand getSwerveControllerCommand(Trajectory trajectory, Drivetrain drivetrain) {

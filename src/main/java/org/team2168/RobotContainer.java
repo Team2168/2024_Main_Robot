@@ -34,6 +34,7 @@ import org.team2168.commands.auto.FourNoteClose;
 import org.team2168.commands.auto.FourNoteFar;
 import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
+import org.team2168.commands.auto.PathFindToAmp;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -173,6 +174,7 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
     // oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.6));
     oi.operatorJoystick.ButtonY().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
+    oi.operatorJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
     oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
@@ -180,7 +182,8 @@ public class RobotContainer {
                                           .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
-    oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    oi.driverJoystick.ButtonBack().onTrue(new PathFindToAmp(drivetrain));
     oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
 
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));

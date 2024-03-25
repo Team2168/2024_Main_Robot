@@ -12,6 +12,8 @@ import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
 
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.PathfindHolonomic;
+import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -50,6 +52,7 @@ public class Robot extends TimedRobot {
 
     limelight.enableVision(true);
     FollowPathHolonomic.warmupCommand().schedule(); // attempts to get rid of random error occuring on robot power-on
+    PathfindHolonomic.warmupCommand().schedule();
   }
 
   /**
