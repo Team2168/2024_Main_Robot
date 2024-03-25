@@ -126,7 +126,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
   }
 
-  public static Climber getClimberInstance() {
+  public static Climber getInstance() {
     if (instance == null) {
       instance = new Climber();
     }
