@@ -99,9 +99,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
   /** Creates a new Climber. */
   public Climber() {
     climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushed);
-    //climberEncoder = CANSparkMax.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50);
-    
-    //WE NEED TO GET AN ENCODER (Vex Shaft Encoder, ticks = 50ticks/rev)
+    climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50);
 
     m_pidController = climberMotor.getPIDController();
     m_Encoder = climberMotor.getEncoder(); // Encoder object created to display position values
