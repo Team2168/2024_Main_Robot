@@ -64,6 +64,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private SwerveDriveOdometry odometry;
     private ChassisSpeeds chassisSpeeds;
 
+    public Limelight limelight = Limelight.getInstance();
+
     private static SwerveDrivePoseEstimator drivePoseEstimator;
 
     private Drivetrain() {
@@ -87,6 +89,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
         return instance;
     }
+
 
     /**
      * @return a configured SwerveDrive
@@ -330,6 +333,14 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return chassisSpeeds;
     }
 
+    public double getBotposeX() {
+        return drivePoseEstimator.getEstimatedPosition().getX();
+    }
+
+    public double getBotposeY() {
+        return drivePoseEstimator.getEstimatedPosition().getY();
+    }
+
     public void driveToChassisSpeed(ChassisSpeeds robotRelSpeeds) {
         chassisSpeeds = robotRelSpeeds;
 
@@ -382,8 +393,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public void setDriveMode(SwerveDrive.DriveMode mode) {
         _sd.setDriveMode(mode);
       }
-
     
+    public void visionSwervePoseEstimation() {
+      if (limelight.hasTarget()) {
+        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), 0.02);
+      }
+    }
 
     
 
@@ -401,6 +416,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         //System.out.println("robot Pose: " + getPose());
 
         drivePoseEstimator.update(getRotation2d(), modulePositions);
+
+        visionSwervePoseEstimation();
     }
 }
 

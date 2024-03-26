@@ -1,4 +1,6 @@
 package org.team2168.subsystems;
+
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -56,6 +58,8 @@ public class Limelight extends SubsystemBase implements Loggable {
 
     
 
+    
+
     public int horizontalScanX = 320;
     public int horizontalScanY = 160;
 
@@ -74,6 +78,8 @@ public class Limelight extends SubsystemBase implements Loggable {
     public Pose3d aprilTagInView;
     public Transform3d pose;
     public Rotation2d limelightAngle;
+
+    
 
 
    
@@ -246,6 +252,11 @@ public class Limelight extends SubsystemBase implements Loggable {
 
       return distanceFromTarget;
   }   
+
+    
+
+
+    
     
     public boolean isLimelightEnabled() {
         return isLimelightEnabled;
