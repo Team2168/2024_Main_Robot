@@ -51,7 +51,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("3_Note_Far_Alt_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-        new SetIntakeSpeed(intakeRoller, 0.0)
+        new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
       new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
@@ -65,7 +65,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("3_Note_Far_Alt_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-        new SetIntakeSpeed(intakeRoller, 0.0)
+        new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
       new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),

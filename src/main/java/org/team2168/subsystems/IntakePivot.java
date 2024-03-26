@@ -37,7 +37,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   private static InvertedValue intakeInvertOne = InvertedValue.Clockwise_Positive; //TODO: check value
-  //private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
+  private static InvertedValue intakeInvertTwo = InvertedValue.CounterClockwise_Positive;
 
  // private static int intakeTimeoutMs = 30;
  // private static double peakOutput = 1.0;
@@ -46,7 +46,7 @@ public class IntakePivot extends SubsystemBase {
   private final double TRIGGER_THRESHOLD_LIMIT = 20;
   private final double TRIGGER_THRESHOLD_TIME = 0.2;
  // private final double minuteInHundredMs = 600.0;
-  private double neutralDeadband = 0.00015;
+  private double neutralDeadband = 0.001;
   private double maxForwardOutput = 1;
   private double maxBackwardOutput = -1;
   final double MIN_ANGLE = -120;
@@ -62,7 +62,7 @@ public class IntakePivot extends SubsystemBase {
   private final static double GEAR_RATIO = 50.0; // updated after waterbury
 
   private double kP = 15.0;
-  private double kI = 0;
+  private double kI = 0.0;
   private double kD = 0.3;
   private double kG = -1.3;
   private GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
@@ -70,20 +70,28 @@ public class IntakePivot extends SubsystemBase {
 
 
   private IntakePivot() {
+    intakePivotOne.clearStickyFaults();
+    intakePivotTwo.clearStickyFaults();
     intakePivotOne.getConfigurator().apply(new TalonFXConfiguration()); //resets leader motor to its factory default
     intakePivotTwo.getConfigurator().apply(new TalonFXConfiguration()); //resets follower motor to its factory default
 
     var currentConfigs = new CurrentLimitsConfigs();
     var PIDconfigs = new SlotConfigs();
     var motionMagicConfigs = new MotionMagicConfigs();
-    var motorConfigs = new MotorOutputConfigs();
+    var motorOneConfigs = new MotorOutputConfigs();
+    var motorTwoConfigs = new MotorOutputConfigs();
     var softLimitsConfigs = new SoftwareLimitSwitchConfigs();
 
-    motorConfigs.withInverted(intakeInvertOne);
+    motorOneConfigs.withInverted(intakeInvertOne);
     //motorConfigs.withInverted(intakeInvertTwo);
-    motorConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
-    motorConfigs.withPeakForwardDutyCycle(maxForwardOutput);
-    motorConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
+    motorOneConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    motorOneConfigs.withPeakForwardDutyCycle(maxForwardOutput);
+    motorOneConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
+
+    motorTwoConfigs.withInverted(intakeInvertTwo);
+    motorTwoConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    motorTwoConfigs.withPeakForwardDutyCycle(maxForwardOutput);
+    motorTwoConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
 
 
     currentConfigs
@@ -116,13 +124,13 @@ public class IntakePivot extends SubsystemBase {
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
     var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
     
-    intakeRaiseAndLowerOne.apply(motorConfigs);
+    intakeRaiseAndLowerOne.apply(motorOneConfigs);
     intakeRaiseAndLowerOne.apply(currentConfigs);
     intakeRaiseAndLowerOne.apply(PIDconfigs);
     intakeRaiseAndLowerOne.apply(softLimitsConfigs);
     intakeRaiseAndLowerOne.apply(motionMagicConfigs);
 
-    //intakeRaiseAndLowerTwo.apply(motorConfigs);
+    intakeRaiseAndLowerTwo.apply(motorTwoConfigs);
     intakeRaiseAndLowerTwo.apply(currentConfigs);
     intakeRaiseAndLowerTwo.apply(motionMagicConfigs);
     //intakeRaiseAndLowerTwo.apply(softLimitsConfigs);
@@ -135,7 +143,7 @@ public class IntakePivot extends SubsystemBase {
     intakePivotTwo.setPosition(sensorOffset, 0.2);
     
     //sets the same settings to the motor intakePivotTwo from intakePivotOne
-    intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
+    //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
   /**
@@ -172,7 +180,7 @@ public class IntakePivot extends SubsystemBase {
   public void setIntakePivotPosition(double degrees) {
     var demand = MathUtil.clamp(degrees, MIN_ANGLE, MAX_ANGLE);
     intakePivotOne.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
-    // intakePivotTwo.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
+    intakePivotTwo.setControl(motionMagicVoltage.withPosition((degreesToRot(demand))));
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 

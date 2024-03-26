@@ -82,7 +82,7 @@ public class StrafeToTagPosition extends Command {
     else 
       strafeSpeed = 0.0;
 
-    drivetrain.drive(0.0, strafeSpeed, 0.0);
+    drivetrain.drive(strafeSpeed, 0.0, 0.0);
   }
 
   // Called once the command ends or is interrupted.

@@ -44,7 +44,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       // drives to and picks up second
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_1", drivetrain, InitialPathState.DISCARDHEADING),
-        new SetIntakePivotPosition(intakePivot, -7.5).withTimeout(0.5),
+        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots second note
@@ -59,7 +59,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       // drives to and picks up 3rd note
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -7.5).withTimeout(0.5),
+        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots 3rd note
@@ -73,7 +73,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       // druves to and picks up 4th note
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Close_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -7.5).withTimeout(0.5),
+        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots 4th note

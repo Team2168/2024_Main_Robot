@@ -50,23 +50,23 @@ public class FourNoteFar extends SequentialCommandGroup {
       ),
       // aim and shoot second note from this position
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-      new SetIntakeSpeed(intakeRoller, 0.0),
+      new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up third note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        SwervePathUtil.getPathCommand("4_Note_Far_2", drivetrain, InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 3rd note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        SwervePathUtil.getPathCommand("4_Note_Far_3", drivetrain, InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(1.0),
-        new SetIntakeSpeed(intakeRoller, 0.0)
+        new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-      new SetIntakeSpeed(intakeRoller, 0.0),
+      new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up fourth note
@@ -79,10 +79,8 @@ public class FourNoteFar extends SequentialCommandGroup {
       new ParallelCommandGroup(
         SwervePathUtil.getPathCommand("4_Note_Far_5", drivetrain, InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(1.0),
-        new SetIntakeSpeed(intakeRoller, 0.0)
+        new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
-      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-      new SetIntakeSpeed(intakeRoller, 0.0),
       new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new StopFlywheel(shooter)

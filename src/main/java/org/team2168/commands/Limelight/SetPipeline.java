@@ -31,12 +31,12 @@ public class SetPipeline extends Command {
         limelight.setPipeline(pipeline);
         isPipelineSet = true;
 
-        if (Math.abs(limelight.getOffsetX()) < limeErrorTolerance) {
-            leds.redlight(true);
-          }
-            else {
-              leds.redlight(false);}
-            } 
+        // if (Math.abs(limelight.getOffsetX()) < limeErrorTolerance) {
+        //     leds.redlight(true);
+        //   }
+        //     else {
+        //       leds.redlight(false);}
+    } 
             
 
     public boolean isFinished() {

@@ -6,15 +6,16 @@ package org.team2168.commands.Drivetrain;
 
 import org.team2168.subsystems.Drivetrain;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class SetHeading extends Command {
+public class SetToPose extends Command {
   /** Creates a new SetHeading. */
   Drivetrain drivetrain;
-  double heading;
-  public SetHeading(Drivetrain drivetrain, double heading) {
+  Pose2d pose;
+  public SetToPose(Drivetrain drivetrain, Pose2d pose) {
     this.drivetrain = drivetrain;
-    this.heading = heading;
+    this.pose = pose;
     addRequirements(drivetrain);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -26,7 +27,7 @@ public class SetHeading extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.setHeading(heading);
+    drivetrain.resetOdometry(pose, true);
   }
 
   // Called once the command ends or is interrupted.
@@ -36,6 +37,6 @@ public class SetHeading extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(drivetrain.getHeading() - heading) < 0.5;
+    return drivetrain.getPose() == pose;
   }
 }

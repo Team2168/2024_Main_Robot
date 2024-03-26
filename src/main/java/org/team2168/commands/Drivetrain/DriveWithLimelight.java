@@ -10,12 +10,13 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
-public class DriveWithLimelight extends CommandBase implements Loggable {
+public class DriveWithLimelight extends Command implements Loggable {
 
     private Drivetrain drivetrain;
     private Limelight limelight;
@@ -39,12 +40,12 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
     private static final double P_FAR = 0.01;
     private static final double I_NEAR = 0;
     private static final double I_FAR = 0;
-    private static final double MINIMUM_COMMAND = 0.0025;
+    private static final double MINIMUM_COMMAND = 0.0015;
     private static final double MAX_INTEGRAL = 1.0;
 
     private double P;
     private double I;
-    private double D = 0.0;
+    private double D = 0.00025;
 
     @Config
     void setLimeP(double P) {
@@ -151,6 +152,7 @@ public class DriveWithLimelight extends CommandBase implements Loggable {
         if (manualControl) {
             limelight.pauseLimelight();
         }
+        drivetrain.drive(0.0, 0.0, 0.0);
     }
 
     public boolean isFinished() {

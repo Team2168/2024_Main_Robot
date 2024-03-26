@@ -1,6 +1,7 @@
 package org.team2168.commands.Drivetrain;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +33,7 @@ public class DriveWithJoystick extends Command {
         DriverStation.refreshData();
         oi = OI.getInstance();
         rotationRateLimiter = new SlewRateLimiter(2.0);
+        drivetrain.driveToChassisSpeed(new ChassisSpeeds(0.0, 0.0, 0.0)); // prevents velocity carryover from autos and pathfinding commands
       }
 
       public void execute() {

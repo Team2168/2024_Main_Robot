@@ -25,6 +25,7 @@ import org.team2168.commands.auto.FourNoteClose;
 import org.team2168.commands.auto.FourNoteFar;
 import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
+import org.team2168.commands.auto.PathFindToAmp;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.LEDs;
@@ -135,6 +136,8 @@ public class RobotContainer {
     oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
     oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
 
+    
+    oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     // amp
@@ -175,6 +178,28 @@ public class RobotContainer {
     // shooting speed bumping
     oi.operatorJoystick2.ButtonLeftBumper().onTrue(new BumpShooterSpeed(shooter));
     oi.operatorJoystick2.ButtonRightBumper().onTrue(new BumpShooterSpeedDown(shooter));
+
+    //old operator button bindings (for F310)
+    // // oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle));
+    // // oi.operatorJoystick.ButtonY().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle));
+    // // oi.operatorJoystick.ButtonB().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.RED_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.RED_LINE.shooterAngle));
+    // oi.operatorJoystick.ButtonB().onTrue(new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight));
+    // oi.operatorJoystick.ButtonX().onTrue(new StopFlywheel(shooter));
+    // oi.operatorJoystick.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_AMP.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_AMP.shooterAngle));
+    // // oi.operatorJoystick.ButtonB().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.6));
+    // oi.operatorJoystick.ButtonY().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75));
+    // oi.operatorJoystick.ButtonY().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
+    // oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
+    // oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
+    // oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
+    //                                       .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+    //                                       .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
+    // //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
+
+    // //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    // oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
+    // //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain));
+
 
     oi.testJoystick.ButtonA().onTrue(new BumpShooterSpeed(shooter));
     oi.testJoystick.ButtonB().onTrue(new BumpShooterSpeedDown(shooter));
@@ -220,9 +245,14 @@ public class RobotContainer {
     brakesEnabled = enabled;
   }
 
-  @Log(name = "is alliance blue?")
-  public boolean isAllianceBlue() {
-    return (DriverStation.getAlliance().get() == Alliance.Blue);
+  @Log(name = "is alliance red?")
+  public boolean isAllianceRed() {
+    if (DriverStation.getAlliance().isPresent()) {
+      return (DriverStation.getAlliance().get() == Alliance.Red);
+    }
+    else {
+      return false;
+    }
   }
 
   /**

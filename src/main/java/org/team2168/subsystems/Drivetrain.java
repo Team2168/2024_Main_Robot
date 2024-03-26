@@ -382,7 +382,6 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
         odometry.update(getRotation2d(), modulePositions);
         field.setRobotPose(getPose());
-        SmartDashboard.putData("field", field);
         //System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
         //System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
         //System.out.println("robot Pose: " + getPose());
