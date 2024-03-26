@@ -21,7 +21,7 @@ public class LeaveStartingZone extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new SetIntakePivotPosition(intakePivot, -120.0).raceWith(
-      new Drive(drivetrain, -0.25, 0, 0).withTimeout(5)), //TODO: verify that this is quick and enough time to back out
+      new Drive(drivetrain, -0.25, 0, 0).withTimeout(2.5)), //TODO: verify that this is quick and enough time to back out
       new Drive(drivetrain, 0, 0, 0)
     );
   }

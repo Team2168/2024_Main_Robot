@@ -7,6 +7,8 @@ package org.team2168.utils;
 import java.util.Optional;
 
 import org.team2168.Constants;
+import org.team2168.commands.Drivetrain.SetHeading;
+import org.team2168.commands.Drivetrain.SetToPose;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.thirdcoast.swerve.SwerveDriveConfig;
 import org.team2168.thirdcoast.swerve.Wheel;
@@ -38,7 +40,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 public class SwervePathUtil {
     private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
-    private static ReplanningConfig replanningConfig = new ReplanningConfig(false, false);
+    private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
     private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel, Constants.Drivetrain.kiAngularVel, Constants.Drivetrain.kdAngularVel),
@@ -62,9 +64,10 @@ public class SwervePathUtil {
     }
 
     public static Command getPathCommand(String pathName, Drivetrain drive, InitialPathState pathState) {
+        DriverStation.refreshData();
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-        if (getPathInvert()) {
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
             path = path.flipPath();
         }
 
@@ -76,14 +79,15 @@ public class SwervePathUtil {
             case PRESERVEODOMETRY:
                 break;
             case PRESERVEHEADING:
+                //sequence.addCommands(new SetToPose(drive, initialPose));
                 sequence.addCommands(new InstantCommand(() -> drive.resetOdometry(initialPose, true)));
                 break;
             case DISCARDHEADING:
                 // drive.resetOdometry(initialPose, false);
-                sequence.addCommands(new InstantCommand(() -> drive.setHeading(initialPose.getRotation().getDegrees()))); // negative to convert ccw to cw
+                sequence.addCommands(new InstantCommand(() -> drive.setHeading(initialPose.getRotation().getDegrees())),
+                                    new InstantCommand(() -> drive.resetOdometry(initialPose, true))); // negative to convert ccw to cw
                                                                             // setting heading to initial auto position will allow for
                                                                             // field relative swerve driving after autos finish
-                sequence.addCommands(new InstantCommand(() -> drive.resetOdometry(initialPose, true)));
                 break;
         }
 

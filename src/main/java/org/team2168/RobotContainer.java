@@ -156,8 +156,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new DriveWithJoystick(drivetrain));
     intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intakepivot works again
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
-    oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
-    oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
+    oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
+    //oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //     .OnTrue(new ExampleCommand(m_exampleSubsystem));
 
@@ -183,8 +183,8 @@ public class RobotContainer {
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
-    oi.driverJoystick.ButtonBack().onTrue(new PathFindToAmp(drivetrain));
-    oi.driverJoystick.ButtonStart().whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
+    oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
+    //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain));
 
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 
@@ -241,10 +241,10 @@ public class RobotContainer {
     brakesEnabled = enabled;
   }
 
-  @Log(name = "is alliance blue?")
-  public boolean isAllianceBlue() {
+  @Log(name = "is alliance red?")
+  public boolean isAllianceRed() {
     if (DriverStation.getAlliance().isPresent()) {
-      return (DriverStation.getAlliance().get() == Alliance.Blue);
+      return (DriverStation.getAlliance().get() == Alliance.Red);
     }
     else {
       return false;
