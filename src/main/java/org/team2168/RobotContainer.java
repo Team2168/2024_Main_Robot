@@ -156,7 +156,7 @@ public class RobotContainer {
     oi.operatorJoystick1.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75))
                                            .whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
     //floor intake
-    oi.operatorJoystick1.ButtonRightBumper()
+    oi.operatorJoystick1.ButtonRightStick()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
       .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
       .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0));
