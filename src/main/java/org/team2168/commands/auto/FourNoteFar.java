@@ -7,6 +7,7 @@ package org.team2168.commands.auto;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
+import org.team2168.commands.ShooterCommands.ShootAndControlHoodFromDistance;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
@@ -17,12 +18,12 @@ import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Drivetrain.InitialPathState;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.subsystems.ShooterSubsystem.Shooter.SHOOTING_RPS;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot.SHOOTING_ANGLE;
 import org.team2168.utils.SwervePathUtil;
-import org.team2168.utils.SwervePathUtil.InitialPathState;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -44,44 +45,53 @@ public class FourNoteFar extends SequentialCommandGroup {
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up second note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_1", drivetrain, InitialPathState.DISCARDHEADING),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_1", InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // aim and shoot second note from this position
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-      new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
+      new ParallelCommandGroup(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
+      ).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up third note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_2", drivetrain, InitialPathState.DISCARDHEADING),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_2", InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 3rd note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_3", drivetrain, InitialPathState.DISCARDHEADING),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_3", InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(1.0),
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-      new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
+      new ParallelCommandGroup(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
+      ).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up fourth note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_4", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_4", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 4th note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Far_5", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_5", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(1.0),
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
-      new DriveWithLimelight(drivetrain, limelight, 2.5, true).withTimeout(1.5),
+      new ParallelCommandGroup(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
+      ).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new StopFlywheel(shooter)
     );

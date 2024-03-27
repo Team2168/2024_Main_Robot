@@ -14,6 +14,16 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.PathfindHolonomic;
+import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.util.GeometryUtil;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,18 +33,27 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
+
+import java.util.Optional;
 
 import org.team2168.Constants;
 // import org.team2168.commands.drivetrain.DriveWithJoystick; Commented out for now, no commmands
 import org.team2168.thirdcoast.swerve.*;
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
+import org.team2168.utils.SwervePathUtil;
 
 public class Drivetrain extends SubsystemBase implements Loggable {
     private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
@@ -55,6 +74,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final double CONTINUOUS_AZIMUTH_CURRENT_LIMIT = 10.0; // amps
     private final double TRIGGER_AZIMUTH_THRESHOLD_LIMIT = 10.0; // amps
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
+
+    // pathplanner setup
+    private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
+    private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
+    private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
+    private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
+        new PIDConstants(Constants.Drivetrain.kpDriveVel),
+        new PIDConstants(Constants.Drivetrain.kpAngularVel, Constants.Drivetrain.kiAngularVel, Constants.Drivetrain.kdAngularVel),
+        PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
 
     private static Drivetrain instance = null;
     private Field2d field = new Field2d(); // used to test if odometry is correct
@@ -372,6 +400,116 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public void setDriveMode(SwerveDrive.DriveMode mode) {
         _sd.setDriveMode(mode);
       }
+    
+    public static boolean getPathInvert() {
+        DriverStation.refreshData();
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            return alliance.get() == Alliance.Red;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static enum InitialPathState {
+        PRESERVEHEADING,
+        PRESERVEODOMETRY,
+        DISCARDHEADING,
+    }
+
+    public Command getPathCommand(String pathName, InitialPathState pathState) {
+        DriverStation.refreshData();
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            path = path.flipPath();
+        }
+        
+        Pose2d initialPose = path.getPreviewStartingHolonomicPose();
+
+        SequentialCommandGroup sequence = new SequentialCommandGroup();
+        
+        switch(pathState) {
+            case PRESERVEODOMETRY:
+                break;
+            case PRESERVEHEADING:
+                //sequence.addCommands(new SetToPose(drive, initialPose));
+                sequence.addCommands(new InstantCommand(() -> resetOdometry(initialPose, true)));
+                break;
+            case DISCARDHEADING:
+                // drive.resetOdometry(initialPose, false);
+                sequence.addCommands(new InstantCommand(() -> setHeading(initialPose.getRotation().getDegrees())),
+                                    new InstantCommand(() -> resetOdometry(initialPose, true))); // negative to convert ccw to cw
+                                                                            // setting heading to initial auto position will allow for
+                                                                            // field relative swerve driving after autos finish
+                break;
+        }
+
+        sequence.addCommands(followPathPlannerCommand(pathName));
+        return sequence;
+    }
+
+    public Command followPathPlannerCommand(String pathName) {
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        return new FollowPathHolonomic(path,
+        this::getPose,
+        this::getChassisSpeeds,
+        this::driveToChassisSpeed, // TODO: verify that this will actually allow chassis to move
+        pathFollowConfig,
+        () -> getPathInvert(),
+        this);
+    }
+
+    public Command pathFindToAmp() {
+        double poseXtranslation;
+        if (getPathInvert()) {
+            poseXtranslation = 14.67; // red amp x position in meters
+        }
+        else {
+            poseXtranslation = 1.85; // blue amp x position in meters
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        return pathFindtoPose(desiredPose);
+    }
+
+    public Command pathFindtoPose(Pose2d pose) {
+        return new PathfindHolonomic(pose,
+        new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
+        0.0,
+        this::getPose,
+        this::getChassisSpeeds,
+        this::driveToChassisSpeed,
+        pathFollowConfig,
+        0.0,
+        this);
+    }
+
+    public Command pathFindThenFollowToAmp() {
+        double poseXtranslation;
+        if (getPathInvert()) {
+            poseXtranslation = 14.67; // red amp x position in meters
+        }
+        else {
+            poseXtranslation = 1.85; // blue amp x position in meters
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        return pathFindToFollowPath("B_To_Amp", desiredPose);
+    }
+
+    public Command pathFindToFollowPath(String pathName, Pose2d pose) {
+        return new PathfindThenFollowPathHolonomic(
+            PathPlannerPath.fromPathFile(pathName),
+            new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
+            this::getPose,
+            this::getChassisSpeeds,
+            this::driveToChassisSpeed,
+            pathFollowConfig,
+            () -> getPathInvert(),
+            this);
+    }
 
     @Override
     public void periodic() {

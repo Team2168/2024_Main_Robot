@@ -18,11 +18,10 @@ import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Drivetrain.InitialPathState;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.utils.SwervePathUtil;
-import org.team2168.utils.SwervePathUtil.InitialPathState;
-
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -43,7 +42,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       // drives to and picks up second
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Close_1", drivetrain, InitialPathState.DISCARDHEADING),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Close_1", InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
@@ -51,14 +50,16 @@ public class FourNoteClose extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       // new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle),
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.5),
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
+      new ParallelCommandGroup(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
+      ).withTimeout(1.5),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
       // drives to and picks up 3rd note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Close_2", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Close_2", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
@@ -66,13 +67,15 @@ public class FourNoteClose extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.5),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new ParallelCommandGroup(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
+      ).withTimeout(1.5),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
       // druves to and picks up 4th note
       new ParallelCommandGroup(
-        SwervePathUtil.getPathCommand("4_Note_Close_3", drivetrain, InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Close_3", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
@@ -80,8 +83,10 @@ public class FourNoteClose extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.5),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
+      new ParallelCommandGroup(
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
+      ).withTimeout(1.5),
       new WaitCommand(0.5),
       new StopFlywheel(shooter)
     );

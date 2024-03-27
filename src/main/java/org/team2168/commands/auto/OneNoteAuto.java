@@ -14,10 +14,9 @@ import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Drivetrain.InitialPathState;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
-import org.team2168.utils.SwervePathUtil;
-import org.team2168.utils.SwervePathUtil.InitialPathState;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -48,7 +47,7 @@ public class OneNoteAuto extends SequentialCommandGroup {
       new DriveIndexeruntilnoNote(indexer, () -> 0.75),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
-      SwervePathUtil.getPathCommand("Move_Back_Speaker", drivetrain, InitialPathState.DISCARDHEADING)
+      new FollowPathPlannerPath(drivetrain, "Move_Back_Speaker", InitialPathState.DISCARDHEADING)
     );
   }
 }

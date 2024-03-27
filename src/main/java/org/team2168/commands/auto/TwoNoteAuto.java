@@ -18,10 +18,9 @@ import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.IntakeRoller;
 import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Drivetrain.InitialPathState;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
-import org.team2168.utils.SwervePathUtil;
-import org.team2168.utils.SwervePathUtil.InitialPathState;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -55,13 +54,13 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       new WaitCommand(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       // moves back to pick up second note
-      SwervePathUtil.getPathCommand("Move_Back_Speaker", drivetrain, InitialPathState.DISCARDHEADING).raceWith(
+      new FollowPathPlannerPath(drivetrain, "Move_Back_Speaker", InitialPathState.DISCARDHEADING).raceWith(
         new SetIntakePivotPosition(intakePivot, -10.0),
         new QueueNote(intakeRoller, indexer, leds)
       ),
       new QueueNote(intakeRoller, indexer, leds).withTimeout(2.0),
       // drives back upon intaking, stows intake
-      SwervePathUtil.getPathCommand("Move_To_Speaker", drivetrain, InitialPathState.PRESERVEHEADING).raceWith(
+      new FollowPathPlannerPath(drivetrain, "Move_To_Speaker", InitialPathState.PRESERVEHEADING).raceWith(
         new SetIntakePivotPosition(intakePivot, -120.0),
         new SetIntakeSpeed(intakeRoller, 0.0)
       ),
