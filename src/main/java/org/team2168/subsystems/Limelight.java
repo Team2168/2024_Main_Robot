@@ -1,19 +1,15 @@
 package org.team2168.subsystems;
+
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.ComputerVisionUtil;
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -51,6 +47,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     private static NetworkTableEntry cl;
     private static NetworkTableEntry botpose;
     private static NetworkTableEntry botpose_wpiblue;
+    private static NetworkTableEntry targetpose;
     
 
     public double aprilTagSize = 0.1651;
@@ -58,6 +55,8 @@ public class Limelight extends SubsystemBase implements Loggable {
     public double fy = 1944.0;
     public double cx = 1296.0;
     public double cy = 972.0;
+
+    
 
     
 
@@ -80,6 +79,8 @@ public class Limelight extends SubsystemBase implements Loggable {
     public Transform3d pose;
     public Rotation2d limelightAngle;
 
+    
+
 
    
     AprilTagDetector detector = new AprilTagDetector();
@@ -88,11 +89,12 @@ public class Limelight extends SubsystemBase implements Loggable {
     AprilTagDetection detectionSoftware;
 
     public enum Pipeline {
-        APRIL_TAGS(0),
-        SPEAKER(1),
-        HUMAN_PLAYER_STATION(2),
-        PIPELINE_THREE(3),
-        PIPELINE_FOUR(4);
+        ALL_APRIL_TAGS(0),
+        SPEAKERS(1),
+        HUMAN_PLAYER_STATIONS(2),
+        HIGHRES_LOWFPS(3),
+        AMPS(4),
+        STAGES(5);
 
         public final int pipelineValue;
 
@@ -148,6 +150,10 @@ public class Limelight extends SubsystemBase implements Loggable {
     return botpose.getDoubleArray(new double[6]);
   }
 
+  public double[] getTargetPoseArray() {
+    return targetpose.getDoubleArray(new double[6]);
+  }
+
   @Log(name = "X pose", rowIndex = 1, columnIndex = 1)
   public double getBotPoseX() {
     return getBotPoseArray()[0];
@@ -163,7 +169,28 @@ public class Limelight extends SubsystemBase implements Loggable {
     return getBotPoseArray()[2];
   }
 
-  @Log(name = "Yaw Roation", rowIndex = 1, columnIndex = 4)
+   @Log(name = "target X pose", rowIndex = 2, columnIndex = 1)
+  public double getTargetPoseX() {
+    return getTargetPoseArray()[0];
+  }
+
+  @Log(name = "target Y pose", rowIndex = 2, columnIndex = 2)
+  public double getTargetPoseY() {
+    return getTargetPoseArray()[1];
+  }
+
+  @Log(name = "target Z pose", rowIndex = 2, columnIndex = 3)
+  public double getTargetPoseZ() {
+    return getTargetPoseArray()[2];
+  }
+
+  @Log(name = "target Yaw rotation", rowIndex = 2, columnIndex = 4)
+  public double getTargetPoseYaw() {
+    return getTargetPoseArray()[5];
+  }
+
+
+  @Log(name = "bot Yaw Roation", rowIndex = 1, columnIndex = 4)
   public double getBotRotationYaw() {
     return getBotPoseArray()[5];
   }
@@ -225,6 +252,11 @@ public class Limelight extends SubsystemBase implements Loggable {
 
       return distanceFromTarget;
   }   
+
+    
+
+
+    
     
     public boolean isLimelightEnabled() {
         return isLimelightEnabled;
@@ -241,6 +273,7 @@ public class Limelight extends SubsystemBase implements Loggable {
         camMode = networkTable.getEntry("camMode");
         pipeline = networkTable.getEntry("pipeline");
         botpose = networkTable.getEntry("botpose");
+        targetpose = networkTable.getEntry("targetpose");
         botpose_wpiblue = networkTable.getEntry("botpose_wpiblue");
         
     }

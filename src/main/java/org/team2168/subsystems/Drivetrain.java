@@ -25,6 +25,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -90,6 +91,10 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private SwerveDriveKinematics swerveKinematics;
     private SwerveDriveOdometry odometry;
     private ChassisSpeeds chassisSpeeds;
+
+    public Limelight limelight = Limelight.getInstance();
+
+    private static SwerveDrivePoseEstimator drivePoseEstimator;
 
     private Drivetrain() {
         // put the zeros for each module to the dashboard
@@ -225,7 +230,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         odometry = new SwerveDriveOdometry(swerveKinematics, config.gyro.getRotation2d(), modulePositions);
         chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(0.0, 0.0, 0.0, config.gyro.getRotation2d());
 
+        drivePoseEstimator = new SwerveDrivePoseEstimator(swerveKinematics, getRotation2d(), modulePositions, getPose());
+
         return new SwerveDrive(config);
+
+        
     }
 
     /**
@@ -348,6 +357,14 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return chassisSpeeds;
     }
 
+    public double getBotposeX() {
+        return drivePoseEstimator.getEstimatedPosition().getX();
+    }
+
+    public double getBotposeY() {
+        return drivePoseEstimator.getEstimatedPosition().getY();
+    }
+
     public void driveToChassisSpeed(ChassisSpeeds robotRelSpeeds) {
         chassisSpeeds = robotRelSpeeds;
 
@@ -395,7 +412,6 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             }
         }
     }
-
 
     public void setDriveMode(SwerveDrive.DriveMode mode) {
         _sd.setDriveMode(mode);
@@ -510,6 +526,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             () -> getPathInvert(),
             this);
     }
+    public void visionSwervePoseEstimation() {
+      if (limelight.hasTarget()) {
+        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), 0.02);
+      }
+    }
 
     @Override
     public void periodic() {
@@ -523,6 +544,9 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         //System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
         //System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
         //System.out.println("robot Pose: " + getPose());
+
+        drivePoseEstimator.update(getRotation2d(), modulePositions);
+
+        visionSwervePoseEstimation();
     }
 }
-
