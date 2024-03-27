@@ -79,12 +79,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     // pathplanner setup
     private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
+    private static final double PATH_MAX_MODULE_SPEED = 10.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
     private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
     private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel, Constants.Drivetrain.kiAngularVel, Constants.Drivetrain.kdAngularVel),
-        PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
+        PATH_MAX_MODULE_SPEED, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
 
     private static Drivetrain instance = null;
     @Log(name = "field", width = 4, height = 3)
