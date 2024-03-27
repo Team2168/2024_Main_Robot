@@ -184,7 +184,7 @@ public class RobotContainer {
 
     //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
-    //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain));
+    //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 

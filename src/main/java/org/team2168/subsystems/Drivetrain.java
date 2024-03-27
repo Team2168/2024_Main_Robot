@@ -525,6 +525,74 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return pathFindToFollowPath("B_To_Amp", desiredPose);
     }
 
+    public enum ClimbPositions {
+        BLUE_CLOSE_SPEAKER(new Pose2d(4.42, 4.91, new Rotation2d(Units.degreesToRadians(-60.0))), "B_Chain_Close_Speaker"),
+        BLUE_CLOSE_SOURCE(new Pose2d(4.22, 3.29, new Rotation2d(Units.degreesToRadians(60.0))), "B_Chain_Close_Source"),
+        BLUE_FAR(new Pose2d(5.83, 4.05, new Rotation2d(Units.degreesToRadians(180.0))), "B_Chain_Far"),
+        RED_CLOSE_SPEAKER(new Pose2d(12.31, 4.90, new Rotation2d(Units.degreesToRadians(-120.0))), "B_Chain_Close_Speaker"),
+        RED_CLOSE_SOURCE(new Pose2d(12.15, 3.27, new Rotation2d(Units.degreesToRadians(120.0))), "B_Chain_Close_Source"),
+        RED_FAR(new Pose2d(10.72, 4.13, new Rotation2d(Units.degreesToRadians(0.0))), "B_Chain_Far");
+
+        public final Pose2d desiredPose;
+        public final String pathName;
+
+        private ClimbPositions(Pose2d desiredPose, String pathName) {
+            this.desiredPose = desiredPose;
+            this.pathName = pathName;
+        }
+
+        public Pose2d getDesiredPose() {
+            return desiredPose;
+        }
+
+        public String getPathName() {
+            return pathName;
+        }
+    }
+
+    public Command pathFindThenFollowToChain() {
+        Pose2d currentPose = getPoseEstimate();
+        Pose2d desiredPose;
+        double fieldCenterY = 4.1; // meters
+        String pathName;
+
+        // distinguishes pose selection based on red and blue
+        if (getPathInvert()) {
+            // if robot is far away, the nearest chain is the farthest chain
+            if (currentPose.getX() < ClimbPositions.RED_FAR.getDesiredPose().getX()) {
+                desiredPose = ClimbPositions.RED_FAR.getDesiredPose();
+                pathName = ClimbPositions.RED_FAR.getPathName();
+            }
+            // distinguishes between last two chains through top and bottom of field
+            else if (currentPose.getY() < fieldCenterY) {
+                desiredPose = ClimbPositions.RED_CLOSE_SOURCE.getDesiredPose();
+                pathName = ClimbPositions.RED_CLOSE_SOURCE.getPathName();
+            }
+            else {
+                desiredPose = ClimbPositions.RED_CLOSE_SPEAKER.getDesiredPose();
+                pathName = ClimbPositions.RED_CLOSE_SPEAKER.getPathName();
+            }
+        }
+        else {
+            // if robot is far away, the nearest chain is farthest
+            if (currentPose.getX() > ClimbPositions.BLUE_FAR.getDesiredPose().getX()) {
+                desiredPose = ClimbPositions.BLUE_FAR.getDesiredPose();
+                pathName = ClimbPositions.BLUE_FAR.getPathName();
+            }
+            // distinguishes between last two chains through top and bottom of field
+            else if (currentPose.getY() < fieldCenterY) {
+                desiredPose = ClimbPositions.BLUE_CLOSE_SOURCE.getDesiredPose();
+                pathName = ClimbPositions.BLUE_CLOSE_SOURCE.getPathName();
+            }
+            else {
+                desiredPose = ClimbPositions.BLUE_CLOSE_SPEAKER.getDesiredPose();
+                pathName = ClimbPositions.BLUE_CLOSE_SPEAKER.getPathName();
+            }
+        }
+
+        return pathFindToFollowPath(pathName, desiredPose);
+    }
+
     public Command pathFindToFollowPath(String pathName, Pose2d pose) {
         return new PathfindThenFollowPathHolonomic(
             PathPlannerPath.fromPathFile(pathName),
