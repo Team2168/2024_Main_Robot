@@ -67,10 +67,10 @@ public class Climber extends SubsystemBase {
   private RelativeEncoder m_Encoder;
   private static final double kMaxOutput = 1;// placeholder
   private static final double kMinOutput = -1;// placeholder
-  private static final double kMaxVel= inchesToRotations(21.68 * 2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
-  private static final double kMaxAcc= inchesToRotations(21.68 * 3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxVel= inchesToRotations(2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
+  private static final double kMaxAcc= inchesToRotations(3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
 
-  private static final double kP = 0;// placeholder
+  private static final double kP = 0.5;// placeholder
   private static final double kI = 0;// placeholder
   private static final double kD = 0;// placeholder
   //private static final double kF = 0;// placeholder
@@ -102,9 +102,9 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
     climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50);
 
     m_pidController = climberMotor.getPIDController();
-    m_Encoder = climberMotor.getEncoder(); // Encoder object created to display position values
+    //m_Encoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50); // Encoder object created to display position values
 
-    m_pidController.setFeedbackDevice(m_Encoder);
+    m_pidController.setFeedbackDevice(climberEncoder);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
 
     m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
@@ -240,12 +240,12 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
 
   @Log(name = "Speed Velocity", rowIndex = 0, columnIndex = 1)
   public double getSpeedVelocity(){
-    return (rotationsToInches(m_Encoder.getVelocity()) / 60); 
+    return (rotationsToInches(climberEncoder.getVelocity()) / 60); 
   }
 
   @Log(name = "Position in inches", rowIndex = 0, columnIndex = 2)
   public double getPositionInches(){
-    return degreesToInches(Units.rotationsToDegrees(m_Encoder.getPosition()));
+    return degreesToInches(Units.rotationsToDegrees(climberEncoder.getPosition()));
   }
 
   @Log(name = "Voltage", rowIndex = 1, columnIndex = 4)

@@ -8,6 +8,7 @@ import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.QueueNote;
+import org.team2168.commands.climber.ClimberDriveToPosition;
 import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
@@ -81,6 +82,9 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new QueueNote(intakeRoller, indexer));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
+
+    oi.testJoystick.ButtonA().onTrue(new ClimberDriveToPosition(climber, 1.0));
+    oi.testJoystick.ButtonB().onTrue(new ClimberDriveToPosition(climber, 0.0));
 
   }
 
