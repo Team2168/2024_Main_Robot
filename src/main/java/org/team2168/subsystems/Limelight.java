@@ -251,12 +251,11 @@ public class Limelight extends SubsystemBase implements Loggable {
       distanceFromTarget = (heightOffset)/Math.tan(Units.degreesToRadians(limelightAngleDegrees + getOffsetY()));
 
       return distanceFromTarget;
-  }   
+  }
 
-    
-
-
-    
+  public double getLimelightLatencySec() {
+    return cl.getDouble(0.0)/1000.0; // converts ms latency into seconds
+  }
     
     public boolean isLimelightEnabled() {
         return isLimelightEnabled;

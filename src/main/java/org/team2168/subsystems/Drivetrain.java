@@ -25,6 +25,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -233,7 +234,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         odometry = new SwerveDriveOdometry(swerveKinematics, config.gyro.getRotation2d(), modulePositions);
         chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(0.0, 0.0, 0.0, config.gyro.getRotation2d());
 
-        drivePoseEstimator = new SwerveDrivePoseEstimator(swerveKinematics, config.gyro.getRotation2d(), modulePositions, getPose());
+        drivePoseEstimator = new SwerveDrivePoseEstimator(swerveKinematics,
+        config.gyro.getRotation2d(),
+        modulePositions,
+        getPose(),
+        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5.0)),
+        VecBuilder.fill(1.0, 1.0, 1.0));
 
         return new SwerveDrive(config);
 
@@ -608,7 +614,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
     public void visionSwervePoseEstimation() {
       if (limelight.hasTarget()) {
-        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), Timer.getFPGATimestamp()); // uses Timer to account for latency
+        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), Timer.getFPGATimestamp() - limelight.getLimelightLatencySec()); // uses Timer to account for latency
       }
     }
 
