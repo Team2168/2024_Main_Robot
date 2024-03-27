@@ -614,13 +614,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             () -> getPathInvert(),
             this);
     }
-    
+
     public void visionSwervePoseEstimation() {
         LimelightHelpers.PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       if (limelight.hasTarget()) {
         drivePoseEstimator.addVisionMeasurement(visionPoseEstimate.pose,
         visionPoseEstimate.timestampSeconds,
-        VecBuilder.fill(DEFAULT_VISION_STD_DEV/visionPoseEstimate.tagCount, DEFAULT_VISION_STD_DEV/visionPoseEstimate.tagCount, 99999999.0)); // uses Timer to account for latency
+        VecBuilder.fill(DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), 99999999.0)); // uses Timer to account for latency
       }
     }
 
