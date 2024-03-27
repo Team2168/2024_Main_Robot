@@ -2,6 +2,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Drivetrain/field": "Field2d",
       "/Shuffleboard/RobotContainer/auto chooser": "String Chooser",
       "/SmartDashboard/Driver Joystick Chooser": "String Chooser",
       "/SmartDashboard/SendableChooser[1]": "String Chooser",

@@ -87,6 +87,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
 
     private static Drivetrain instance = null;
+    @Log(name = "field", width = 4, height = 3)
     private Field2d field = new Field2d(); // used to test if odometry is correct
 
     private SwerveDriveKinematics swerveKinematics;
@@ -231,7 +232,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         odometry = new SwerveDriveOdometry(swerveKinematics, config.gyro.getRotation2d(), modulePositions);
         chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(0.0, 0.0, 0.0, config.gyro.getRotation2d());
 
-        drivePoseEstimator = new SwerveDrivePoseEstimator(swerveKinematics, getRotation2d(), modulePositions, getPose());
+        drivePoseEstimator = new SwerveDrivePoseEstimator(swerveKinematics, config.gyro.getRotation2d(), modulePositions, getPose());
 
         return new SwerveDrive(config);
 
