@@ -59,7 +59,7 @@ public class Climber extends SubsystemBase {
   static Climber instance = null;
   public static final double TICKS_PER_REV = 50.0;
   private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
-  private static final double GEAR_RATIO = 79.0; 
+  private static final double GEAR_RATIO = 100.0; 
   private static final double MOTOR_DIAMETER_IN = 1.73228; 
   private static final double INCHES_PER_REV = MOTOR_DIAMETER_IN * Math.PI;
 
@@ -84,10 +84,10 @@ public class Climber extends SubsystemBase {
   //private SparkLimitSwitch forwardLimit;
   //private SparkLimitSwitch reverseLimit;
 
- private static final int CURRENT_LIMIT = 0; // it limits when the feature is activited (in amps)
-private static final int FREE_LIMIT = 0; // it tells what the threshold should be for the limit to be activited (in amps)
+ private static final int CURRENT_LIMIT = 25; // it limits when the feature is activited (in amps)
+private static final int FREE_LIMIT = 30; // it tells what the threshold should be for the limit to be activited (in amps)
   private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
-  private static final double THRESHOLD_TIME = 0.0; // time in seconds of when the limiting should happen after the
+  private static final double THRESHOLD_TIME = 0.5; // time in seconds of when the limiting should happen after the
                                                     // threshold has been overreached
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
   private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
@@ -202,7 +202,7 @@ private static final int FREE_LIMIT = 0; // it tells what the threshold should b
    * @return sets the reference for the motor controller that sets the position using smart motion 
    */
   public void setPosition(double in){
-    m_pidController.setReference(inchesToRotations(in) * TIME_UNITS_OF_VELOCITY, ControlType.kSmartMotion, 0, kArbitraryFeedForward);
+    m_pidController.setReference(inchesToTicks(in), ControlType.kSmartMotion, 0, kArbitraryFeedForward);
   }
 
   public void setToZero(){
