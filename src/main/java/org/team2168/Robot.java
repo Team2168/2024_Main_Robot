@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Limelight.Pipeline;
 
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.commands.PathfindHolonomic;
@@ -88,6 +89,7 @@ public class Robot extends TimedRobot {
     drivetrain.driveToChassisSpeed(new ChassisSpeeds(0.0, 0.0, 0.0));
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     limelight.enableBaseCameraSettings();
+    limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -110,12 +112,13 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     limelight.enableBaseCameraSettings();
+    limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
     // intakePivot.setIntakePivotPosition(-120.0);
 
-    limelight.enableBaseCameraSettings();
     drivetrain.setMotorsBrake(true);
   }
 

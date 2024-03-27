@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import org.team2168.OI;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Limelight.Pipeline;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -86,7 +87,7 @@ public class DriveWithLimelight extends Command implements Loggable {
     public void initialize() {
         pid = new PIDController(P, I, D);
         limelight.enableBaseCameraSettings();
-        limelight.setPipeline(1);
+        limelight.setPipeline(Pipeline.SPEAKERS.pipelineValue);
 
         pid.setTolerance(errorToleranceAngle);
         pid.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
@@ -149,9 +150,10 @@ public class DriveWithLimelight extends Command implements Loggable {
 
     @Override
     public void end(boolean interrupted) {
-        if (manualControl) {
-            limelight.pauseLimelight();
-        }
+        // if (manualControl) {
+        //     limelight.pauseLimelight();
+        // }
+        limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
         drivetrain.drive(0.0, 0.0, 0.0);
     }
 

@@ -38,6 +38,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -357,6 +358,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return chassisSpeeds;
     }
 
+    /**
+     * returns robot pose given by SwerveDrivePoseEstimator, infusing vision measurements with standard odometry
+     * 
+     * @return pose from pose estimator in meters
+     */
+    public Pose2d getPoseEstimate() {
+        return drivePoseEstimator.getEstimatedPosition();
+    }
+
     public double getBotposeX() {
         return drivePoseEstimator.getEstimatedPosition().getX();
     }
@@ -494,7 +504,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return new PathfindHolonomic(pose,
         new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
         0.0,
-        this::getPose,
+        this::getPoseEstimate,
         this::getChassisSpeeds,
         this::driveToChassisSpeed,
         pathFollowConfig,
@@ -519,7 +529,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return new PathfindThenFollowPathHolonomic(
             PathPlannerPath.fromPathFile(pathName),
             new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
-            this::getPose,
+            this::getPoseEstimate,
             this::getChassisSpeeds,
             this::driveToChassisSpeed,
             pathFollowConfig,
@@ -528,7 +538,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
     public void visionSwervePoseEstimation() {
       if (limelight.hasTarget()) {
-        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), 0.02);
+        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), Timer.getFPGATimestamp()); // uses Timer to account for latency
       }
     }
 
