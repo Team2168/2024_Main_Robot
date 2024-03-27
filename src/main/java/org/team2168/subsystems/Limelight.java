@@ -147,7 +147,7 @@ public class Limelight extends SubsystemBase implements Loggable {
 
   
   public double[] getBotPoseArray() {
-    return botpose.getDoubleArray(new double[6]);
+    return botpose_wpiblue.getDoubleArray(new double[6]); // uses blue origin to match odometry positions
   }
 
   public double[] getTargetPoseArray() {
