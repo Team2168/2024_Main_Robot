@@ -35,6 +35,7 @@ import org.team2168.commands.auto.FourNoteFar;
 import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.PathFindToAmp;
+import org.team2168.commands.auto.PathFindToChain;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.ExampleSubsystem;
@@ -184,6 +185,9 @@ public class RobotContainer {
 
     //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
+    oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
+    oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain));
+    oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));

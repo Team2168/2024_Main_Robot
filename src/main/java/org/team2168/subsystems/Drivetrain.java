@@ -56,6 +56,7 @@ import org.team2168.Constants;
 // import org.team2168.commands.drivetrain.DriveWithJoystick; Commented out for now, no commmands
 import org.team2168.thirdcoast.swerve.*;
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
+import org.team2168.utils.LimelightHelpers;
 import org.team2168.utils.SwervePathUtil;
 
 public class Drivetrain extends SubsystemBase implements Loggable {
@@ -79,6 +80,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
     // pathplanner setup
+    private static final double DEFAULT_VISION_STD_DEV = 1.0;
     private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
     private static final double PATH_MAX_MODULE_SPEED = 10.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
@@ -612,9 +614,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             () -> getPathInvert(),
             this);
     }
+    
     public void visionSwervePoseEstimation() {
+        LimelightHelpers.PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       if (limelight.hasTarget()) {
-        drivePoseEstimator.addVisionMeasurement(limelight.getPose2d(), Timer.getFPGATimestamp() - limelight.getLimelightLatencySec()); // uses Timer to account for latency
+        drivePoseEstimator.addVisionMeasurement(visionPoseEstimate.pose,
+        visionPoseEstimate.timestampSeconds,
+        VecBuilder.fill(DEFAULT_VISION_STD_DEV/visionPoseEstimate.tagCount, DEFAULT_VISION_STD_DEV/visionPoseEstimate.tagCount, 99999999.0)); // uses Timer to account for latency
       }
     }
 
