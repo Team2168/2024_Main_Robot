@@ -122,6 +122,7 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
     climberMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
 
     climberMotor.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
+    climberMotor.setIdleMode(IdleMode.kBrake);
     //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
     //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
   }
