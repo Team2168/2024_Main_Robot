@@ -39,6 +39,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
       new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_1", InitialPathState.DISCARDHEADING),
+      // new FollowInitialPath(drivetrain, "3_Note_Far_Alt_1"),
       new ParallelCommandGroup(
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)

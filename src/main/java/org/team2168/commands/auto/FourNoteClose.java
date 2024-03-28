@@ -43,6 +43,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       // drives to and picks up second
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "4_Note_Close_1", InitialPathState.DISCARDHEADING),
+        // new FollowInitialPath(drivetrain, "4_Note_Close_1"),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),

@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
@@ -53,6 +54,7 @@ import io.github.oblarg.oblog.annotations.Log;
 import java.util.Optional;
 
 import org.team2168.Constants;
+import org.team2168.Robot;
 // import org.team2168.commands.drivetrain.DriveWithJoystick; Commented out for now, no commmands
 import org.team2168.thirdcoast.swerve.*;
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
@@ -113,6 +115,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         _sd = configSwerve();
 
         SmartDashboard.putData("field", field);
+
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::resetOdometry,
+            this::getChassisSpeeds,
+            this::driveToChassisSpeed,
+            pathFollowConfig,
+            () -> getPathInvert(),
+            this
+        );
     }
 
     /**
@@ -352,6 +364,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         odometry.resetPosition(getRotation2d(), modulePositions, pose); // TODO: reset modulePosition distance
     }
 
+    public void resetOdometry(Pose2d pose) {
+        setHeading(pose.getRotation().getDegrees());
+        resetOdometry(pose, true);
+    }
+
     /**
      * returns the robot pose given by the SwerveDriveOdometry class
      * 
@@ -472,6 +489,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
         if (getPathInvert()) {
             path = path.flipPath();
+            // path.preventFlipping = true; // prevents path from flipping multiple times if flipped once
         }
         
         Pose2d initialPose = path.getPreviewStartingHolonomicPose();
@@ -496,6 +514,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
         sequence.addCommands(followPathPlannerCommand(pathName));
         return sequence;
+    }
+
+    public Command followInitialPath(String pathName) {
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        return AutoBuilder.followPath(path);
     }
 
     public Command followPathPlannerCommand(String pathName) {
@@ -651,7 +674,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         //System.out.println("robot Pose: " + getPose());
 
         drivePoseEstimator.update(getRotation2d(), modulePositions);
-        //System.out.println(getPathInvert());
+        // System.out.println(getPathInvert());
         visionSwervePoseEstimation();
     }
 }
