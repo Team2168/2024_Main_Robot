@@ -94,10 +94,10 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         PATH_MAX_MODULE_SPEED, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
 
     private static Drivetrain instance = null;
-    @Log(name = "field", width = 4, height = 3)
+    @Log(name = "field", width = 3, height = 2)
     private Field2d field = new Field2d(); // used to test if odometry is correct
 
-    @Log(name = "pose estimation result", rowIndex = 3, columnIndex = 1, width = 4, height = 3)
+    @Log(name = "pose estimation result", rowIndex = 3, columnIndex = 1, width = 3, height = 2)
     private Field2d poseEstfield = new Field2d();
 
     private SwerveDriveKinematics swerveKinematics;
@@ -398,6 +398,19 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         return drivePoseEstimator.getEstimatedPosition();
     }
 
+    public void resetPoseEstimator(Pose2d pose2d, boolean preserveHeading) {
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            modulePositions[i].distanceMeters = 0.0; // resets distance traveled in all module positions
+        }
+
+        resetDriveEncoders();
+        if (!preserveHeading) {
+            zeroGyro();
+        }
+
+        drivePoseEstimator.resetPosition(getRotation2d(), modulePositions, pose2d);
+    }
+
     public double getBotposeX() {
         return drivePoseEstimator.getEstimatedPosition().getX();
     }
@@ -505,10 +518,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             case PRESERVEHEADING:
                 //sequence.addCommands(new SetToPose(drive, initialPose));
                 sequence.addCommands(new InstantCommand(() -> resetOdometry(initialPose, true)));
+                sequence.addCommands(new InstantCommand(() -> resetPoseEstimator(initialPose, true)));
                 break;
             case DISCARDHEADING:
                 // drive.resetOdometry(initialPose, false);
                 sequence.addCommands(new InstantCommand(() -> setHeading(initialPose.getRotation().getDegrees())),
+                                    new InstantCommand(() -> resetPoseEstimator(initialPose, true)),
                                     new InstantCommand(() -> resetOdometry(initialPose, true))); // negative to convert ccw to cw
                                                                             // setting heading to initial auto position will allow for
                                                                             // field relative swerve driving after autos finish

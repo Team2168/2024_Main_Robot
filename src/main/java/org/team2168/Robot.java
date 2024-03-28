@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
     limelight.enableVision(true);
     FollowPathHolonomic.warmupCommand().schedule(); // attempts to get rid of random error occuring on robot power-on
     PathfindHolonomic.warmupCommand().schedule();
+    intakePivot.resetIntakeEncodersToStow(); // only reset intake pivot among first time
   }
 
   /**
