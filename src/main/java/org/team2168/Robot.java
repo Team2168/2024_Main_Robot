@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    DriverStation.refreshData();
+    // DriverStation.refreshData();
     drivetrain.updatePathInvert();
 
     if (DriverStation.getAlliance().isPresent() && lastAllianceReport != DriverStation.getAlliance().get()) {

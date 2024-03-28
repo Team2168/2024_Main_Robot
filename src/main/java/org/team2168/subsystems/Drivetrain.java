@@ -459,7 +459,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
       }
     
     public static boolean getPathInvert() {
-        DriverStation.refreshData();
+        // DriverStation.refreshData();
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             return alliance.get() == Alliance.Red;
@@ -470,7 +470,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     public void updatePathInvert() {
-        DriverStation.refreshData();
+        // DriverStation.refreshData();
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             pathInvert = alliance.get() == Alliance.Red;
@@ -487,7 +487,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     public Command getPathCommand(String pathName, InitialPathState pathState) {
-        DriverStation.refreshData();
+        // DriverStation.refreshData();
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
         if (getPathInvert()) {
