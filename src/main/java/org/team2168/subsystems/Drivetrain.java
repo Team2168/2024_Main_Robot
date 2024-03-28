@@ -80,6 +80,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
     // pathplanner setup
+    private boolean pathInvert = false;
     private static final double DEFAULT_VISION_STD_DEV = 1.0;
     private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
     private static final double PATH_MAX_MODULE_SPEED = 10.0;
@@ -448,6 +449,17 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
     }
 
+    public void updatePathInvert() {
+        DriverStation.refreshData();
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            pathInvert = alliance.get() == Alliance.Red;
+        }
+        else {
+            pathInvert = false;
+        }
+    }
+
     public static enum InitialPathState {
         PRESERVEHEADING,
         PRESERVEODOMETRY,
@@ -458,7 +470,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         DriverStation.refreshData();
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+        if (getPathInvert()) {
             path = path.flipPath();
         }
         
@@ -633,12 +645,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
         odometry.update(getRotation2d(), modulePositions);
         field.setRobotPose(getPose());
+
         //System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
         //System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
         //System.out.println("robot Pose: " + getPose());
 
         drivePoseEstimator.update(getRotation2d(), modulePositions);
-
+        //System.out.println(getPathInvert());
         visionSwervePoseEstimation();
     }
 }
