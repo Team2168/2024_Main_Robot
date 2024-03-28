@@ -14,7 +14,20 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.PathfindHolonomic;
+import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.util.GeometryUtil;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,18 +36,30 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 // import edu.wpi.first.wpilibj.command.Subsystem; Commented out for now, no commands
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
+import java.util.Optional;
+
 import org.team2168.Constants;
+import org.team2168.Robot;
 // import org.team2168.commands.drivetrain.DriveWithJoystick; Commented out for now, no commmands
 import org.team2168.thirdcoast.swerve.*;
 import org.team2168.thirdcoast.swerve.SwerveDrive.DriveMode;
+import org.team2168.utils.LimelightHelpers;
+import org.team2168.utils.SwervePathUtil;
 
 public class Drivetrain extends SubsystemBase implements Loggable {
     private Wheel[] _wheels = new Wheel[SwerveDrive.getWheelCount()];
@@ -56,12 +81,32 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final double TRIGGER_AZIMUTH_THRESHOLD_LIMIT = 10.0; // amps
     private final double TRIGGER_AZIMUTH_THRESHOLD_TIME = 0.1; // seconds
 
+    // pathplanner setup
+    private boolean pathInvert = false;
+    private static final double DEFAULT_VISION_STD_DEV = 1.0;
+    private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
+    private static final double PATH_MAX_MODULE_SPEED = 10.0;
+    private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
+    private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
+    private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
+        new PIDConstants(Constants.Drivetrain.kpDriveVel),
+        new PIDConstants(Constants.Drivetrain.kpAngularVel, Constants.Drivetrain.kiAngularVel, Constants.Drivetrain.kdAngularVel),
+        PATH_MAX_MODULE_SPEED, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
+
     private static Drivetrain instance = null;
+    @Log(name = "field", width = 3, height = 2)
     private Field2d field = new Field2d(); // used to test if odometry is correct
+
+    @Log(name = "pose estimation result", rowIndex = 3, columnIndex = 1, width = 3, height = 2)
+    private Field2d poseEstfield = new Field2d();
 
     private SwerveDriveKinematics swerveKinematics;
     private SwerveDriveOdometry odometry;
     private ChassisSpeeds chassisSpeeds;
+
+    public Limelight limelight = Limelight.getInstance();
+
+    private static SwerveDrivePoseEstimator drivePoseEstimator;
 
     private Drivetrain() {
         // put the zeros for each module to the dashboard
@@ -73,6 +118,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         _sd = configSwerve();
 
         SmartDashboard.putData("field", field);
+
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::resetOdometry,
+            this::getChassisSpeeds,
+            this::driveToChassisSpeed,
+            pathFollowConfig,
+            () -> getPathInvert(),
+            this
+        );
     }
 
     /**
@@ -197,7 +252,16 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         odometry = new SwerveDriveOdometry(swerveKinematics, config.gyro.getRotation2d(), modulePositions);
         chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(0.0, 0.0, 0.0, config.gyro.getRotation2d());
 
+        drivePoseEstimator = new SwerveDrivePoseEstimator(swerveKinematics,
+        config.gyro.getRotation2d(),
+        modulePositions,
+        getPose(),
+        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5.0)),
+        VecBuilder.fill(1.0, 1.0, 1.0));
+
         return new SwerveDrive(config);
+
+        
     }
 
     /**
@@ -303,6 +367,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         odometry.resetPosition(getRotation2d(), modulePositions, pose); // TODO: reset modulePosition distance
     }
 
+    public void resetOdometry(Pose2d pose) {
+        setHeading(pose.getRotation().getDegrees());
+        resetOdometry(pose, true);
+    }
+
     /**
      * returns the robot pose given by the SwerveDriveOdometry class
      * 
@@ -318,6 +387,36 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     public ChassisSpeeds getChassisSpeeds() {
         return chassisSpeeds;
+    }
+
+    /**
+     * returns robot pose given by SwerveDrivePoseEstimator, infusing vision measurements with standard odometry
+     * 
+     * @return pose from pose estimator in meters
+     */
+    public Pose2d getPoseEstimate() {
+        return drivePoseEstimator.getEstimatedPosition();
+    }
+
+    public void resetPoseEstimator(Pose2d pose2d, boolean preserveHeading) {
+        for (int i = 0; i < SwerveDrive.getWheelCount(); i++) {
+            modulePositions[i].distanceMeters = 0.0; // resets distance traveled in all module positions
+        }
+
+        resetDriveEncoders();
+        if (!preserveHeading) {
+            zeroGyro();
+        }
+
+        drivePoseEstimator.resetPosition(getRotation2d(), modulePositions, pose2d);
+    }
+
+    public double getBotposeX() {
+        return drivePoseEstimator.getEstimatedPosition().getX();
+    }
+
+    public double getBotposeY() {
+        return drivePoseEstimator.getEstimatedPosition().getY();
     }
 
     public void driveToChassisSpeed(ChassisSpeeds robotRelSpeeds) {
@@ -368,10 +467,215 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
     }
 
-
     public void setDriveMode(SwerveDrive.DriveMode mode) {
         _sd.setDriveMode(mode);
       }
+    
+    public static boolean getPathInvert() {
+        // DriverStation.refreshData();
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            return alliance.get() == Alliance.Red;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public void updatePathInvert() {
+        // DriverStation.refreshData();
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            pathInvert = alliance.get() == Alliance.Red;
+        }
+        else {
+            pathInvert = false;
+        }
+    }
+
+    public static enum InitialPathState {
+        PRESERVEHEADING,
+        PRESERVEODOMETRY,
+        DISCARDHEADING,
+    }
+
+    public Command getPathCommand(String pathName, InitialPathState pathState) {
+        // DriverStation.refreshData();
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+        if (getPathInvert()) {
+            path = path.flipPath();
+            // path.preventFlipping = true; // prevents path from flipping multiple times if flipped once
+        }
+        
+        Pose2d initialPose = path.getPreviewStartingHolonomicPose();
+
+        SequentialCommandGroup sequence = new SequentialCommandGroup();
+        
+        switch(pathState) {
+            case PRESERVEODOMETRY:
+                break;
+            case PRESERVEHEADING:
+                //sequence.addCommands(new SetToPose(drive, initialPose));
+                sequence.addCommands(new InstantCommand(() -> resetOdometry(initialPose, true)));
+                sequence.addCommands(new InstantCommand(() -> resetPoseEstimator(initialPose, true)));
+                break;
+            case DISCARDHEADING:
+                // drive.resetOdometry(initialPose, false);
+                sequence.addCommands(new InstantCommand(() -> setHeading(initialPose.getRotation().getDegrees())),
+                                    new InstantCommand(() -> resetPoseEstimator(initialPose, true)),
+                                    new InstantCommand(() -> resetOdometry(initialPose, true))); // negative to convert ccw to cw
+                                                                            // setting heading to initial auto position will allow for
+                                                                            // field relative swerve driving after autos finish
+                break;
+        }
+
+        sequence.addCommands(followPathPlannerCommand(pathName));
+        return sequence;
+    }
+
+    public Command followInitialPath(String pathName) {
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        return AutoBuilder.followPath(path);
+    }
+
+    public Command followPathPlannerCommand(String pathName) {
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        return new FollowPathHolonomic(path,
+        this::getPose,
+        this::getChassisSpeeds,
+        this::driveToChassisSpeed, // TODO: verify that this will actually allow chassis to move
+        pathFollowConfig,
+        () -> getPathInvert(),
+        this);
+    }
+
+    public Command pathFindToAmp() {
+        double poseXtranslation;
+        if (getPathInvert()) {
+            poseXtranslation = 14.67; // red amp x position in meters
+        }
+        else {
+            poseXtranslation = 1.85; // blue amp x position in meters
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        return pathFindtoPose(desiredPose);
+    }
+
+    public Command pathFindtoPose(Pose2d pose) {
+        return new PathfindHolonomic(pose,
+        new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
+        0.0,
+        this::getPoseEstimate,
+        this::getChassisSpeeds,
+        this::driveToChassisSpeed,
+        pathFollowConfig,
+        0.0,
+        this);
+    }
+
+    public Command pathFindThenFollowToAmp() {
+        double poseXtranslation;
+        if (getPathInvert()) {
+            poseXtranslation = 14.67; // red amp x position in meters
+        }
+        else {
+            poseXtranslation = 1.85; // blue amp x position in meters
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        return pathFindToFollowPath("B_To_Amp", desiredPose);
+    }
+
+    public enum ClimbPositions {
+        BLUE_CLOSE_SPEAKER(new Pose2d(4.42, 4.91, new Rotation2d(Units.degreesToRadians(-60.0))), "B_Chain_Close_Speaker"),
+        BLUE_CLOSE_SOURCE(new Pose2d(4.22, 3.29, new Rotation2d(Units.degreesToRadians(60.0))), "B_Chain_Close_Source"),
+        BLUE_FAR(new Pose2d(5.83, 4.05, new Rotation2d(Units.degreesToRadians(180.0))), "B_Chain_Far"),
+        RED_CLOSE_SPEAKER(new Pose2d(12.31, 4.90, new Rotation2d(Units.degreesToRadians(-120.0))), "B_Chain_Close_Speaker"),
+        RED_CLOSE_SOURCE(new Pose2d(12.15, 3.27, new Rotation2d(Units.degreesToRadians(120.0))), "B_Chain_Close_Source"),
+        RED_FAR(new Pose2d(10.72, 4.13, new Rotation2d(Units.degreesToRadians(0.0))), "B_Chain_Far");
+
+        public final Pose2d desiredPose;
+        public final String pathName;
+
+        private ClimbPositions(Pose2d desiredPose, String pathName) {
+            this.desiredPose = desiredPose;
+            this.pathName = pathName;
+        }
+
+        public Pose2d getDesiredPose() {
+            return desiredPose;
+        }
+
+        public String getPathName() {
+            return pathName;
+        }
+    }
+
+    public Command pathFindThenFollowToChain() {
+        Pose2d currentPose = getPoseEstimate();
+        Pose2d desiredPose;
+        double fieldCenterY = 4.1; // meters
+        String pathName;
+
+        // distinguishes pose selection based on red and blue
+        if (getPathInvert()) {
+            // if robot is far away, the nearest chain is the farthest chain
+            if (currentPose.getX() < ClimbPositions.RED_FAR.getDesiredPose().getX()) {
+                desiredPose = ClimbPositions.RED_FAR.getDesiredPose();
+                pathName = ClimbPositions.RED_FAR.getPathName();
+            }
+            // distinguishes between last two chains through top and bottom of field
+            else if (currentPose.getY() < fieldCenterY) {
+                desiredPose = ClimbPositions.RED_CLOSE_SOURCE.getDesiredPose();
+                pathName = ClimbPositions.RED_CLOSE_SOURCE.getPathName();
+            }
+            else {
+                desiredPose = ClimbPositions.RED_CLOSE_SPEAKER.getDesiredPose();
+                pathName = ClimbPositions.RED_CLOSE_SPEAKER.getPathName();
+            }
+        }
+        else {
+            // if robot is far away, the nearest chain is farthest
+            if (currentPose.getX() > ClimbPositions.BLUE_FAR.getDesiredPose().getX()) {
+                desiredPose = ClimbPositions.BLUE_FAR.getDesiredPose();
+                pathName = ClimbPositions.BLUE_FAR.getPathName();
+            }
+            // distinguishes between last two chains through top and bottom of field
+            else if (currentPose.getY() < fieldCenterY) {
+                desiredPose = ClimbPositions.BLUE_CLOSE_SOURCE.getDesiredPose();
+                pathName = ClimbPositions.BLUE_CLOSE_SOURCE.getPathName();
+            }
+            else {
+                desiredPose = ClimbPositions.BLUE_CLOSE_SPEAKER.getDesiredPose();
+                pathName = ClimbPositions.BLUE_CLOSE_SPEAKER.getPathName();
+            }
+        }
+
+        return pathFindToFollowPath(pathName, desiredPose);
+    }
+
+    public Command pathFindToFollowPath(String pathName, Pose2d pose) {
+        return new PathfindThenFollowPathHolonomic(
+            PathPlannerPath.fromPathFile(pathName),
+            new PathConstraints(PATH_MAX_VEL, PATH_MAX_VEL, Units.degreesToRadians(540.0), Units.degreesToRadians(720.0)),
+            this::getPoseEstimate,
+            this::getChassisSpeeds,
+            this::driveToChassisSpeed,
+            pathFollowConfig,
+            () -> getPathInvert(),
+            this);
+    }
+
+    public void visionSwervePoseEstimation() {
+        LimelightHelpers.PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+      if (limelight.hasTarget()) {
+        drivePoseEstimator.addVisionMeasurement(visionPoseEstimate.pose,
+        visionPoseEstimate.timestampSeconds,
+        VecBuilder.fill(DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), 99999999.0)); // uses Timer to account for latency
+      }
+    }
 
     @Override
     public void periodic() {
@@ -382,9 +686,14 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
         odometry.update(getRotation2d(), modulePositions);
         field.setRobotPose(getPose());
+
         //System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
         //System.out.println("gyro rotation2d: " + getRotation2d().getRadians());
         //System.out.println("robot Pose: " + getPose());
+
+        drivePoseEstimator.update(getRotation2d(), modulePositions);
+        // System.out.println(getPathInvert());
+        visionSwervePoseEstimation();
+        poseEstfield.setRobotPose(getPoseEstimate());
     }
 }
-

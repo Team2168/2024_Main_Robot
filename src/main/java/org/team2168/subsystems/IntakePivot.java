@@ -139,8 +139,8 @@ public class IntakePivot extends SubsystemBase {
     intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
     intakePivotTwo.setNeutralMode(NeutralModeValue.Brake);
 
-    intakePivotOne.setPosition(sensorOffset, 0.2);
-    intakePivotTwo.setPosition(sensorOffset, 0.2);
+    // intakePivotOne.setPosition(sensorOffset, 0.2);
+    // intakePivotTwo.setPosition(sensorOffset, 0.2); // reset only upon robot init
     
     //sets the same settings to the motor intakePivotTwo from intakePivotOne
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
@@ -187,6 +187,11 @@ public class IntakePivot extends SubsystemBase {
   public void setSpeed(double percentOutput) {
     intakePivotOne.set(percentOutput);
     //intakePivotTwo.set(percentOutput);
+  }
+
+  public void resetIntakeEncodersToStow() {
+    intakePivotOne.setPosition(sensorOffset, 0.2);
+    intakePivotTwo.setPosition(sensorOffset, 0.2);
   }
 
   @Log(name = "Position (deg)", rowIndex = 0, columnIndex = 0)

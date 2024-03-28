@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.team2168.subsystems.IntakePivot;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Limelight.Pipeline;
 
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.commands.PathfindHolonomic;
@@ -17,6 +18,7 @@ import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
@@ -35,6 +37,7 @@ public class Robot extends TimedRobot {
   public Limelight limelight;
   private Drivetrain drivetrain;
 
+  private Alliance lastAllianceReport = Alliance.Blue;
 
 
   /**
@@ -51,8 +54,9 @@ public class Robot extends TimedRobot {
     intakePivot = IntakePivot.getInstance();
 
     limelight.enableVision(true);
-    //FollowPathHolonomic.warmupCommand().schedule(); // attempts to get rid of random error occuring on robot power-on
+    FollowPathHolonomic.warmupCommand().schedule(); // attempts to get rid of random error occuring on robot power-on
     PathfindHolonomic.warmupCommand().schedule();
+    intakePivot.resetIntakeEncodersToStow(); // only reset intake pivot among first time
   }
 
   /**
@@ -70,6 +74,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
+    SmartDashboard.updateValues();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -78,7 +83,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    DriverStation.refreshData();
+    // DriverStation.refreshData();
+    drivetrain.updatePathInvert();
+
+    if (DriverStation.getAlliance().isPresent() && lastAllianceReport != DriverStation.getAlliance().get()) {
+      m_robotContainer.configureAutonomousRoutines();
+      lastAllianceReport = DriverStation.getAlliance().get();
+    }
     // drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
   }
 
@@ -88,6 +99,7 @@ public class Robot extends TimedRobot {
     drivetrain.driveToChassisSpeed(new ChassisSpeeds(0.0, 0.0, 0.0));
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     limelight.enableBaseCameraSettings();
+    limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -110,12 +122,13 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     limelight.enableBaseCameraSettings();
+    limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
     // intakePivot.setIntakePivotPosition(-120.0);
 
-    limelight.enableBaseCameraSettings();
     drivetrain.setMotorsBrake(true);
   }
 
@@ -140,4 +153,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  @Override
+  public void driverStationConnected() {
+    m_robotContainer.configureAutonomousRoutines();
+  }
 }

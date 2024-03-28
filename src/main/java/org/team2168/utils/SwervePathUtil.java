@@ -47,7 +47,7 @@ public class SwervePathUtil {
         PATH_MAX_VEL, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
 
     public static boolean getPathInvert() {
-        DriverStation.refreshData();
+        // DriverStation.refreshData();
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             return alliance.get() == Alliance.Red;
@@ -64,7 +64,7 @@ public class SwervePathUtil {
     }
 
     public static Command getPathCommand(String pathName, Drivetrain drive, InitialPathState pathState) {
-        DriverStation.refreshData();
+        // DriverStation.refreshData();
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {

@@ -30,7 +30,7 @@ public class DriveWithJoystick extends Command {
     // Called when the command is initially scheduled.
       @Override
       public void initialize() {
-        DriverStation.refreshData();
+        // DriverStation.refreshData();
         oi = OI.getInstance();
         rotationRateLimiter = new SlewRateLimiter(2.0);
         drivetrain.driveToChassisSpeed(new ChassisSpeeds(0.0, 0.0, 0.0)); // prevents velocity carryover from autos and pathfinding commands

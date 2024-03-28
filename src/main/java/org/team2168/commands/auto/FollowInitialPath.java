@@ -5,20 +5,20 @@
 package org.team2168.commands.auto;
 
 import org.team2168.subsystems.Drivetrain;
-import org.team2168.utils.SwervePathUtil;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PathFindToAmp extends SequentialCommandGroup {
-  /** Creates a new PathFindToAmp. */
-  public PathFindToAmp(Drivetrain drive) {
+public class FollowInitialPath extends SequentialCommandGroup {
+  /** Creates a new FollowInitialPath.
+   * 
+   * Intended to be used at the start of auto to reset pose and heading for the rest of the match
+   */
+  public FollowInitialPath(Drivetrain drivetrain, String pathName) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      drive.pathFindThenFollowToAmp()
-    );
+    addCommands(drivetrain.followInitialPath(pathName));
   }
 }
