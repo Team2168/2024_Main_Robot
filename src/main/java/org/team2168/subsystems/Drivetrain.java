@@ -97,7 +97,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     @Log(name = "field", width = 4, height = 3)
     private Field2d field = new Field2d(); // used to test if odometry is correct
 
-    @Log(name = "pose estimation result", rowIndex = 5, columnIndex = 1, width = 4, height = 3)
+    @Log(name = "pose estimation result", rowIndex = 3, columnIndex = 1, width = 4, height = 3)
     private Field2d poseEstfield = new Field2d();
 
     private SwerveDriveKinematics swerveKinematics;
