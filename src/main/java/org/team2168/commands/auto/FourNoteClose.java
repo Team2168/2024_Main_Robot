@@ -36,7 +36,7 @@ public class FourNoteClose extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       // fires first note
-      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.5),
+      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
       new WaitCommand(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
@@ -54,7 +54,7 @@ public class FourNoteClose extends SequentialCommandGroup {
       new ParallelCommandGroup(
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+      ).withTimeout(1.0),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
@@ -71,7 +71,8 @@ public class FourNoteClose extends SequentialCommandGroup {
       new ParallelCommandGroup(
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+      ).withTimeout(1.0),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new WaitCommand(0.5),
       new StopFlywheel(shooter),
       // druves to and picks up 4th note
@@ -87,7 +88,8 @@ public class FourNoteClose extends SequentialCommandGroup {
       new ParallelCommandGroup(
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+      ).withTimeout(1.0),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new WaitCommand(0.5),
       new StopFlywheel(shooter)
     );

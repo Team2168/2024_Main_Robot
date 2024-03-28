@@ -61,10 +61,12 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       ),
       new QueueNote(intakeRoller, indexer, leds).withTimeout(2.0),
       // drives back upon intaking, stows intake
-      new FollowPathPlannerPath(drivetrain, "Move_To_Speaker", InitialPathState.PRESERVEODOMETRY).raceWith(
-        new SetIntakePivotPosition(intakePivot, -120.0),
-        new SetIntakeSpeed(intakeRoller, 0.0)
-      ),
+      // new FollowPathPlannerPath(drivetrain, "Move_To_Speaker", InitialPathState.PRESERVEODOMETRY).raceWith(
+      //   new SetIntakePivotPosition(intakePivot, -120.0),
+      //   new SetIntakeSpeed(intakeRoller, 0.0)
+      // ),
+      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
+      new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       // shoots second note
       new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       new WaitCommand(0.75),
