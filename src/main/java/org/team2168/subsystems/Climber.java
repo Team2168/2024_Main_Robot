@@ -57,7 +57,7 @@ public class Climber extends SubsystemBase {
   private RelativeEncoder climberEncoder;
 
   static Climber instance = null;
-  public static final double TICKS_PER_REV = 50.0;
+  public static final int TICKS_PER_REV = 50;
   private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
   private static final double GEAR_RATIO = 100.0; 
   private static final double MOTOR_DIAMETER_IN = 1.73228; 
@@ -99,7 +99,7 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
   /** Creates a new Climber. */
   public Climber() {
     climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushed);
-    climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50);
+    climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, TICKS_PER_REV);
 
     m_pidController = climberMotor.getPIDController();
     //m_Encoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50); // Encoder object created to display position values
