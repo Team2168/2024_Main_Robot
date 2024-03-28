@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
   public Limelight limelight;
   private Drivetrain drivetrain;
 
+  private Alliance lastAllianceReport = Alliance.Blue;
 
 
   /**
@@ -83,6 +84,11 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     DriverStation.refreshData();
     drivetrain.updatePathInvert();
+
+    if (DriverStation.getAlliance().isPresent() && lastAllianceReport != DriverStation.getAlliance().get()) {
+      m_robotContainer.configureAutonomousRoutines();
+      lastAllianceReport = DriverStation.getAlliance().get();
+    }
     // drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
   }
 
@@ -146,4 +152,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  @Override
+  public void driverStationConnected() {
+    m_robotContainer.configureAutonomousRoutines();
+  }
 }

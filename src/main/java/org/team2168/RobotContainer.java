@@ -207,6 +207,8 @@ public class RobotContainer {
   }
 
   public void configureAutonomousRoutines() {
+    // autoChooser = new SendableChooser<Command>(); // reinitializes autoChooser upon configuration
+
     autoChooser.setDefaultOption("Do Nothing", new DoNothing());
     autoChooser.addOption("One Note", new OneNoteAuto(drivetrain, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Two Note", new TwoNoteAuto(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));

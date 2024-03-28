@@ -6,6 +6,11 @@
       "/Shuffleboard/RobotContainer/auto chooser": "String Chooser",
       "/SmartDashboard/Driver Joystick Chooser": "String Chooser",
       "/SmartDashboard/SendableChooser[1]": "String Chooser",
+      "/SmartDashboard/SendableChooser[2]": "String Chooser",
+      "/SmartDashboard/SendableChooser[3]": "String Chooser",
+      "/SmartDashboard/SendableChooser[4]": "String Chooser",
+      "/SmartDashboard/SendableChooser[5]": "String Chooser",
+      "/SmartDashboard/SendableChooser[6]": "String Chooser",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
