@@ -134,9 +134,9 @@ public class RobotContainer {
     intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intakepivot works again
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
     
-    oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
-    oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
-    oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    // oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
+    // oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
+    // oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
 
     
     oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
