@@ -5,8 +5,10 @@
 package org.team2168.commands.auto;
 
 import org.team2168.commands.QueueNote;
+import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.commands.Drivetrain.SetHeading;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
+import org.team2168.commands.ShooterCommands.ShootAndControlHoodFromDistance;
 import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
@@ -22,6 +24,7 @@ import org.team2168.subsystems.Drivetrain.InitialPathState;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -67,6 +70,10 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       // ),
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
+      new ParallelCommandGroup(
+        new DriveWithLimelight(drivetrain, limelight, 1.5, true).withTimeout(1.5),
+        new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(1.5)
+      ),
       // shoots second note
       new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
       new WaitCommand(0.75),

@@ -88,11 +88,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private static final double PATH_MAX_MODULE_SPEED = 10.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
     private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
+    private static ReplanningConfig repathfindConfig = new ReplanningConfig(true, true);
     private static HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(Constants.Drivetrain.kpDriveVel),
         new PIDConstants(Constants.Drivetrain.kpAngularVel, Constants.Drivetrain.kiAngularVel, Constants.Drivetrain.kdAngularVel),
         PATH_MAX_MODULE_SPEED, Math.hypot(swerveConfig.length, swerveConfig.width), replanningConfig);
-
+    private static HolonomicPathFollowerConfig pathFindFollowConfig = new HolonomicPathFollowerConfig(
+        new PIDConstants(Constants.Drivetrain.kpDriveVel),
+        new PIDConstants(Constants.Drivetrain.kpAngularVel, Constants.Drivetrain.kiAngularVel, Constants.Drivetrain.kdAngularVel),
+        PATH_MAX_MODULE_SPEED, Math.hypot(swerveConfig.length, swerveConfig.width), repathfindConfig);
     private static Drivetrain instance = null;
     @Log(name = "field", width = 3, height = 2)
     private Field2d field = new Field2d(); // used to test if odometry is correct
@@ -570,7 +574,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         this::getPoseEstimate,
         this::getChassisSpeeds,
         this::driveToChassisSpeed,
-        pathFollowConfig,
+        pathFindFollowConfig,
         0.0,
         this);
     }
@@ -614,7 +618,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     }
 
     public Command pathFindThenFollowToChain() {
-        Pose2d currentPose = getPoseEstimate();
+        Pose2d currentPose = getPose();
         Pose2d desiredPose;
         double fieldCenterY = 4.1; // meters
         String pathName;
@@ -663,7 +667,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             this::getPoseEstimate,
             this::getChassisSpeeds,
             this::driveToChassisSpeed,
-            pathFollowConfig,
+            pathFindFollowConfig,
             () -> getPathInvert(),
             this);
     }
