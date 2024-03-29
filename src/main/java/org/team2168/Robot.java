@@ -90,6 +90,10 @@ public class Robot extends TimedRobot {
       m_robotContainer.configureAutonomousRoutines();
       lastAllianceReport = DriverStation.getAlliance().get();
     }
+    // intakePivotOne needs to have an invert of true, intakePivotTwo needs to have an invert of false
+    if (!intakePivot.getIntakeOneInvert() || intakePivot.getIntakeTwoInvert()) {
+      intakePivot.setInvertConfiguration();
+    }
     // drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
   }
 

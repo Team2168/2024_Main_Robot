@@ -124,17 +124,17 @@ public class IntakePivot extends SubsystemBase {
     var intakeRaiseAndLowerOne = intakePivotOne.getConfigurator();
     var intakeRaiseAndLowerTwo = intakePivotTwo.getConfigurator();
     
-    intakeRaiseAndLowerOne.apply(motorOneConfigs);
-    intakeRaiseAndLowerOne.apply(currentConfigs);
-    intakeRaiseAndLowerOne.apply(PIDconfigs);
-    intakeRaiseAndLowerOne.apply(softLimitsConfigs);
-    intakeRaiseAndLowerOne.apply(motionMagicConfigs);
+    intakeRaiseAndLowerOne.apply(motorOneConfigs, 0.2);
+    intakeRaiseAndLowerOne.apply(currentConfigs, 0.2);
+    intakeRaiseAndLowerOne.apply(PIDconfigs, 0.2);
+    intakeRaiseAndLowerOne.apply(softLimitsConfigs, 0.2);
+    intakeRaiseAndLowerOne.apply(motionMagicConfigs, 0.2);
 
-    intakeRaiseAndLowerTwo.apply(motorTwoConfigs);
-    intakeRaiseAndLowerTwo.apply(currentConfigs);
-    intakeRaiseAndLowerTwo.apply(motionMagicConfigs);
+    intakeRaiseAndLowerTwo.apply(motorTwoConfigs, 0.2);
+    intakeRaiseAndLowerTwo.apply(currentConfigs, 0.2);
+    intakeRaiseAndLowerTwo.apply(motionMagicConfigs, 0.2);
     //intakeRaiseAndLowerTwo.apply(softLimitsConfigs);
-    intakeRaiseAndLowerTwo.apply(PIDconfigs);
+    intakeRaiseAndLowerTwo.apply(PIDconfigs, 0.2);
 
     intakePivotOne.setNeutralMode(NeutralModeValue.Brake);
     intakePivotTwo.setNeutralMode(NeutralModeValue.Brake);
@@ -184,6 +184,14 @@ public class IntakePivot extends SubsystemBase {
     //intakePivotTwo.setControl(new Follower(intakePivotOne.getDeviceID(), true));
   }
 
+  public boolean getIntakeOneInvert() {
+    return intakePivotOne.getInverted(); // clockwise positive is true
+  }
+
+  public boolean getIntakeTwoInvert() {
+    return intakePivotTwo.getInverted(); // clockwise positive is true
+  }
+
   public void setSpeed(double percentOutput) {
     intakePivotOne.set(percentOutput);
     //intakePivotTwo.set(percentOutput);
@@ -192,6 +200,25 @@ public class IntakePivot extends SubsystemBase {
   public void resetIntakeEncodersToStow() {
     intakePivotOne.setPosition(sensorOffset, 0.2);
     intakePivotTwo.setPosition(sensorOffset, 0.2);
+  }
+
+  public void setInvertConfiguration() {
+    var motorOneConfigs = new MotorOutputConfigs();
+    var motorTwoConfigs = new MotorOutputConfigs();
+
+    motorOneConfigs.withInverted(intakeInvertOne);
+    //motorConfigs.withInverted(intakeInvertTwo);
+    motorOneConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    motorOneConfigs.withPeakForwardDutyCycle(maxForwardOutput);
+    motorOneConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
+
+    motorTwoConfigs.withInverted(intakeInvertTwo);
+    motorTwoConfigs.withDutyCycleNeutralDeadband(neutralDeadband);
+    motorTwoConfigs.withPeakForwardDutyCycle(maxForwardOutput);
+    motorTwoConfigs.withPeakReverseDutyCycle(maxBackwardOutput);
+
+    intakePivotOne.getConfigurator().apply(motorOneConfigs, 0.2);
+    intakePivotTwo.getConfigurator().apply(motorTwoConfigs, 0.2);
   }
 
   @Log(name = "Position (deg)", rowIndex = 0, columnIndex = 0)
