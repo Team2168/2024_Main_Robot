@@ -4,59 +4,28 @@
 
 package org.team2168.subsystems;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkLimitSwitch;
-import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.math.controller.PIDController;
 
-import java.beans.Encoder;
-import java.security.CodeSource;
-
-import org.team2168.Constants;
 import org.team2168.Constants.ClimberMotors;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FollowerType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.sensors.CANCoder;
-
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class Climber extends SubsystemBase {
 
-  private CANSparkMax climberMotor;
-  private RelativeEncoder climberEncoder;
+  private CANSparkMax climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushed);
+  private RelativeEncoder climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, TICKS_PER_REV);
 
   static Climber instance = null;
+
   public static final int TICKS_PER_REV = 50;
   private static final double TIME_UNITS_OF_VELOCITY = 1; //this might need to be changed later
   private static final double GEAR_RATIO = 100.0; 
@@ -64,7 +33,7 @@ public class Climber extends SubsystemBase {
   private static final double INCHES_PER_REV = MOTOR_DIAMETER_IN * Math.PI;
 
   private SparkPIDController m_pidController;
-  private RelativeEncoder m_Encoder;
+
   private static final double kMaxOutput = 1;// placeholder
   private static final double kMinOutput = -1;// placeholder
   private static final double kMaxVel= inchesToRotations(2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
@@ -84,23 +53,17 @@ public class Climber extends SubsystemBase {
   //private SparkLimitSwitch forwardLimit;
   //private SparkLimitSwitch reverseLimit;
 
- private static final int CURRENT_LIMIT = 25; // it limits when the feature is activited (in amps)
-private static final int FREE_LIMIT = 30; // it tells what the threshold should be for the limit to be activited (in amps)
-  private static final boolean CURRENT_LIMIT_ENABLED = true; //placeholder
-  private static final double THRESHOLD_TIME = 0.5; // time in seconds of when the limiting should happen after the
-                                                    // threshold has been overreached
+  private static final int CURRENT_LIMIT = 25; // it limits when the feature is activited (in amps)
+  private static final int FREE_LIMIT = 30; // it tells what the threshold should be for the limit to be activited (in amps)
+
   private static final double CARRIAGE_MASS_KG = 4.5;//(placeholder)
-  private static final double MIN_HEIGHT_INCHES = -25.0; //+11.9 (30.1 inches is the distance from top of frame to top of moving piece)
+  private static final double MIN_HEIGHT_INCHES = -25.0; //
   private static final double MAX_HEIGHT_INCHES = 0.5; //placeholder
 
   //private SupplyCurrentLimitConfiguration talonCurrentLimit = new SupplyCurrentLimitConfiguration(true, CURRENT_LIMIT, THRESHOLD_CURRENT, THRESHOLD_TIME);
 
-
   /** Creates a new Climber. */
   public Climber() {
-    climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushed);
-    climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, TICKS_PER_REV);
-
     m_pidController = climberMotor.getPIDController();
     //m_Encoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50); // Encoder object created to display position values
 
@@ -114,7 +77,6 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
     m_pidController.setP(kP);
     m_pidController.setI(kI);
     m_pidController.setD(kD);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
     climberMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     climberMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
@@ -123,8 +85,6 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
 
     climberMotor.setSmartCurrentLimit(CURRENT_LIMIT, FREE_LIMIT);
     climberMotor.setIdleMode(IdleMode.kBrake);
-    //currentConfigs.withSupplyCurrentLimitEnable(CURRENT_LIMIT_ENABLED);
-    //currentConfigs.withSupplyTimeThreshold(THRESHOLD_TIME);
   }
 
   public static Climber getInstance() {
@@ -190,12 +150,20 @@ private static final int FREE_LIMIT = 30; // it tells what the threshold should 
     climberMotor.setIdleMode(IdleMode.kCoast);
   }
 
-    /** Sets the position of where the climber should be
-   * @param velocity - velocity (in inches)
+    /** Sets the velocity of where the climber should be
+   * @param velocity - velocity (in inches per second)
    * @return sets the reference for the motor controller that sets the velocity of the climber motor
    */
   public void setSpeedVelocity(double velocity){
     m_pidController.setReference(inchesToRotations(velocity) * TIME_UNITS_OF_VELOCITY, ControlType.kVelocity, 0, kArbitraryFeedForward);
+  }
+
+  /**
+   * Sets the speed of the climber
+   * @param speed speed of the climber (-1.0 to 1.0)
+   */
+  public void setSpeed(double speed) {
+    climberMotor.set(speed);
   }
 
     /** Sets the position of where the climber should be
