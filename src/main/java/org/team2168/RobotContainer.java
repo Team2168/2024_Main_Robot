@@ -28,6 +28,7 @@ import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.PathFindToAmp;
 import org.team2168.commands.auto.PathFindToChain;
 import org.team2168.commands.auto.RotateChassisContinuous;
+import org.team2168.commands.auto.ThreeNoteAltSide;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.subsystems.LEDs;
 
@@ -159,6 +160,7 @@ public class RobotContainer {
     // source intake
     oi.operatorJoystick1.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75))
                                            .whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
+                                          //  .whileFalse(new DriveIndexer(indexer, () -> 0.0));
     //floor intake
     oi.operatorJoystick1.ButtonRightStick()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
@@ -221,6 +223,7 @@ public class RobotContainer {
     autoChooser.addOption("Close 4 Note", new FourNoteClose(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Far 4 Note", new FourNoteFar(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Rotational Accuracy Auto", SwervePathUtil.getPathCommand("Rotational_Accuracy_Test", drivetrain, InitialPathState.DISCARDHEADING));
+    autoChooser.addOption("3 Note Alt", new ThreeNoteAltSide(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }

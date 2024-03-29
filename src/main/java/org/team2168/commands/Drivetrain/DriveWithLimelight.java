@@ -153,8 +153,8 @@ public class DriveWithLimelight extends Command implements Loggable {
         // if (manualControl) {
         //     limelight.pauseLimelight();
         // }
-        limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
         drivetrain.drive(0.0, 0.0, 0.0);
+        limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
     }
 
     public boolean isFinished() {

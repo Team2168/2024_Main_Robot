@@ -18,7 +18,7 @@ public class LEDstatus extends Command {
   private Indexer indexer;
   private Limelight limelight;
   private Shooter shooter;
-  double limeErrorTolerance = 1.0; //in degrees
+  double limeErrorTolerance = 1.5; //in degrees
   public LEDstatus(LEDs leds, Indexer indexer, Limelight limelight, Shooter shooter) {
     this.leds = leds;  
     this.indexer = indexer; 
@@ -44,7 +44,7 @@ public class LEDstatus extends Command {
       leds.bluelight(false);
     }
 
-    if (Math.abs(limelight.getOffsetX()) < limeErrorTolerance) {
+    if (limelight.hasTarget() && Math.abs(limelight.getOffsetX()) < limeErrorTolerance) {
       leds.redlight(true);
     }
       else {

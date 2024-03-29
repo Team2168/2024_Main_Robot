@@ -563,7 +563,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             poseXtranslation = 1.85; // blue amp x position in meters
         }
 
-        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 8.0, new Rotation2d(Units.degreesToRadians(90.0)));
         return pathFindtoPose(desiredPose);
     }
 
