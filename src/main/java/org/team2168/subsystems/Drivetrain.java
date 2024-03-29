@@ -85,7 +85,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private boolean pathInvert = false;
     private static final double DEFAULT_VISION_STD_DEV = 1.0;
     private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
-    private static final double PATH_MAX_MODULE_SPEED = 10.0;
+    private static final double PATH_MAX_MODULE_SPEED = 13.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
     private static ReplanningConfig replanningConfig = new ReplanningConfig(true, false);
     private static ReplanningConfig repathfindConfig = new ReplanningConfig(true, true);

@@ -72,7 +72,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new ParallelCommandGroup(
         new DriveWithLimelight(drivetrain, limelight, 1.5, true).withTimeout(1.5),
-        new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(1.5)
+        new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(3.0)
       ),
       // shoots second note
       new DriveIndexeruntilnoNote(indexer, () -> 0.75).withTimeout(1.0),
