@@ -45,6 +45,8 @@ public class F310 extends Joystick {
 	public static final int BUTTON_START = 8;
 	public static final int BUTTON_LEFT_STICK = 9;
 	public static final int BUTTON_RIGHT_STICK = 10;
+	public static final int FLIGHT_JOYSTICK_EXTRA_ONE = 11;
+	public static final int FLIGHT_JOYSTICK_EXTRA_TWO = 12;
 
 	// POV (D-Pad) buttons
 	public static final int DPAD_UP = 0;
@@ -179,6 +181,14 @@ public class F310 extends Joystick {
 		return getRawButton(BUTTON_RIGHT_STICK);
 	}
 
+	public boolean isPressedButtonDriverExtraOne() {
+		return getRawButton(FLIGHT_JOYSTICK_EXTRA_ONE);
+	}
+
+	public boolean isPressedButtonDriverExtraTwo() {
+		return getRawButton(FLIGHT_JOYSTICK_EXTRA_TWO);
+	}
+
 	public boolean isPressedButtonLeftTrigger() {
 		return ButtonLeftTrigger().get();
 	}
@@ -295,6 +305,20 @@ public class F310 extends Joystick {
 	 */
 	public JoystickButton ButtonRightStick() {
 		return new JoystickButton(this, BUTTON_RIGHT_STICK);
+	}
+
+	/**
+	 * Button pressed when pushing on button labelled "11" on Flight Joystick
+	 */
+	public JoystickButton ButtonDriverExtraOne() {
+		return new JoystickButton(this, FLIGHT_JOYSTICK_EXTRA_ONE);
+	}
+
+	/**
+	 * Button pressed when pushing on button labelled "12" on Flight Joystick
+	 */
+	public JoystickButton ButtonDriverExtraTwo() {
+		return new JoystickButton(this, FLIGHT_JOYSTICK_EXTRA_TWO);
 	}
 
 	/**
