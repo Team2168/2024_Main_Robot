@@ -134,9 +134,9 @@ public class RobotContainer {
     intakePivot.setDefaultCommand(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intakepivot works again
     leds.setDefaultCommand(new LEDstatus(leds, indexer, limelight, shooter));
     
-    oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
-    oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
-    oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    // oi.driverJoystick.ButtonX().onTrue(new DriveWithLimelight(drivetrain, limelight, 0.5, true));
+    // oi.driverJoystick.ButtonLeftBumper().onTrue(new DriveWithJoystick(drivetrain)); // cancels drivewithlimelight command
+    // oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
 
     
     oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
@@ -165,7 +165,8 @@ public class RobotContainer {
     oi.operatorJoystick1.ButtonRightStick()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
       .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
-      .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0));
+      .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0))
+      .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0)); // continues running indexer to intake a stuck note after intake is lifted
     // spit
     oi.operatorJoystick1.ButtonBack()
       .whileTrue(new SetIntakeSpeed(intakeRoller, -1.0))
@@ -196,6 +197,7 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
                                           .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+                                          .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0))
                                           .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 

@@ -17,6 +17,7 @@ public class DriveWithJoystick extends Command {
     private Drivetrain drivetrain;
     private double chassisRot = 0.0;
     private double kDriveInvert = 1.0;
+    private double kPrecisionDrive = 1.0;
 
 
     public DriveWithJoystick(Drivetrain drivetrain) {
@@ -53,12 +54,19 @@ public class DriveWithJoystick extends Command {
           chassisRot = oi.getDriverJoystickZValue();
         }
 
+        if (oi.driverJoystick.isPressedButtonX()) {
+          kPrecisionDrive = 0.3;
+        }
+        else {
+          kPrecisionDrive = 1.0;
+        }
+
         if (DriverStation.getAlliance().get() == Alliance.Red) {
           kDriveInvert = -1.0;
         }
 
         if (SmartDashboard.getString("Control Mode", "Joystick").equals("Joystick")) {
-          drivetrain.drive(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, rotationRateLimiter.calculate(chassisRot));
+          drivetrain.drive(oi.getLimitedDriverJoystickYValue() * kDriveInvert * kPrecisionDrive, oi.getLimitedDriverJoystickXValue() * kDriveInvert * kPrecisionDrive, rotationRateLimiter.calculate(chassisRot) * kPrecisionDrive);
         }
         else {
           drivetrain.stop();

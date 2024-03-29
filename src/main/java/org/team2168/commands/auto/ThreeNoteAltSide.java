@@ -41,15 +41,15 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_1", InitialPathState.DISCARDHEADING),
       // new FollowInitialPath(drivetrain, "3_Note_Far_Alt_1"),
       new ParallelCommandGroup(
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true),
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight)
+      ).withTimeout(1.1),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up second note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_2", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(3.2)
       ),
       // drive back to shooting position and shoot note
       new ParallelCommandGroup(
@@ -60,24 +60,24 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       new ParallelCommandGroup(
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+      ).withTimeout(1.2),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up third note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_2", InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_4", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(3.3)
       ),
       // drive back to the shooting position and shoot note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_3", InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_5", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
       new ParallelCommandGroup(
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+      ).withTimeout(1.2),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // stops shooter for end of auto
       new WaitCommand(1.0),

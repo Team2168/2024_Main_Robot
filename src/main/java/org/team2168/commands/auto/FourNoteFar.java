@@ -48,25 +48,25 @@ public class FourNoteFar extends SequentialCommandGroup {
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_1", InitialPathState.DISCARDHEADING),
         // new FollowInitialPath(drivetrain, "4_Note_Far_1"),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(2.7)
       ),
       // aim and shoot second note from this position
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
       new ParallelCommandGroup(
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+        new DriveWithLimelight(drivetrain, limelight, 1.0, true),
+        new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight)
+      ).withTimeout(1.2),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
       // drive to and pick up third note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "4_Note_Far_2", InitialPathState.DISCARDHEADING),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_2", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 3rd note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "4_Note_Far_3", InitialPathState.DISCARDHEADING),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Far_3", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(1.0),
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
@@ -90,10 +90,11 @@ public class FourNoteFar extends SequentialCommandGroup {
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
       new ParallelCommandGroup(
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.5),
+        new DriveWithLimelight(drivetrain, limelight, 1.0, true),
+        new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight)
+      ).withTimeout(1.2),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new WaitCommand(0.25),
       new StopFlywheel(shooter)
     );
   }
