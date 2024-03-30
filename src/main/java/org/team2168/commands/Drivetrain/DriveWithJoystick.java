@@ -54,7 +54,7 @@ public class DriveWithJoystick extends Command {
           chassisRot = oi.getDriverJoystickZValue();
         }
 
-        if (oi.driverJoystick.isPressedButtonX()) {
+        if (oi.driverJoystick.isPressedButtonDriverExtraOne()) {
           kPrecisionDrive = 0.3;
         }
         else {
