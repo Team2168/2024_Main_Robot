@@ -139,7 +139,7 @@ public class RobotContainer {
     // oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
 
     
-    oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
+    // oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
     // amp
