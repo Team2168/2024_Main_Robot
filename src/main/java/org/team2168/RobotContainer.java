@@ -164,13 +164,13 @@ public class RobotContainer {
     //floor intake
     oi.operatorJoystick1.ButtonRightStick()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-      .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+      .whileTrue(new SetIntakePivotPosition(intakePivot, -11.0))
       .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0))
       .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0)); // continues running indexer to intake a stuck note after intake is lifted
     // spit
     oi.operatorJoystick1.ButtonBack()
       .whileTrue(new SetIntakeSpeed(intakeRoller, -1.0))
-      .whileTrue(new DriveIndexer(indexer, ()->-1.0));
+      .whileTrue(new DriveIndexer(indexer, ()->-0.75));
     // stop shooter
     oi.operatorJoystick1.ButtonStart().onTrue(new StopFlywheel(shooter));
     //toggle climb
@@ -205,8 +205,8 @@ public class RobotContainer {
     //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
     oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
-    oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain));
-    oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));
+    // oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
+    // oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
 

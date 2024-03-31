@@ -34,7 +34,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     UP_AGAINST_SPEAKER(60.0), // placeholder
     WHITE_LINE(60.0),
     RED_LINE(41.0),
-    UP_AGAINST_AMP(60.0), //no provided f310 bindings for this on the button bindings paper.
+    UP_AGAINST_AMP(62.0), //no provided f310 bindings for this on the button bindings paper.
     STARTING_ZONE_LINE(46.0),
     STAGE_LINE(40.25);
 
@@ -76,12 +76,12 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
 
   private InterpolatingDoubleTreeMap shooterAngleLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed                                                                                            // from  // distance using a // interpolating lookup table.
     {
-      put(0.0, 60.0);
-      put(1.10, 60.0);
-      put(1.5, 52.0); // TODO: test at wpi
-      put(2.0, 42.8);
-      put(2.5, 39.1);
-      put(3.0, 38.4);
+      put(0.0, 60.3);
+      put(1.10, 60.3);
+      put(1.5, 49.3); // TODO: test at wpi
+      put(2.0, 41.2);
+      put(2.5, 38.0);
+      put(3.0, 36.9);
       put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
       put(100.0, 35.0);
       // put(6.0, 30.0);
@@ -103,7 +103,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     percentOutput = new DutyCycleOut(0.0);
 
     motionMagicConfigs.withMotionMagicAcceleration(degreesToRotation(240.0)); // placeholder, original 36
-    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(70.0)); // placeholder, original 18, 36/2
+    motionMagicConfigs.withMotionMagicCruiseVelocity(degreesToRotation(140.0)); // placeholder, original 18, 36/2
     // motionMagicConfigs.withMotionMagicJerk(degreesToRotation(0.0025)); //modifying jerk appears to be a necessary config for motion magic according to MotionMagicVoltage.
     // motionMagicConfigs.withMotionMagicJerk(degreesPerSecondToRotationsPerSecond(0.03));
     // //placeholder

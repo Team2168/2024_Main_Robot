@@ -41,10 +41,14 @@ public class FourNoteFar extends SequentialCommandGroup {
       // shoot first note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new ControlShooterAndHood(shooter, shooterPivot, SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
-      new WaitCommand(1.0),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new WaitCommand(0.6),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
       // drive to and pick up second note
       new ParallelCommandGroup(
+        new SequentialCommandGroup(
+          new WaitCommand(0.5),
+          new StopFlywheel(shooter)
+        ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_1", InitialPathState.DISCARDHEADING),
         // new FollowInitialPath(drivetrain, "4_Note_Far_1"),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
@@ -56,10 +60,14 @@ public class FourNoteFar extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new DriveWithLimelight(drivetrain, limelight, 1.0, true),
         new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight)
-      ).withTimeout(1.2),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
+      ).withTimeout(0.75),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.25),
       // drive to and pick up third note
       new ParallelCommandGroup(
+        new SequentialCommandGroup(
+          new WaitCommand(0.5),
+          new StopFlywheel(shooter)
+        ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_2", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
@@ -76,9 +84,13 @@ public class FourNoteFar extends SequentialCommandGroup {
       new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
       new DriveWithLimelight(drivetrain, limelight, 1.0, true)
       ).withTimeout(1.5),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.27),
       // drive to and pick up fourth note
       new ParallelCommandGroup(
+        new SequentialCommandGroup(
+          new WaitCommand(0.5),
+          new StopFlywheel(shooter)
+        ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_4", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)

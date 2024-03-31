@@ -12,28 +12,28 @@
         "y": 0.184806435963581
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "3NAlt3-4"
     },
     {
       "anchor": {
-        "x": 8.47475858652785,
-        "y": 2.619573827522507
+        "x": 8.47,
+        "y": 2.62
       },
       "prevControl": {
-        "x": 6.926385952416033,
-        "y": 0.4869096333684975
+        "x": 6.921627365888184,
+        "y": 0.48733580584599073
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "3NAlt4-5"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 6.0,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

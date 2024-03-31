@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.48,
-        "y": 5.29
+        "x": 8.484496779190351,
+        "y": 5.287838618386734
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.2349882208769145,
-        "y": 8.305262902563719
+        "x": 7.190597888309304,
+        "y": 7.703510383329843
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "4NFar4-5"
     },
     {
       "anchor": {
@@ -38,8 +38,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
-    "maxAcceleration": 6.0,
+    "maxVelocity": 7.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

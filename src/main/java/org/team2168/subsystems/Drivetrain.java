@@ -68,7 +68,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final boolean[] DRIVE_INVERTED = {true, false, true, false};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.8364258, 0.260254, 0.4604492, 0.23388672}; // the magnet offsets should be set to the opposite sign of these encoder values
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.82446289, 0.259277, 1.4543457, 0.2360839}; // the magnet offsets should be set to the opposite sign of these encoder values
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
@@ -84,8 +84,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     // pathplanner setup
     private boolean pathInvert = false;
     private static final double DEFAULT_VISION_STD_DEV = 1.0;
-    private static final double PATH_MAX_VEL = 5.0; // m/s // TESTING VALUE
-    private static final double PATH_MAX_MODULE_SPEED = 13.0;
+    private static final double PATH_MAX_VEL = 6.0; // m/s // TESTING VALUE
+    private static final double PATH_MAX_MODULE_SPEED = 16.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
     private static ReplanningConfig replanningConfig = new ReplanningConfig(true, true);
     private static ReplanningConfig repathfindConfig = new ReplanningConfig(true, true);
@@ -546,7 +546,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public Command followPathPlannerCommand(String pathName) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
         return new FollowPathHolonomic(path,
-        this::getPose,
+        this::getPoseEstimate, // TODO: verify pose estimation is accurate enough for autos
         this::getChassisSpeeds,
         this::driveToChassisSpeed, // TODO: verify that this will actually allow chassis to move
         pathFollowConfig,
@@ -689,7 +689,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             new Rotation2d(Wheel.rotToRadians(_wheels[i].getAzimuthPosition()))); // negative for counterclockwise
         }
         odometry.update(getRotation2d(), modulePositions);
-        field.setRobotPose(getPose());
+        field.setRobotPose(getPoseEstimate());
 
         //System.out.println("chassis speed rotationSpeed: " + chassisSpeeds.omegaRadiansPerSecond);
         //System.out.println("gyro rotation2d: " + getRotation2d().getRadians());

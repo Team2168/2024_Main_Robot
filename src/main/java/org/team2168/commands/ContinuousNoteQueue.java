@@ -29,7 +29,7 @@ public class ContinuousNoteQueue extends Command {
   public void execute() {
     if (!indexer.isNotePresent()) {
       indexer.setDriveIndexer(0.6);
-      intakeRoller.setRollerSpeed(0.75);
+      intakeRoller.setRollerSpeed(0.55);
     }
     else {
       indexer.setDriveIndexer(0.0);
