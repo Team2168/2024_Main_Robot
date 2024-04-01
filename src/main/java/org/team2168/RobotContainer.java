@@ -21,6 +21,7 @@ import org.team2168.commands.ShooterCommands.ShooterFlywheel.StopFlywheel;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngle;
 import org.team2168.commands.ShooterCommands.ShooterPivot.BumpShooterAngleDown;
 import org.team2168.commands.auto.DoNothing;
+import org.team2168.commands.auto.FasterCloseFourNote;
 import org.team2168.commands.auto.FourNoteClose;
 import org.team2168.commands.auto.FourNoteFar;
 import org.team2168.commands.auto.LeaveStartingZone;
@@ -30,6 +31,7 @@ import org.team2168.commands.auto.PathFindToChain;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.ThreeNoteAltSide;
 import org.team2168.commands.auto.TwoNoteAuto;
+import org.team2168.commands.auto.WPIThreeNote;
 import org.team2168.subsystems.LEDs;
 
 //import org.team2168.subsystems.Indexer;
@@ -227,6 +229,7 @@ public class RobotContainer {
     autoChooser.addOption("Far 4 Note", new FourNoteFar(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("Rotational Accuracy Auto", SwervePathUtil.getPathCommand("Rotational_Accuracy_Test", drivetrain, InitialPathState.DISCARDHEADING));
     autoChooser.addOption("3 Note Alt", new ThreeNoteAltSide(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("WPI 3 Note", new WPIThreeNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }

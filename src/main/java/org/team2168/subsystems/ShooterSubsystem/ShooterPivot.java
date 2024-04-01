@@ -77,11 +77,14 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
   private InterpolatingDoubleTreeMap shooterAngleLookup = new InterpolatingDoubleTreeMap() { // calculate motorspeed                                                                                            // from  // distance using a // interpolating lookup table.
     {
       put(0.0, 60.3);
-      put(1.10, 60.3);
-      put(1.5, 49.3); // TODO: test at wpi
-      put(2.0, 41.2);
-      put(2.5, 38.0);
-      put(3.0, 36.9);
+      put(1.05, 60.3);
+      put(1.5, 47.0); // TODO: test at wpi
+      put(1.73, 45.8);
+      put(2.0, 43.0);
+      put(2.3, 39.9);
+      put(2.5, 37.7);
+      put(2.75, 36.0);
+      put(3.0, 29.7);
       put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
       put(100.0, 35.0);
       // put(6.0, 30.0);

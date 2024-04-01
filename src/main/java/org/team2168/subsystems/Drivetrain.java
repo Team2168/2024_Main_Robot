@@ -68,7 +68,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final boolean[] DRIVE_INVERTED = {true, false, true, false};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.82446289, 0.259277, 1.4543457, 0.2360839}; // the magnet offsets should be set to the opposite sign of these encoder values
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {-0.82446289, -0.74291992, 1.4543457, 0.2360839}; // the magnet offsets should be set to the opposite sign of these encoder values
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
@@ -677,7 +677,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
       if (limelight.hasTarget()) {
         drivePoseEstimator.addVisionMeasurement(visionPoseEstimate.pose,
         visionPoseEstimate.timestampSeconds,
-        VecBuilder.fill(DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), 99999999.0)); // uses Timer to account for latency
+        VecBuilder.fill(DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/6.0), DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/6.0), 99999999.0)); // uses Timer to account for latency
       }
     }
 
