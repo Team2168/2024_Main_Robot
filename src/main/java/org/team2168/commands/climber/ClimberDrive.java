@@ -32,11 +32,11 @@ public class ClimberDrive extends InstantCommand {
   public void execute() {
     //elevator.setPercentOutput(elevatorPercentOutput);
   // if (elevator.isInRange()) {
-    climber.setVolt(speed.getAsDouble());
+    climber.setSpeed(speed.getAsDouble());
   }
 
   @Override
   public void end(boolean interrupted) {
-    climber.setVolt(0);
+    climber.setSpeed(0.0);
 }
 }
