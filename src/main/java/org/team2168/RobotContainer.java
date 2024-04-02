@@ -126,7 +126,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
+  public void configureBindings() {
     // oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
     // oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
     // oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
@@ -146,6 +146,8 @@ public class RobotContainer {
     // oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
+    //reset 
+    oi.operatorJoystick1.ButtonLeftStick().onTrue(new StopFlywheel(shooter));
     // amp
     oi.operatorJoystick1.ButtonA().onTrue(
       new ControlShooterAndHood(shooter, shooterPivot, 
@@ -234,7 +236,7 @@ public class RobotContainer {
     autoChooser.addOption("Rotational Accuracy Auto", SwervePathUtil.getPathCommand("Rotational_Accuracy_Test", drivetrain, InitialPathState.DISCARDHEADING));
     autoChooser.addOption("3 Note Alt", new ThreeNoteAltSide(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("WPI 3 Note", new WPIThreeNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
-    //autoChooser.addOption("Faster Close 4 Note", new FasterCloseFourNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("Faster Close 4 Note", new FasterCloseFourNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }

@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
 
     if (DriverStation.getAlliance().isPresent() && lastAllianceReport != DriverStation.getAlliance().get()) {
       m_robotContainer.configureAutonomousRoutines();
+      m_robotContainer.configureBindings();
       lastAllianceReport = DriverStation.getAlliance().get();
     }
     // intakePivotOne needs to have an invert of true, intakePivotTwo needs to have an invert of false
@@ -161,5 +162,6 @@ public class Robot extends TimedRobot {
   @Override
   public void driverStationConnected() {
     m_robotContainer.configureAutonomousRoutines();
+    m_robotContainer.configureBindings();
   }
 }

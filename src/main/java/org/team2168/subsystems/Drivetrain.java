@@ -260,8 +260,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         config.gyro.getRotation2d(),
         modulePositions,
         getPose(),
-        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(2.5)),
-        VecBuilder.fill(1.0, 1.0, 1.0));
+        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(2.5)),
+        VecBuilder.fill(1.0, 1.0, 99999999.0));
 
         return new SwerveDrive(config);
 
@@ -605,7 +605,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         }
 
         Pose2d desiredPose = new Pose2d(poseXtranslation, 5.5, new Rotation2d(Units.degreesToRadians(desiredRotation)));
-        return pathFindToFollowPath("Move_To_Speaker", desiredPose);
+        return pathFindToFollowPath("Speaker_Pathfind_End", desiredPose);
     }
 
     public double getDefaultShotHeading() {

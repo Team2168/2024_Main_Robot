@@ -51,46 +51,48 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
         new FollowPathPlannerPath(drivetrain, "4_Note_Close_1", InitialPathState.DISCARDHEADING),
         // new FollowInitialPath(drivetrain, "4_Note_Close_1"),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(1.5)
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(2.8)
       ),
-      // drives towards 3rd note and shoots 2nd note while moving
-      new ParallelCommandGroup(
-        new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
-        new SequentialCommandGroup(
-          new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-          new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-            // index for short portion of time
-            new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(0.75),
-            new WaitCommand(0.85),
-          new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
-          new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.1),
-          new StopFlywheel(shooter),
-        new ContinuousNoteQueue(indexer, intakeRoller).withTimeout(1.0) // non sequential command group to avoid errors
-        ),
-        new FollowPathPlannerPath(drivetrain, "4_Note_Close_2", InitialPathState.PRESERVEODOMETRY)
-      ),
-      // drives towards 4th note and shoots 3rd note while moving
-      new ParallelCommandGroup(
-        new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
-        new SequentialCommandGroup(
-          new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-          new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-          // index for short portion of time
-            new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(1.0),
-            new WaitCommand(0.75),
-          new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
-          new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.1),
-          new StopFlywheel(shooter),
-        new ContinuousNoteQueue(indexer, intakeRoller).withTimeout(1.5)
-        ),
-        new FollowPathPlannerPath(drivetrain, "4_Note_Close_3", InitialPathState.PRESERVEODOMETRY)
-      ),
-      // drives to speaker and shoots 4th note
+      // shoots second note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-      new FollowPathPlannerPath(drivetrain, "4_Note_Close_4", InitialPathState.PRESERVEODOMETRY),
+      new PathFindToSpeaker(drivetrain),
+      // new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.STARTING_ZONE_LINE.shooterRPS, ShooterPivot.SHOOTING_ANGLE.STARTING_ZONE_LINE.shooterAngle),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
-      new DriveIndexeruntilnoNote(indexer, () -> 1.0),
+      new WaitCommand(0.25),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.25),
+      new WaitCommand(0.2),
+      new StopFlywheel(shooter),
+      // drives to and picks up 3rd note
+      new ParallelCommandGroup(
+        new FollowPathPlannerPath(drivetrain, "4_Note_Close_2", InitialPathState.PRESERVEODOMETRY),
+        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
+      ),
+      // shoots 3rd note
+      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
+      new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
+      new PathFindToSpeaker(drivetrain),
+      // new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
+      new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
+      new WaitCommand(0.2),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.25),
+      new WaitCommand(0.2),
+      new StopFlywheel(shooter),
+      // druves to and picks up 4th note
+      new ParallelCommandGroup(
+        new FollowPathPlannerPath(drivetrain, "4_Note_Close_3", InitialPathState.PRESERVEODOMETRY),
+        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(3.3)
+      ),
+      // shoots 4th note
+      new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
+      new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
+      new PathFindToSpeaker(drivetrain),
+      // new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.0),
+      new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
+      new WaitCommand(0.5),
+      new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       new WaitCommand(0.5),
       new StopFlywheel(shooter)
       );
