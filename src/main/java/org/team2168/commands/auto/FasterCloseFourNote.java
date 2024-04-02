@@ -4,6 +4,7 @@
 
 package org.team2168.commands.auto;
 
+import org.team2168.commands.ContinuousNoteQueue;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.commands.ShooterCommands.ControlShooterAndHood;
@@ -62,9 +63,9 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
             new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(0.75),
             new WaitCommand(0.85),
           new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
-          new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+          new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.1),
           new StopFlywheel(shooter),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(1.0)
+        new ContinuousNoteQueue(indexer, intakeRoller).withTimeout(1.0) // non sequential command group to avoid errors
         ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Close_2", InitialPathState.PRESERVEODOMETRY)
       ),
@@ -78,9 +79,9 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
             new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(1.0),
             new WaitCommand(0.75),
           new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
-          new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+          new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.1),
           new StopFlywheel(shooter),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(1.5)
+        new ContinuousNoteQueue(indexer, intakeRoller).withTimeout(1.5)
         ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Close_3", InitialPathState.PRESERVEODOMETRY)
       ),
