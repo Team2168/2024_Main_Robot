@@ -28,6 +28,7 @@ import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.PathFindToAmp;
 import org.team2168.commands.auto.PathFindToChain;
+import org.team2168.commands.auto.PathFindToSpeaker;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.ThreeNoteAltSide;
 import org.team2168.commands.auto.TwoNoteAuto;
@@ -46,6 +47,7 @@ import org.team2168.utils.SwervePathUtil;
 import org.team2168.utils.SwervePathUtil.InitialPathState;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
+import org.team2168.commands.Drivetrain.DriveToHeading;
 import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
@@ -202,12 +204,14 @@ public class RobotContainer {
                                           .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
                                           .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0))
                                           .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
-    //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0)); // TODO: test
 
     //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    oi.driverJoystick.ButtonX().whileTrue(new DriveToHeading(drivetrain, 90.0).withTimeout(1.5)); // TO TEST
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
     oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
-    // oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
+    oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
+    oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToSpeaker(drivetrain));
     // oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
@@ -230,6 +234,7 @@ public class RobotContainer {
     autoChooser.addOption("Rotational Accuracy Auto", SwervePathUtil.getPathCommand("Rotational_Accuracy_Test", drivetrain, InitialPathState.DISCARDHEADING));
     autoChooser.addOption("3 Note Alt", new ThreeNoteAltSide(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("WPI 3 Note", new WPIThreeNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    //autoChooser.addOption("Faster Close 4 Note", new FasterCloseFourNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }

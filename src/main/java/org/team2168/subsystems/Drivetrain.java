@@ -83,7 +83,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     // pathplanner setup
     private boolean pathInvert = false;
-    private static final double DEFAULT_VISION_STD_DEV = 1.0;
+    private static final double DEFAULT_VISION_STD_DEV = 0.8;
     private static final double PATH_MAX_VEL = 6.0; // m/s // TESTING VALUE
     private static final double PATH_MAX_MODULE_SPEED = 16.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
@@ -260,7 +260,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
         config.gyro.getRotation2d(),
         modulePositions,
         getPose(),
-        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5.0)),
+        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(2.5)),
         VecBuilder.fill(1.0, 1.0, 1.0));
 
         return new SwerveDrive(config);
@@ -588,8 +588,24 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             poseXtranslation = 1.85; // blue amp x position in meters
         }
 
-        Pose2d desiredPose = new Pose2d(poseXtranslation, 7.65, new Rotation2d(Units.degreesToRadians(90.0)));
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 8.0, new Rotation2d(Units.degreesToRadians(90.0)));
         return pathFindToFollowPath("B_To_Amp", desiredPose);
+    }
+
+    public Command pathFindThenFollowToSpeaker() {
+        double poseXtranslation;
+        double desiredRotation; // in degrees
+        if (getPathInvert()) {
+            poseXtranslation = 15.0; // red speaker position in meters
+            desiredRotation = 0.0;
+        }
+        else {
+            poseXtranslation = 1.5; // blue speaker position in meters
+            desiredRotation = 180.0;
+        }
+
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 5.5, new Rotation2d(Units.degreesToRadians(desiredRotation)));
+        return pathFindToFollowPath("Move_To_Speaker", desiredPose);
     }
 
     public enum ClimbPositions {
@@ -674,10 +690,10 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     public void visionSwervePoseEstimation() {
         LimelightHelpers.PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      if (limelight.hasTarget()) {
+      if (limelight.hasTarget() && visionPoseEstimate.tagCount >= 2) {
         drivePoseEstimator.addVisionMeasurement(visionPoseEstimate.pose,
         visionPoseEstimate.timestampSeconds,
-        VecBuilder.fill(DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/6.0), DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/6.0), 99999999.0)); // uses Timer to account for latency
+        VecBuilder.fill(DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), DEFAULT_VISION_STD_DEV - (visionPoseEstimate.tagCount/7.0), 99999999.0)); // uses Timer to account for latency
       }
     }
 

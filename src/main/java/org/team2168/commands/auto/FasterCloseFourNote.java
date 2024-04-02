@@ -60,7 +60,7 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
           new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
             // index for short portion of time
             new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(0.75),
-            new WaitCommand(0.75),
+            new WaitCommand(0.85),
           new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
           new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
           new StopFlywheel(shooter),
@@ -74,10 +74,9 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
         new SequentialCommandGroup(
           new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
           new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1),
-          new SequentialCommandGroup( // index for short portion of time
+          // index for short portion of time
             new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(1.0),
-            new WaitCommand(1.0)
-          ).withTimeout(1.0),
+            new WaitCommand(0.75),
           new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(0.5),
           new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
           new StopFlywheel(shooter),
