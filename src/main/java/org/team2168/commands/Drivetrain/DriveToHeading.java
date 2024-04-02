@@ -57,7 +57,7 @@ public class DriveToHeading extends Command {
       // drivetrain.driveWithKinematics(0.0, 0.0, drivePID.calculate(drivetrain.getHeading() % 360.0 - angle));
     }
 
-    if (Math.abs(-drivetrain.getHeading() % 360.0) - angle < ERROR_TOLERANCE) {
+    if (Math.abs(ccwHeading - angle) < ERROR_TOLERANCE) {
       numLoops++;
     }
     else {

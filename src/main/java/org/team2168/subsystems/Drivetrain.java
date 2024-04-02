@@ -83,7 +83,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     // pathplanner setup
     private boolean pathInvert = false;
-    private static final double DEFAULT_VISION_STD_DEV = 0.8;
+    private static final double DEFAULT_VISION_STD_DEV = 1.0;
     private static final double PATH_MAX_VEL = 6.0; // m/s // TESTING VALUE
     private static final double PATH_MAX_MODULE_SPEED = 16.0;
     private static SwerveDriveConfig swerveConfig = new SwerveDriveConfig();
@@ -606,6 +606,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
         Pose2d desiredPose = new Pose2d(poseXtranslation, 5.5, new Rotation2d(Units.degreesToRadians(desiredRotation)));
         return pathFindToFollowPath("Move_To_Speaker", desiredPose);
+    }
+
+    public double getDefaultShotHeading() {
+        if (getPathInvert()) {
+            return 0.0;
+        }
+        else {
+            return 180.0;
+        }
     }
 
     public enum ClimbPositions {

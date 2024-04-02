@@ -4,6 +4,7 @@
 
 package org.team2168.commands.auto;
 
+import org.team2168.commands.Drivetrain.DriveToHeading;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.utils.SwervePathUtil;
 
@@ -18,6 +19,7 @@ public class PathFindToAmp extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new DriveToHeading(drive, 90.0).withTimeout(1.2168),
       drive.pathFindThenFollowToAmp()
     );
   }

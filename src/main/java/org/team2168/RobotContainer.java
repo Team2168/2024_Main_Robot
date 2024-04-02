@@ -207,7 +207,7 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0)); // TODO: test
 
     //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
-    oi.driverJoystick.ButtonX().whileTrue(new DriveToHeading(drivetrain, 90.0).withTimeout(1.5)); // TO TEST
+    //oi.driverJoystick.ButtonX().whileTrue(new DriveToHeading(drivetrain, 90.0).withTimeout(1.5)); // TO TEST
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
     oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
     oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot

@@ -4,6 +4,7 @@
 
 package org.team2168.commands.auto;
 
+import org.team2168.commands.Drivetrain.DriveToHeading;
 import org.team2168.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -17,6 +18,7 @@ public class PathFindToSpeaker extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new DriveToHeading(drivetrain, drivetrain.getDefaultShotHeading()).withTimeout(1.0),
       drivetrain.pathFindThenFollowToSpeaker()
     );
   }
