@@ -6,6 +6,7 @@ package org.team2168.commands.Drivetrain;
 
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Limelight.Pipeline;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,6 +91,7 @@ public class StrafeToTagPosition extends Command {
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(0.0, 0.0, 0.0);
+    limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
   }
 
   // Returns true when the command should end.
