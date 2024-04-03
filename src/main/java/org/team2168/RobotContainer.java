@@ -186,8 +186,7 @@ public class RobotContainer {
     oi.operatorJoystick2.ButtonX().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick2.ButtonY().onTrue(new BumpShooterAngleDown(shooterPivot));
     // shooting speed bumping
-    oi.operatorJoystick2.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75))
-                                           .whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
+    oi.operatorJoystick2.ButtonLeftBumper().onTrue(new BumpShooterSpeed(shooter));
     oi.operatorJoystick2.ButtonRightBumper().onTrue(new BumpShooterSpeedDown(shooter));
 
     //old operator button bindings (for F310)
