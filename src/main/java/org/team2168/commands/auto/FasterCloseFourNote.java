@@ -65,7 +65,7 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
       new StopFlywheel(shooter),
       // drives to and picks up 3rd note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "4_Note_Close_2", InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Subwoofer_2", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
@@ -81,7 +81,7 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
       new StopFlywheel(shooter),
       // druves to and picks up 4th note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "4_Note_Close_3", InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "4_Note_Subwoofer_3", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(3.3)
       ),
