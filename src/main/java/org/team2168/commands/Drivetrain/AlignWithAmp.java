@@ -4,6 +4,7 @@
 
 package org.team2168.commands.Drivetrain;
 
+import org.team2168.commands.auto.PathFindToAmp;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
 
@@ -19,8 +20,10 @@ public class AlignWithAmp extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new DriveToHeading(drivetrain, -90),
-      new StrafeToTagPosition(drivetrain, limelight, 3)
+      drivetrain.pathFindToAmp(),
+      new DriveToHeading(drivetrain, 90.0).withTimeout(1.5),
+      new StrafeToTagPosition(drivetrain, limelight, 1.5).withTimeout(2.0),
+      new Drive(drivetrain, 0.0, 0.5, 0.0).withTimeout(2.5)
     );
   }
 }

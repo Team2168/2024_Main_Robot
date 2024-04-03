@@ -21,11 +21,11 @@ public class StrafeToTagPosition extends Command {
   private int acceptableLoops = 10;
   
   //PID gains
-  private static final double kP = 0.05; //TODO: check gains
+  private static final double kP = 0.02168; //TODO: check gains
   private static final double kI = 0;
-  private static final double kD = 0;
+  private static final double kD = 0.0025;
 
-  private static final double MINIMUM_COMMAND = 0.2;
+  private static final double MINIMUM_COMMAND = 0.15;
   private static final double MAX_INTEGRAL = 1.0;
 
   private double strafeSpeed;
@@ -56,6 +56,7 @@ public class StrafeToTagPosition extends Command {
     pidController.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
 
     limelight.enableBaseCameraSettings();
+    limelight.setPipeline(Limelight.Pipeline.AMPS.getPipeline());
 
     pidController.setTolerance(errorToleranceAngle);
   }
@@ -72,12 +73,12 @@ public class StrafeToTagPosition extends Command {
     else 
       withinThresholdLoops = 0;
 
-    strafeSpeed = (pidController.calculate(limeAngle));
+    strafeSpeed = -(pidController.calculate(limeAngle));
     
     //speed is adjusted to ensure the drivetrain will actually move
     if(limeAngle > errorToleranceAngle)
       strafeSpeed += MINIMUM_COMMAND;
-    else if (limeAngle < errorToleranceAngle)
+    else if (limeAngle < -errorToleranceAngle)
       strafeSpeed -= MINIMUM_COMMAND;
     else 
       strafeSpeed = 0.0;
