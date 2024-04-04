@@ -8,6 +8,7 @@ import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.ContinuousNoteQueue;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
+import org.team2168.commands.Drivetrain.StrafeToTagPosition;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.commands.LEDs.LEDstatus;
@@ -179,8 +180,8 @@ public class RobotContainer {
       .whileTrue(new DriveIndexer(indexer, ()->-0.75));
     // stop shooter
     oi.operatorJoystick1.ButtonStart().onTrue(new StopFlywheel(shooter));
-    //toggle climb
-    //oi.operatorJoystick2.ButtonA().toggleOnTrue(new climber thing)
+    //trap shot
+    oi.operatorJoystick2.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.TRAP_SHOT.shooterRPS, ShooterPivot.SHOOTING_ANGLE.TRAP_SHOT.shooterAngle));
                                   //.toggleOnFalse(turn climber off);
     //shooter angle bumping
     oi.operatorJoystick2.ButtonX().onTrue(new BumpShooterAngle(shooterPivot));
@@ -207,11 +208,11 @@ public class RobotContainer {
                                           .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0)); // TODO: test
 
-    //oi.driverJoystick.ButtonLeftStick().onTrue(new AlignWithAmp(drivetrain, limelight)); // TODO: Test
+    oi.driverJoystick.ButtonLeftStick().onTrue(new AlignWithAmp(drivetrain, limelight)); // TODO: Test
     //oi.driverJoystick.ButtonX().whileTrue(new DriveToHeading(drivetrain, 90.0).withTimeout(1.5)); // TO TEST
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
     oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
-    oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
+    //oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
     oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToSpeaker(drivetrain));
     // oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment

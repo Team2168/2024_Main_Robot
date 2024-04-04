@@ -558,13 +558,13 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     public Command pathFindToAmp() {
         double poseXtranslation;
         if (getPathInvert()) {
-            poseXtranslation = 14.67; // red amp x position in meters
+            poseXtranslation = 15.0; // red amp x position in meters
         }
         else {
-            poseXtranslation = 1.85; // blue amp x position in meters
+            poseXtranslation = 1.5; // blue amp x position in meters
         }
 
-        Pose2d desiredPose = new Pose2d(poseXtranslation, 6.5, new Rotation2d(Units.degreesToRadians(90.0)));
+        Pose2d desiredPose = new Pose2d(poseXtranslation, 6.0, new Rotation2d(Units.degreesToRadians(90.0)));
         return pathFindtoPose(desiredPose);
     }
 

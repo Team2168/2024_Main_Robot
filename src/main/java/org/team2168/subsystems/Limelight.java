@@ -68,7 +68,8 @@ public class Limelight extends SubsystemBase implements Loggable {
     
     double heightOffset;
     double heightToLimelight = 0.648; // m
-    double heightToSpeakerTag = 1.448; // m
+    double heightToSpeakerTag = 1.457; // m
+    double heightToTrapTag = 1.295;
     double distanceFromTarget = 0.0;
     
     double limelightAngleDegrees = 29.45;
@@ -282,7 +283,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     public void periodic() {
         // This method will be called once per scheduler run\
         Timer.getFPGATimestamp();
-        System.out.println(calculateDistance());
+        //System.out.println(calculateDistance());
     
     }
     

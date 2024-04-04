@@ -36,7 +36,8 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     RED_LINE(41.0),
     UP_AGAINST_AMP(62.0), //no provided f310 bindings for this on the button bindings paper.
     STARTING_ZONE_LINE(46.0),
-    STAGE_LINE(40.25);
+    STAGE_LINE(40.25),
+    TRAP_SHOT(57.3);
 
     public double shooterAngle;
 
@@ -78,10 +79,12 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     {
       put(0.0, 60.3);
       put(1.05, 60.3);
+      put(1.27, 56.0);
       put(1.5, 47.0); // TODO: test at wpi
       put(1.73, 45.8);
+      put(1.83, 45.0);
       put(2.0, 43.0);
-      put(2.3, 39.9);
+      put(2.3, 40.9);
       put(2.5, 37.7);
       put(2.75, 36.0);
       put(3.0, 29.7);

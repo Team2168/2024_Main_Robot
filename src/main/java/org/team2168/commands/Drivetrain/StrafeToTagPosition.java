@@ -69,18 +69,18 @@ public class StrafeToTagPosition extends Command {
 
     //robot needs to within its error tolerance for 10 loops
     //or else the counter resets
-    if(Math.abs(limeAngle) < errorToleranceAngle)
+    if(Math.abs(limeAngle) < errorToleranceAngle && limelight.hasTarget())
       ++withinThresholdLoops;
     else 
       withinThresholdLoops = 0;
 
-    strafeSpeed = -(pidController.calculate(limeAngle));
+    strafeSpeed = (pidController.calculate(limeAngle));
     
     //speed is adjusted to ensure the drivetrain will actually move
     if(limeAngle > errorToleranceAngle)
-      strafeSpeed += MINIMUM_COMMAND;
-    else if (limeAngle < -errorToleranceAngle)
       strafeSpeed -= MINIMUM_COMMAND;
+    else if (limeAngle < -errorToleranceAngle)
+      strafeSpeed += MINIMUM_COMMAND;
     else 
       strafeSpeed = 0.0;
 

@@ -23,7 +23,7 @@ public class AlignWithAmp extends SequentialCommandGroup {
       drivetrain.pathFindToAmp(),
       new DriveToHeading(drivetrain, 90.0).withTimeout(1.5),
       new StrafeToTagPosition(drivetrain, limelight, 1.5).withTimeout(2.0),
-      new Drive(drivetrain, 0.0, 0.5, 0.0).withTimeout(2.5)
+      new Drive(drivetrain, 0.0, -0.25, 0.0).withTimeout(2.5)
     );
   }
 }
