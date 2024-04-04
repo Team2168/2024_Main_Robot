@@ -85,7 +85,7 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
 
     oi.testJoystick.ButtonA().whileTrue(new ClimberDrive(climber, () -> 0.5));
-    oi.testJoystick.ButtonB().onTrue(new ClimberDrive(climber, () -> -0.5));
+    oi.testJoystick.ButtonB().whileTrue(new ClimberDrive(climber, () -> -0.5));
 
   }
 

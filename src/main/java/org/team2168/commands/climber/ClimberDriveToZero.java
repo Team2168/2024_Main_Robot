@@ -26,7 +26,7 @@ public class ClimberDriveToZero extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setToZero();
+    // climber.setToZero();
   }
 
   // Called once the command ends or is interrupted.
@@ -40,7 +40,8 @@ public class ClimberDriveToZero extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (((0 - acceptableErrorTolerance) <= climber.getPositionInches()) && (climber.getPositionInches() <= 0)) ||
-    ((climber.getPositionInches() <= acceptableErrorTolerance) && (0 <= climber.getPositionInches())); 
+    return true;
+    // return (((0 - acceptableErrorTolerance) <= climber.getPositionInches()) && (climber.getPositionInches() <= 0)) ||
+    // ((climber.getPositionInches() <= acceptableErrorTolerance) && (0 <= climber.getPositionInches())); 
 }
 }

@@ -28,7 +28,7 @@ public class ClimberDriveToPosition extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setPosition(inches);
+    // climber.setPosition(inches);
   }
 
   // Called once the command ends or is interrupted.
@@ -38,7 +38,8 @@ public class ClimberDriveToPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((climber.getPositionInches() >= (inches - acceptableErrorTolerance) && climber.getPositionInches() <= (inches + acceptableErrorTolerance)) );
+    return true;
+    // return ((climber.getPositionInches() >= (inches - acceptableErrorTolerance) && climber.getPositionInches() <= (inches + acceptableErrorTolerance)) );
   }
   
 }

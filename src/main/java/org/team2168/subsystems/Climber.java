@@ -6,6 +6,7 @@ package org.team2168.subsystems;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -19,10 +20,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import org.team2168.Constants.ClimberMotors;
 
-public class Climber extends SubsystemBase {
+public class Climber extends SubsystemBase implements Loggable {
 
   private CANSparkMax climberMotor = new CANSparkMax(ClimberMotors.CLIMBER_MOTOR, MotorType.kBrushed);
-  private RelativeEncoder climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, TICKS_PER_REV);
+  // private RelativeEncoder climberEncoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, TICKS_PER_REV);
 
   static Climber instance = null;
 
@@ -34,8 +35,8 @@ public class Climber extends SubsystemBase {
 
   private SparkPIDController m_pidController;
 
-  private static final double kMaxOutput = 1;// placeholder
-  private static final double kMinOutput = -1;// placeholder
+  private static final double kMaxOutput = 1.0;// placeholder
+  private static final double kMinOutput = -1.0;// placeholder
   private static final double kMaxVel= inchesToRotations(2.5) * TIME_UNITS_OF_VELOCITY;; //placeholder
   private static final double kMaxAcc= inchesToRotations(3.0) * TIME_UNITS_OF_VELOCITY;; //placeholder
 
@@ -67,7 +68,7 @@ public class Climber extends SubsystemBase {
     m_pidController = climberMotor.getPIDController();
     //m_Encoder = climberMotor.getEncoder(SparkRelativeEncoder.Type.kNoSensor, 50); // Encoder object created to display position values
 
-    m_pidController.setFeedbackDevice(climberEncoder);
+    // m_pidController.setFeedbackDevice(climberEncoder);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput); 
 
     m_pidController.setSmartMotionMaxVelocity(kMaxVel, 0);
@@ -206,15 +207,15 @@ public class Climber extends SubsystemBase {
     return climberMotor.get();
   }
 
-  @Log(name = "Speed Velocity", rowIndex = 0, columnIndex = 1)
-  public double getSpeedVelocity(){
-    return (rotationsToInches(climberEncoder.getVelocity()) / 60); 
-  }
+  // @Log(name = "Speed Velocity", rowIndex = 0, columnIndex = 1)
+  // public double getSpeedVelocity(){
+  //   return (rotationsToInches(climberEncoder.getVelocity()) / 60); 
+  // }
 
-  @Log(name = "Position in inches", rowIndex = 0, columnIndex = 2)
-  public double getPositionInches(){
-    return degreesToInches(Units.rotationsToDegrees(climberEncoder.getPosition()));
-  }
+  // @Log(name = "Position in inches", rowIndex = 0, columnIndex = 2)
+  // public double getPositionInches(){
+  //   return degreesToInches(Units.rotationsToDegrees(climberEncoder.getPosition()));
+  // }
 
   @Log(name = "Voltage", rowIndex = 1, columnIndex = 4)
   public double getVoltage(){
