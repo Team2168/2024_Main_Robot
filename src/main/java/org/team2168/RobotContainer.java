@@ -8,11 +8,14 @@ import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.Autos;
 import org.team2168.commands.ExampleCommand;
 import org.team2168.commands.QueueNote;
+import org.team2168.commands.climber.ClimberDrive;
+import org.team2168.commands.climber.ClimberDriveToPosition;
 import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
 import org.team2168.commands.intakePivot.SetIntakePivotPosition;
 import org.team2168.commands.intakerRoller.SetIntakeSpeed;
 import org.team2168.subsystems.ExampleSubsystem;
+import org.team2168.subsystems.Climber;
 import org.team2168.subsystems.Indexer;
 //import org.team2168.subsystems.Indexer;
 import org.team2168.subsystems.IntakeRoller;
@@ -40,6 +43,7 @@ public class RobotContainer {
   OI oi = OI.getInstance();
 
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Climber climber = Climber.getInstance();
 
   //private final Indexer indexer = Indexer.getInstance();
 
@@ -79,6 +83,9 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new QueueNote(intakeRoller, indexer));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new SetIntakePivotPosition(intakePivot, 0.0)).onFalse(new SetIntakePivotPosition(intakePivot, -120.0));
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0));
+
+    oi.testJoystick.ButtonA().whileTrue(new ClimberDrive(climber, () -> 0.5));
+    oi.testJoystick.ButtonB().onTrue(new ClimberDrive(climber, () -> -0.5));
 
   }
 
