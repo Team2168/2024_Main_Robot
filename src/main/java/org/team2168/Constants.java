@@ -57,6 +57,8 @@ public final class Constants {
   
       public static final int PIGEON_CAN_ID = 17;
 
+      public static final int CLIMBER_MOTOR = 18;
+
       public static final int intakePivotL = 20;
       public static final int intakePivotR = 21;
       public static final int intakeRoller = 22;

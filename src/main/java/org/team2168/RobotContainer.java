@@ -8,6 +8,7 @@ import org.team2168.Constants.OperatorConstants;
 import org.team2168.commands.ContinuousNoteQueue;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
+import org.team2168.subsystems.Climber;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.commands.LEDs.LEDstatus;
@@ -32,6 +33,7 @@ import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.ThreeNoteAltSide;
 import org.team2168.commands.auto.TwoNoteAuto;
 import org.team2168.commands.auto.WPIThreeNote;
+import org.team2168.commands.climber.SetClimberSpeed;
 import org.team2168.subsystems.LEDs;
 
 //import org.team2168.subsystems.Indexer;
@@ -82,6 +84,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Limelight limelight = Limelight.getInstance();
   private final Drivetrain drivetrain = Drivetrain.getInstance();
+  private final Climber climber = Climber.getInstance();
 
   private final OI oi = OI.getInstance();
   private final Shooter shooter = Shooter.getInstance();
@@ -212,8 +215,9 @@ public class RobotContainer {
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
 
-    oi.testJoystick.ButtonA().onTrue(new BumpShooterSpeed(shooter));
-    oi.testJoystick.ButtonB().onTrue(new BumpShooterSpeedDown(shooter));
+    oi.testJoystick.ButtonA().whileTrue(new SetClimberSpeed(climber, 0.2));
+    oi.testJoystick.ButtonB().whileTrue(new SetClimberSpeed(climber, -0.2));
+    oi.testJoystick.ButtonX().onTrue(new SetClimberSpeed(climber, 0.0));
 
   }
 
