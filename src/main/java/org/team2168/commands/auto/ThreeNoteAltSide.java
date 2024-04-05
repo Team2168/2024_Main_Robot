@@ -38,18 +38,20 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       // drive back to the front of the speaker and score first note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
       new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
-      new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_1", InitialPathState.DISCARDHEADING),
-      // new FollowInitialPath(drivetrain, "3_Note_Far_Alt_1"),
-      new ParallelCommandGroup(
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true),
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight)
-      ).withTimeout(1.1),
+      // new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_1", InitialPathState.DISCARDHEADING),
+      // // new FollowInitialPath(drivetrain, "3_Note_Far_Alt_1"),
+      // new ParallelCommandGroup(
+      // new DriveWithLimelight(drivetrain, limelight, 1.0, true),
+      // new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight)
+      // ).withTimeout(1.1),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
+      new WaitCommand(0.5),
+      new StopFlywheel(shooter),
       // drive to and pick up second note
       new ParallelCommandGroup(
-        new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_2", InitialPathState.PRESERVEODOMETRY),
+        new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_New_1", InitialPathState.DISCARDHEADING),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.5)
       ),
       // drive back to shooting position and shoot note
       new ParallelCommandGroup(
@@ -66,7 +68,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_4", InitialPathState.PRESERVEODOMETRY),
         new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
-        new QueueNote(intakeRoller, indexer, leds).withTimeout(3.3)
+        new QueueNote(intakeRoller, indexer, leds).withTimeout(4.3)
       ),
       // drive back to the shooting position and shoot note
       new ParallelCommandGroup(

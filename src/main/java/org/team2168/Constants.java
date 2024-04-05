@@ -82,7 +82,7 @@ public final class Constants {
     public static final double kpDriveVel = 3.0; // needs testing
     public static final double kpAngularVel = 1.0; // needs to be tested
     public static final double kdAngularVel = 0.0;
-    public static final double kiAngularVel = 0.0;
+    public static final double kiAngularVel = 0.01;
     public static double ksVolts;
     public static double kvVoltSecondsPerMeter;
     public static double kaVoltSecondsSquaredPerMeter;

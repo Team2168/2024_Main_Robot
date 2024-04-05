@@ -6,6 +6,7 @@ package org.team2168.commands.Drivetrain;
 
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.Limelight;
+import org.team2168.subsystems.Limelight.Pipeline;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,11 +22,11 @@ public class StrafeToTagPosition extends Command {
   private int acceptableLoops = 10;
   
   //PID gains
-  private static final double kP = 0.05; //TODO: check gains
+  private static final double kP = 0.02168; //TODO: check gains
   private static final double kI = 0;
-  private static final double kD = 0;
+  private static final double kD = 0.0025;
 
-  private static final double MINIMUM_COMMAND = 0.2;
+  private static final double MINIMUM_COMMAND = 0.15;
   private static final double MAX_INTEGRAL = 1.0;
 
   private double strafeSpeed;
@@ -56,6 +57,7 @@ public class StrafeToTagPosition extends Command {
     pidController.setIntegratorRange(-MAX_INTEGRAL, MAX_INTEGRAL);
 
     limelight.enableBaseCameraSettings();
+    limelight.setPipeline(Limelight.Pipeline.AMPS.getPipeline());
 
     pidController.setTolerance(errorToleranceAngle);
   }
@@ -67,7 +69,7 @@ public class StrafeToTagPosition extends Command {
 
     //robot needs to within its error tolerance for 10 loops
     //or else the counter resets
-    if(Math.abs(limeAngle) < errorToleranceAngle)
+    if(Math.abs(limeAngle) < errorToleranceAngle && limelight.hasTarget())
       ++withinThresholdLoops;
     else 
       withinThresholdLoops = 0;
@@ -76,9 +78,9 @@ public class StrafeToTagPosition extends Command {
     
     //speed is adjusted to ensure the drivetrain will actually move
     if(limeAngle > errorToleranceAngle)
-      strafeSpeed += MINIMUM_COMMAND;
-    else if (limeAngle < errorToleranceAngle)
       strafeSpeed -= MINIMUM_COMMAND;
+    else if (limeAngle < -errorToleranceAngle)
+      strafeSpeed += MINIMUM_COMMAND;
     else 
       strafeSpeed = 0.0;
 
@@ -89,6 +91,7 @@ public class StrafeToTagPosition extends Command {
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(0.0, 0.0, 0.0);
+    limelight.setPipeline(Pipeline.ALL_APRIL_TAGS.pipelineValue);
   }
 
   // Returns true when the command should end.

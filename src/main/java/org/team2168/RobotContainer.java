@@ -9,6 +9,7 @@ import org.team2168.commands.ContinuousNoteQueue;
 import org.team2168.commands.Drivetrain.DriveWithJoystick;
 import org.team2168.commands.Drivetrain.DriveWithLimelight;
 import org.team2168.subsystems.Climber;
+import org.team2168.commands.Drivetrain.StrafeToTagPosition;
 import org.team2168.subsystems.Drivetrain;
 import org.team2168.subsystems.ExampleSubsystem;
 import org.team2168.commands.LEDs.LEDstatus;
@@ -29,6 +30,7 @@ import org.team2168.commands.auto.LeaveStartingZone;
 import org.team2168.commands.auto.OneNoteAuto;
 import org.team2168.commands.auto.PathFindToAmp;
 import org.team2168.commands.auto.PathFindToChain;
+import org.team2168.commands.auto.PathFindToSpeaker;
 import org.team2168.commands.auto.RotateChassisContinuous;
 import org.team2168.commands.auto.ThreeNoteAltSide;
 import org.team2168.commands.auto.TwoNoteAuto;
@@ -48,6 +50,7 @@ import org.team2168.utils.SwervePathUtil;
 import org.team2168.utils.SwervePathUtil.InitialPathState;
 import org.team2168.commands.QueueNote;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
+import org.team2168.commands.Drivetrain.DriveToHeading;
 import org.team2168.commands.indexer.DriveIndexer;
 import org.team2168.commands.indexer.DriveIndexeruntilNote;
 import org.team2168.commands.indexer.DriveIndexeruntilnoNote;
@@ -127,7 +130,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
+  public void configureBindings() {
     // oi.testJoystick.ButtonA().onTrue(new SetRedLED(leds, true));
     // oi.testJoystick.ButtonB().onTrue(new SetGreenLED(leds, true));
     // oi.testJoystick.ButtonBack().onTrue(new SetBlueLED(leds, true));
@@ -147,6 +150,8 @@ public class RobotContainer {
     // oi.driverJoystick.ButtonX().onTrue(new PathFindToAmp(drivetrain));  
     //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
 
+    //reset 
+    oi.operatorJoystick1.ButtonLeftStick().onTrue(new StopFlywheel(shooter));
     // amp
     oi.operatorJoystick1.ButtonA().onTrue(
       new ControlShooterAndHood(shooter, shooterPivot, 
@@ -178,15 +183,14 @@ public class RobotContainer {
       .whileTrue(new DriveIndexer(indexer, ()->-0.75));
     // stop shooter
     oi.operatorJoystick1.ButtonStart().onTrue(new StopFlywheel(shooter));
-    //toggle climb
-    //oi.operatorJoystick2.ButtonA().toggleOnTrue(new climber thing)
+    //trap shot
+    oi.operatorJoystick2.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.TRAP_SHOT.shooterRPS, ShooterPivot.SHOOTING_ANGLE.TRAP_SHOT.shooterAngle));
                                   //.toggleOnFalse(turn climber off);
     //shooter angle bumping
     oi.operatorJoystick2.ButtonX().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick2.ButtonY().onTrue(new BumpShooterAngleDown(shooterPivot));
     // shooting speed bumping
-    oi.operatorJoystick2.ButtonLeftBumper().whileTrue(new DriveIndexeruntilNote(indexer, () -> 0.75))
-                                           .whileTrue(new SetIntakeSpeed(intakeRoller, -0.5));
+    oi.operatorJoystick2.ButtonLeftBumper().onTrue(new BumpShooterSpeed(shooter));
     oi.operatorJoystick2.ButtonRightBumper().onTrue(new BumpShooterSpeedDown(shooter));
 
     //old operator button bindings (for F310)
@@ -205,12 +209,14 @@ public class RobotContainer {
                                           .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
                                           .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0))
                                           .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
-    //oi.operatorJoystick.ButtonLeftBumper().whileTrue(new RepeatCommand(new QueueNote(intakeRoller, indexer))); // TODO: test
+    oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0)); // TODO: test
 
-    //oi.driverJoystick.ButtonBack().onTrue(new AlignWithAmp(drivetrain, limelight));
+    oi.driverJoystick.ButtonLeftStick().onTrue(new AlignWithAmp(drivetrain, limelight)); // TODO: Test
+    //oi.driverJoystick.ButtonX().whileTrue(new DriveToHeading(drivetrain, 90.0).withTimeout(1.5)); // TO TEST
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
     oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
-    // oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
+    //oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
+    oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToSpeaker(drivetrain));
     // oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
@@ -234,6 +240,7 @@ public class RobotContainer {
     autoChooser.addOption("Rotational Accuracy Auto", SwervePathUtil.getPathCommand("Rotational_Accuracy_Test", drivetrain, InitialPathState.DISCARDHEADING));
     autoChooser.addOption("3 Note Alt", new ThreeNoteAltSide(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
     autoChooser.addOption("WPI 3 Note", new WPIThreeNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
+    autoChooser.addOption("Faster Close 4 Note", new FasterCloseFourNote(drivetrain, intakeRoller, intakePivot, indexer, shooter, shooterPivot, limelight, leds));
 
     SmartDashboard.putData(autoChooser);
   }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.47,
-        "y": 2.62
+        "x": 8.591236139818252,
+        "y": 2.7915498485025405
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.572281852192506,
-        "y": -0.32086140977130917
+        "x": 6.693517992010757,
+        "y": -0.14931156126876877
       },
       "isLocked": false,
       "linkedName": "3NAlt4-5"
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -120.0,
+    "rotation": -125.0,
     "velocity": 0
   },
   "useDefaultConstraints": false
