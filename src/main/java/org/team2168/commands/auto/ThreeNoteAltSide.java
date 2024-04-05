@@ -50,7 +50,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       // drive to and pick up second note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_New_1", InitialPathState.DISCARDHEADING),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.5)
       ),
       // drive back to shooting position and shoot note
@@ -67,7 +67,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       // drive to and pick up third note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_4", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.3)
       ),
       // drive back to the shooting position and shoot note

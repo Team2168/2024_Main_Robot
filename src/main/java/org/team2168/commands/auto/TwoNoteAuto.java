@@ -59,7 +59,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       // moves back to pick up second note
       new FollowPathPlannerPath(drivetrain, "Move_Back_Speaker", InitialPathState.DISCARDHEADING).raceWith(
         // new FollowInitialPath(drivetrain, "Move_Back_Speaker").raceWith(
-        new SetIntakePivotPosition(intakePivot, -10.0),
+        new SetIntakePivotPosition(intakePivot, -12.5),
         new QueueNote(intakeRoller, indexer, leds)
       ),
       new QueueNote(intakeRoller, indexer, leds).withTimeout(2.0),

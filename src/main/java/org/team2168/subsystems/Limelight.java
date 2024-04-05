@@ -283,7 +283,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     public void periodic() {
         // This method will be called once per scheduler run\
         Timer.getFPGATimestamp();
-        //System.out.println(calculateDistance());
+        System.out.println(calculateDistance());
     
     }
     

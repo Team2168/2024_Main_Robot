@@ -43,7 +43,7 @@ public class WPIThreeNote extends SequentialCommandGroup {
       //drive back to second note, pick up and shoot
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "WPI3_Note_1", InitialPathState.DISCARDHEADING),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(2.5)
       ),
       // shoot
@@ -55,7 +55,7 @@ public class WPIThreeNote extends SequentialCommandGroup {
       // drive to and pick up third note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "WPI3_Note_2", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive back and shoot third note

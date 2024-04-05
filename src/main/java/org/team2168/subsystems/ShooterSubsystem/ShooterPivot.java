@@ -67,8 +67,8 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
   private boolean supplyCurrentLimitEnable = true; // placeholder
   private double supplyCurrentThreshold = 20.05;
   private double supplyTimeThreshold = 0.02;
-  private double kP = 7.5; // placeholder
-  private double kI = 0.1; // placeholder
+  private double kP = 20.0; // placeholder
+  private double kI = 5.0; // placeholder
   private double kD = 0.0; // placeholder
   private double kG = 0.0; // placeholder, negative because we need down force to counteract tension.
   private double kS = 0.025;
@@ -85,9 +85,10 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
       put(1.83, 45.0);
       put(2.0, 43.0);
       put(2.3, 40.9);
-      put(2.5, 37.7);
-      put(2.75, 36.0);
-      put(3.0, 29.7);
+      put(2.5, 39.7);
+      put(2.75, 37.0);
+      put(2.9, 38.5);
+      put(3.0, 31.7);
       put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
       put(100.0, 35.0);
       // put(6.0, 30.0);

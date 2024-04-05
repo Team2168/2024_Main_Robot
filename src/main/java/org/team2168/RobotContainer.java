@@ -175,7 +175,7 @@ public class RobotContainer {
     //floor intake
     oi.operatorJoystick1.ButtonRightStick()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-      .whileTrue(new SetIntakePivotPosition(intakePivot, -11.0))
+      .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
       .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0))
       .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0)); // continues running indexer to intake a stuck note after intake is lifted
     // spit
@@ -185,8 +185,8 @@ public class RobotContainer {
     // stop shooter
     oi.operatorJoystick1.ButtonStart().onTrue(new StopFlywheel(shooter));
     //trap shot
-    oi.operatorJoystick2.ButtonA().onTrue(new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.TRAP_SHOT.shooterRPS, ShooterPivot.SHOOTING_ANGLE.TRAP_SHOT.shooterAngle));
-                                  //.toggleOnFalse(turn climber off);
+    oi.operatorJoystick2.ButtonA().toggleOnTrue(new SetClimberSpeed(climber, 0.8))
+                                  .toggleOnFalse(new SetClimberSpeed(climber, -0.8));
     //shooter angle bumping
     oi.operatorJoystick2.ButtonX().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick2.ButtonY().onTrue(new BumpShooterAngleDown(shooterPivot));

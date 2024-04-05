@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.008437427396181,
-        "y": 6.7674758970371025
+        "x": 3.902988659057887,
+        "y": 7.42143740211651
       },
       "isLocked": false,
       "linkedName": "4NFar1-2"
     },
     {
       "anchor": {
-        "x": 8.260529885988683,
-        "y": 7.343624165921318
+        "x": 8.331980573735585,
+        "y": 7.417171325570721
       },
       "prevControl": {
-        "x": 7.36461616059065,
-        "y": 6.671688871872794
+        "x": 7.0869687946125,
+        "y": 7.42689798009512
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -164.2162062653264,
+      "rotationDegrees": 180.0,
       "rotateFast": false
     }
   ],
@@ -45,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -139.68589983950258,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -175.0,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

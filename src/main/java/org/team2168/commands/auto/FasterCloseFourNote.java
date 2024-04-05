@@ -50,7 +50,7 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
         ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Close_1", InitialPathState.DISCARDHEADING),
         // new FollowInitialPath(drivetrain, "4_Note_Close_1"),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(2.8)
       ),
       // shoots second note
@@ -66,7 +66,7 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
       // drives to and picks up 3rd note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "4_Note_Subwoofer_2", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // shoots 3rd note
@@ -82,7 +82,7 @@ public class FasterCloseFourNote extends SequentialCommandGroup {
       // druves to and picks up 4th note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "4_Note_Subwoofer_3", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(0.5),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(0.5),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(3.3)
       ),
       // shoots 4th note

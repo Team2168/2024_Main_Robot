@@ -51,7 +51,7 @@ public class FourNoteFar extends SequentialCommandGroup {
         ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_1", InitialPathState.DISCARDHEADING),
         // new FollowInitialPath(drivetrain, "4_Note_Far_1"),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(2.7)
       ),
       // aim and shoot second note from this position
@@ -69,7 +69,7 @@ public class FourNoteFar extends SequentialCommandGroup {
           new StopFlywheel(shooter)
         ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_2", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 3rd note
@@ -92,7 +92,7 @@ public class FourNoteFar extends SequentialCommandGroup {
           new StopFlywheel(shooter)
         ),
         new FollowPathPlannerPath(drivetrain, "4_Note_Far_4", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -10.0).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.0)
       ),
       // drive to scoring position and score 4th note
