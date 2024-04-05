@@ -215,8 +215,8 @@ public class RobotContainer {
     //oi.driverJoystick.ButtonStart().whileTrue(new DriveWithJoystick(drivetrain)); // TODO: add button binding for amp alignment and climber alignment
 
 
-    oi.testJoystick.ButtonA().whileTrue(new SetClimberSpeed(climber, 0.2));
-    oi.testJoystick.ButtonB().whileTrue(new SetClimberSpeed(climber, -0.2));
+    oi.testJoystick.ButtonA().whileTrue(new SetClimberSpeed(climber, 0.8));
+    oi.testJoystick.ButtonB().whileTrue(new SetClimberSpeed(climber, -0.8));
     oi.testJoystick.ButtonX().onTrue(new SetClimberSpeed(climber, 0.0));
 
   }
