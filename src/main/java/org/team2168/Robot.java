@@ -17,6 +17,7 @@ import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,7 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  Timer timer = new Timer();
 
   private IntakePivot intakePivot;
   private RobotContainer m_robotContainer;
@@ -79,23 +81,29 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    timer.reset();
+    timer.start();
+  }
 
   @Override
   public void disabledPeriodic() {
     // DriverStation.refreshData();
-    drivetrain.updatePathInvert();
+    // drivetrain.updatePathInvert();
 
     if (DriverStation.getAlliance().isPresent() && lastAllianceReport != DriverStation.getAlliance().get()) {
       m_robotContainer.configureAutonomousRoutines();
       m_robotContainer.configureBindings();
       lastAllianceReport = DriverStation.getAlliance().get();
     }
-    // intakePivotOne needs to have an invert of true, intakePivotTwo needs to have an invert of false
-    if (!intakePivot.getIntakeOneInvert() || intakePivot.getIntakeTwoInvert()) {
-      intakePivot.setInvertConfiguration();
+    if (timer.hasElapsed(1)) {
+      // intakePivotOne needs to have an invert of true, intakePivotTwo needs to have an invert of false
+      if (!intakePivot.getIntakeOneInvert() || intakePivot.getIntakeTwoInvert()) {
+        intakePivot.setInvertConfiguration();
+      }
+      timer.reset();
     }
-    // drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
+    //drivetrain.setMotorsBrake(m_robotContainer.getBrakesEnabled());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
