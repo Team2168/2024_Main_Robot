@@ -32,6 +32,7 @@ import io.github.oblarg.oblog.annotations.Log;
 public class ShooterPivot extends SubsystemBase implements Loggable {
   public enum SHOOTING_ANGLE {
     UP_AGAINST_SPEAKER(60.0), // placeholder
+    SUBWOOFER_SIDE(59.0),
     WHITE_LINE(60.0),
     RED_LINE(41.0),
     UP_AGAINST_AMP(62.0), //no provided f310 bindings for this on the button bindings paper.
@@ -67,11 +68,11 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
   private boolean supplyCurrentLimitEnable = true; // placeholder
   private double supplyCurrentThreshold = 20.05;
   private double supplyTimeThreshold = 0.02;
-  private double kP = 20.0; // placeholder
-  private double kI = 5.0; // placeholder
+  private double kP = 25.0; // placeholder
+  private double kI = 30.0; // placeholder
   private double kD = 0.0; // placeholder
   private double kG = 0.0; // placeholder, negative because we need down force to counteract tension.
-  private double kS = 0.025;
+  private double kS = 0.0;
   private SoftwareLimitSwitchConfigs rotationLimits;
   private DutyCycleOut percentOutput;
 
@@ -85,10 +86,10 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
       put(1.83, 45.0);
       put(2.0, 43.0);
       put(2.3, 40.9);
-      put(2.5, 39.7);
+      put(2.5, 38.5);
       put(2.75, 37.0);
-      put(2.9, 38.5);
-      put(3.0, 31.7);
+      put(2.9, 35.5);
+      put(3.0, 34.7);
       put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
       put(100.0, 35.0);
       // put(6.0, 30.0);

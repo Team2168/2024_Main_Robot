@@ -175,7 +175,7 @@ public class RobotContainer {
     //floor intake
     oi.operatorJoystick1.ButtonRightStick()
       .whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-      .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+      .whileTrue(new SetIntakePivotPosition(intakePivot, -15.0))
       .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0))
       .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0)); // continues running indexer to intake a stuck note after intake is lifted
     // spit
@@ -207,7 +207,7 @@ public class RobotContainer {
     oi.operatorJoystick.ButtonStart().onTrue(new BumpShooterAngle(shooterPivot));
     oi.operatorJoystick.ButtonBack().onTrue(new BumpShooterAngleDown(shooterPivot));
     oi.operatorJoystick.ButtonLeftBumper().whileTrue(new ContinuousNoteQueue(indexer, intakeRoller))
-                                          .whileTrue(new SetIntakePivotPosition(intakePivot, -12.5))
+                                          .whileTrue(new SetIntakePivotPosition(intakePivot, -15.0))
                                           .whileFalse(new DriveIndexeruntilNote(indexer, () -> 0.75).withTimeout(3.0))
                                           .whileFalse(new SetIntakePivotPosition(intakePivot, -120.0)); // TODO: uncomment when intake pivot is brought back
     oi.operatorJoystick.ButtonRightBumper().whileTrue(new DriveIndexeruntilnoNote(indexer, () -> 1.0)); // TODO: test

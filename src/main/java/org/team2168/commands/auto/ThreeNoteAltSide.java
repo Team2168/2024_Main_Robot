@@ -37,7 +37,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
     addCommands(
       // drive back to the front of the speaker and score first note
       new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
-      new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.UP_AGAINST_SPEAKER.shooterAngle),
+      new ControlShooterAndHood(shooter, shooterPivot, Shooter.SHOOTING_RPS.UP_AGAINST_SPEAKER.shooterRPS, ShooterPivot.SHOOTING_ANGLE.SUBWOOFER_SIDE.shooterAngle),
       // new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_1", InitialPathState.DISCARDHEADING),
       // // new FollowInitialPath(drivetrain, "3_Note_Far_Alt_1"),
       // new ParallelCommandGroup(
@@ -50,7 +50,7 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
       // drive to and pick up second note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_New_1", InitialPathState.DISCARDHEADING),
-        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -15.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.5)
       ),
       // drive back to shooting position and shoot note
@@ -59,15 +59,13 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
-      new ParallelCommandGroup(
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.2),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.25),
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.7),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // drive to and pick up third note
       new ParallelCommandGroup(
         new FollowPathPlannerPath(drivetrain, "3_Note_Far_Alt_4", InitialPathState.PRESERVEODOMETRY),
-        new SetIntakePivotPosition(intakePivot, -12.5).withTimeout(1.0),
+        new SetIntakePivotPosition(intakePivot, -15.0).withTimeout(1.0),
         new QueueNote(intakeRoller, indexer, leds).withTimeout(4.3)
       ),
       // drive back to the shooting position and shoot note
@@ -76,10 +74,8 @@ public class ThreeNoteAltSide extends SequentialCommandGroup {
         new SetIntakePivotPosition(intakePivot, -120.0).withTimeout(0.1),
         new SetIntakeSpeed(intakeRoller, 0.0).withTimeout(0.1)
       ),
-      new ParallelCommandGroup(
-      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight),
-      new DriveWithLimelight(drivetrain, limelight, 1.0, true)
-      ).withTimeout(1.2),
+      new DriveWithLimelight(drivetrain, limelight, 1.0, true).withTimeout(1.25),
+      new ShootAndControlHoodFromDistance(shooter, shooterPivot, limelight).withTimeout(0.7),
       new DriveIndexeruntilnoNote(indexer, () -> 1.0).withTimeout(1.0),
       // stops shooter for end of auto
       new WaitCommand(1.0),

@@ -32,7 +32,7 @@ public class Climber extends SubsystemBase {
 
     climberMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
     climberMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-    climberMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 800);
+    climberMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 825);
     climberMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
   }
 
