@@ -50,6 +50,7 @@ import org.team2168.subsystems.ShooterSubsystem.ShooterPivot;
 import org.team2168.utils.SwervePathUtil;
 import org.team2168.utils.SwervePathUtil.InitialPathState;
 import org.team2168.commands.QueueNote;
+import org.team2168.commands.Drivetrain.AimTowardsSpeaker;
 import org.team2168.commands.Drivetrain.AlignWithAmp;
 import org.team2168.commands.Drivetrain.DriveToHeading;
 import org.team2168.commands.indexer.DriveIndexer;
@@ -215,7 +216,7 @@ public class RobotContainer {
     oi.driverJoystick.ButtonLeftStick().onTrue(new AlignWithAmp(drivetrain, limelight)); // TODO: Test
     //oi.driverJoystick.ButtonX().whileTrue(new DriveToHeading(drivetrain, 90.0).withTimeout(1.5)); // TO TEST
     oi.driverJoystick.ButtonBack().whileTrue(new DriveWithLimelight(drivetrain, limelight, 1.0, true));
-    oi.driverJoystick.ButtonStart().onTrue(new DriveWithJoystick(drivetrain));
+    oi.driverJoystick.ButtonStart().whileTrue(new AimTowardsSpeaker(drivetrain, shooter));
     //oi.driverJoystick.ButtonLeftStick().onTrue(new PathFindToAmp(drivetrain)); // TODO: troubleshoot
     oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToSpeaker(drivetrain));
     // oi.driverJoystick.ButtonRightStick().onTrue(new PathFindToChain(drivetrain));

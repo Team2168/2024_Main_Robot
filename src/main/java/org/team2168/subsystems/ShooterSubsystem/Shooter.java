@@ -79,6 +79,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   private final double PEAK_REVERSE_DUTY_CYCLE = -1.0; // placeholder
   private final InvertedValue leftInvert = InvertedValue.Clockwise_Positive;
   private final InvertedValue rightInvert = InvertedValue.CounterClockwise_Positive;
+  private final double WHEEL_RADIUS_M = Units.inchesToMeters(4.0/2.0);
 
   private double first_kP = 0.7; // placeholder
   private double first_kI = 1.0; // placeholder
@@ -221,6 +222,10 @@ public class Shooter extends SubsystemBase implements Loggable {
   @Log(name = "shooter velocity in rotations per second", rowIndex = 0, columnIndex = 0)
   public double getVelocity() {
     return (leftShooterMotor.getVelocity().getValue()) * GEAR_RATIO;
+  }
+
+  public double shotVelToNoteVel() {
+    return getVelocity() * WHEEL_RADIUS_M;
   }
 
   public double getError() {

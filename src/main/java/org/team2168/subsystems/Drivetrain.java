@@ -277,6 +277,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
      */
     public void drive(double forward, double strafe, double azimuth) {
         _sd.drive(forward, strafe, azimuth);
+        chassisSpeeds = _sd.getChassisDriver(); // field relative
     }
 
     public void driveWithKinematics(double forward, double strafe, double azimuth) {

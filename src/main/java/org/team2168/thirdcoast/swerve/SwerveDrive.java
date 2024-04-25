@@ -192,6 +192,8 @@ public class SwerveDrive implements Loggable {
       wheels[i].set(wa[i], ws[i]);
       // SmartDashboard.putNumber("Commanded position (percent of a rotation) module " + i, wa[i]);
     }
+
+    chassisDriver = new ChassisSpeeds(forward * Wheel.getMaxVelocityMetersPerSec(), strafe * Wheel.getMaxVelocityMetersPerSec(), 0.0); // this chassisSpeed state is only used for forward and strafe movement, so rotation does not need to be tracked
   }
 
   public void driveWithKinematics(double forward, double strafe, double azimuth) {
