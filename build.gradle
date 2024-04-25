@@ -1,12 +1,17 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.2.1"
+    id "edu.wpi.first.GradleRIO" version "2024.3.2"
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
+
 
 def ROBOT_MAIN_CLASS = "org.team2168.Main"
 
@@ -37,6 +42,10 @@ deploy {
             }
         }
     }
+}
+
+repositories {
+    maven { url 'https://jitpack.io'}
 }
 
 def deployArtifact = deploy.targets.roborio.artifacts.frcJava

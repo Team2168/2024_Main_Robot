@@ -24,7 +24,7 @@ public class SwerveDriveConfig {
 
   public double lengthFromCenterToWheel = 0.53975; // meters
 
-  public double widthFromCenterToWheel = 0.53975; // meters
+  public double widthFromCenterToWheel = 0.37465; // meters
 
   /**
    * Robot period is the {@code TimedRobot} period in seconds, defaults to {@code

@@ -7,7 +7,10 @@ package org.team2168.commands.Drivetrain;
 import org.team2168.OI;
 import org.team2168.subsystems.Drivetrain;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DriveWithChassisSpeedsJoystick extends Command {
@@ -15,6 +18,8 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   Drivetrain drive;
   OI oi;
   double chassisRot;
+  private double kDriveInvert = 1.0;
+  private SlewRateLimiter rotationRateLimiter;
 
   public DriveWithChassisSpeedsJoystick(Drivetrain drive) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,6 +31,7 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   @Override
   public void initialize() {
     oi = OI.getInstance();
+    rotationRateLimiter = new SlewRateLimiter(0.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -33,10 +39,10 @@ public class DriveWithChassisSpeedsJoystick extends Command {
   public void execute() {
     if (OI.joystickChooser.getSelected().equals("flight")) {
       if (oi.driverJoystick.isPressedButtonA()) {
-        chassisRot = 0.35;
+        chassisRot = 0.4;
       }
       else if (oi.driverJoystick.isPressedButtonB()) {
-        chassisRot = -0.35;
+        chassisRot = -0.4;
       }
       else {
         chassisRot = 0.0;
@@ -45,7 +51,12 @@ public class DriveWithChassisSpeedsJoystick extends Command {
     else {
       chassisRot = oi.getDriverJoystickZValue();
     }
-    drive.driveWithKinematics(oi.getDriverJoystickXValue(), oi.getDriverJoystickYValue(), chassisRot);
+
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      kDriveInvert = -1.0;
+    }
+
+    drive.driveWithKinematics(oi.getLimitedDriverJoystickYValue() * kDriveInvert, oi.getLimitedDriverJoystickXValue() * kDriveInvert, chassisRot);
   }
 
   // Called once the command ends or is interrupted.
