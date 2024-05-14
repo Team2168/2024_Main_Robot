@@ -68,7 +68,7 @@ public class Limelight extends SubsystemBase implements Loggable {
     
     double heightOffset;
     double heightToLimelight = 0.648; // m
-    double heightToSpeakerTag = 1.457; // m
+    double heightToSpeakerTag = 1.45415; // m TODO: change for each competition field
     double heightToTrapTag = 1.295;
     double distanceFromTarget = 0.0;
     

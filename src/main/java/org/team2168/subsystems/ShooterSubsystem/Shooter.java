@@ -173,7 +173,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public void setMotorSpeedFromDistance(double distanceFromObject) {
     double motorSpeedFromDistance = velocityLookup.get(distanceFromObject);
-    setVelocity(motorSpeedFromDistance);
+      setVelocity(motorSpeedFromDistance);
   }
 
   public static Shooter getInstance() {
