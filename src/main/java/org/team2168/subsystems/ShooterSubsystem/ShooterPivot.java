@@ -197,7 +197,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
   }
 
   public void setShooterAngleFromDistanceGraph(double distanceFromObject) {
-    double shooterAngle = 91.8 + -31.9*distanceFromObject + 4.84*(Math.pow(distanceFromObject, 2.0));
+    double shooterAngle = 91.8 + -30.4*distanceFromObject + 4.84*(Math.pow(distanceFromObject, 2.0));
     setPositionDegrees(shooterAngle);
   }
 

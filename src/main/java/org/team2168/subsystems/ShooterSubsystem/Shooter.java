@@ -46,7 +46,7 @@ import io.github.oblarg.oblog.annotations.Log;
 public class Shooter extends SubsystemBase implements Loggable {
 
   public enum SHOOTING_RPS { 
-    UP_AGAINST_SPEAKER(15.0), // placeholder (32.5)
+    UP_AGAINST_SPEAKER(22.0), // placeholder (32.5)
     WHITE_LINE(30.0),
     RED_LINE(40.0),
     UP_AGAINST_AMP(2.8), // no provided f310 bindings for this on the button bindings paper.
