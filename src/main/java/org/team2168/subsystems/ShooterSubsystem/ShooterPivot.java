@@ -82,6 +82,7 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
       put(1.05, 60.3);
       put(1.27, 56.0);
       put(1.5, 47.0); // TODO: test at wpi
+      put(1.54,57.28);
       put(1.73, 45.8);
       put(1.83, 45.0);
       put(2.0, 43.0);

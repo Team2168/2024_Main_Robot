@@ -32,7 +32,7 @@ public class ShootAndControlHoodFromDistance extends Command {
   public void execute() {
     distanceMeters = limelight.calculateDistance();
     shooter.setMotorSpeedFromDistance(distanceMeters);
-    shooterPivot.setShooterAngleFromDistanceGraph(distanceMeters);
+    shooterPivot.setShooterAngleFromDistance(distanceMeters);
   }
 
   // Called once the command ends or is interrupted.

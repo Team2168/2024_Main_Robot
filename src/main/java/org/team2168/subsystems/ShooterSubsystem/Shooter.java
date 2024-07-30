@@ -97,10 +97,11 @@ public class Shooter extends SubsystemBase implements Loggable {
     {
       put(0.0, 25.0); // these motorspeeds to meters values are all placeholders, need to actually //
                         // calculate appropriate motorspeed from corresponding distance;
-      // put(1.93, 37.5);
-      // put(3.205, 41.0);
-      // put(4.0, 40.0);
-      // put(5.0, 45.0);
+      put(1.22, 25.7);
+      put(1.54, 25.2);
+      put(3.205, 41.0);
+      put(4.0, 40.0);
+      put(5.0, 45.0);
       put(100.0, 25.0); // makes sure that interpolator has a limit
       // put(7.0, 7000.0);
     }
