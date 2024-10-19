@@ -68,7 +68,7 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     private final boolean[] DRIVE_INVERTED = {true, false, true, false};
     private final SensorDirectionValue[] ABSOLUTE_ENCODER_INVERTED = {SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive, 
         SensorDirectionValue.CounterClockwise_Positive, SensorDirectionValue.CounterClockwise_Positive};
-    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.1628418, 0.256591797, 0.463623047, 1.2314453125}; // the magnet offsets should be set to the opposite sign of these encoder values
+    private final double[] ABSOLUTE_ENCODER_OFFSET = {0.159423828125, 0.26171875, 0.463134765625, 0.224365234375}; // the magnet offsets should be set to the opposite sign of these encoder values
     // private final double[] ABSOLUTE_ENCODER_OFFSET_DEGREES = {186.503906, 196.083984, 215.244141, 177.011719};
     private SwerveDrive _sd;
     private final boolean ENABLE_DRIVE_CURRENT_LIMIT = true;
