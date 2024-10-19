@@ -80,19 +80,17 @@ public class ShooterPivot extends SubsystemBase implements Loggable {
     {
       put(0.0, 60.3);
       put(1.05, 60.3);
-      put(1.27, 56.0);
-      put(1.5, 47.0); // TODO: test at wpi
+      put(1.27, 57.8); 
       put(1.54,57.28);
-      put(1.73, 45.8);
-      put(1.83, 45.0);
-      put(2.0, 43.0);
-      put(2.3, 40.9);
-      put(2.5, 38.5);
-      put(2.75, 37.0);
-      put(2.9, 35.5);
-      put(3.0, 34.7);
-      put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
-      put(100.0, 35.0);
+      put(1.71, 50.8);
+      put(1.9, 47.0);
+      put(2.0, 46.87);
+      put(2.5, 41.9);
+      // put(2.75, 37.0);
+      // put(2.9, 35.5);
+      // put(3.0, 34.7);
+      // put(3.5, 34.5); // these motorspeeds to meters values are all placeholders, need to actually calculate appropriate motorspeed from corresponding distance;
+      // put(100.0, 35.0);
       // put(6.0, 30.0);
       // put(7.0, 20.0);
     }

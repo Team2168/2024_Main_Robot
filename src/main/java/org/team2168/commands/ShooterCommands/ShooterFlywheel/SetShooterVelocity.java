@@ -4,6 +4,8 @@
 
 package org.team2168.commands.ShooterCommands.ShooterFlywheel;
 
+import java.util.function.DoubleSupplier;
+
 import org.team2168.subsystems.LEDs;
 import org.team2168.subsystems.ShooterSubsystem.Shooter;
 
@@ -20,6 +22,10 @@ public class SetShooterVelocity extends Command {
     this.velocity = velocity;
     this.leds = leds;
     addRequirements(shooter);
+  }
+
+    public SetShooterVelocity(Shooter shooter, DoubleSupplier velocity, LEDs leds) {
+      this(shooter, velocity.getAsDouble(), leds);
   }
 
   // Called when the command is initially scheduled.
